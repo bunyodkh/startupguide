@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block content %}
+<section class="container">
+    
+    <div class="layout-grid">        
+        <section class="layout-block span-col-1">
+            <div class="layout-block-heading">
+                <h2 class="medium-bold">{% trans "Create an account" %}</h2>
+                <p class="light">{% trans "Join the community" %}</p>
+            </div>
+
+            <form class="form-submit" method="post" action="{% url 'account_signup' %}" novalidate>
+                {% csrf_token %}
+
+                {% if form.errors %}
+                <div class="auth-errors">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="form-field">
+                    <label class="form-input-label" for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+                    {{ form.email }}
+                </div>
+
+                <div class="form-field">
+                    <label class="form-input-label" for="{{ form.password1.id_for_label }}">{{ form.password1.label }}</label>
+                    <div class="password-wrapper">
+                        {{ form.password1 }}
+                        <button type="button" class="password-hint-toggle" onclick="document.getElementById('password-hint').classList.toggle('visible')" aria-label="{% trans 'Show password requirements' %}">
+                            <img src="{% static 'images/question-mark.svg' %}" alt="" width="18" height="18">
+                        </button>
+                    </div>
+                    <p class="form-hint" id="password-hint">{% trans "Min. 8 characters — must include a letter, a number, and a special character." %}</p>
+                </div>
+
+                <div class="form-field">
+                    <label class="form-input-label" for="{{ form.password2.id_for_label }}">{{ form.password2.label }}</label>
+                    {{ form.password2 }}
+                </div>
+
+                <button type="submit" class="btn-primary">{% trans "Sign Up" %}</button>
+            </form>
+
+            <p class="form-footer">
+                {% trans "Already have an account?" %}
+                <a class="form-link" href="{% url 'account_login' %}">{% trans "Sign in" %}</a>
+            </p>
+        </section>
+    </div>
+</section>
+{% endblock %}

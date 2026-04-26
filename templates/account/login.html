@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<section class="container">
+    
+    <div class="layout-grid">        
+        <section class="layout-block span-col-1">
+            <div class="layout-block-heading">
+                <h2 class="medium-bold">{% trans "Sign In" %}</h2>
+                <p class="light">{% trans "Engage with the community" %}</p>
+            </div>
+
+        <form class="form-submit" method="post" action="{% url 'account_login' %}">
+            {% csrf_token %}
+
+            {% if form.errors %}
+            <div class="auth-errors">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="form-field">
+                <label class="form-input-label" for="{{ form.login.id_for_label }}">{% trans "Email" %}</label>
+                {{ form.login }}
+            </div>
+
+            <div class="form-field">
+                <label class="form-input-label" for="{{ form.password.id_for_label }}">{% trans "Password" %}</label>
+                {{ form.password }}
+            </div>
+
+            <button type="submit" class="btn-primary">{% trans "Sign In" %}</button>
+        </form>
+
+        <p class="form-footer">
+            {% trans "Don't have an account?" %}
+            <a class="form-link" href="{% url 'account_signup' %}">{% trans "Sign up" %}</a>
+        </p>
+
+        </section>
+    </div>
+</section>
+{% endblock %}

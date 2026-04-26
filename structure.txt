@@ -1,0 +1,47 @@
+startupguide_uz/
+├── .env                    # Секретные ключи, доступы к БД (не пушить в Git!)
+├── .gitignore              # Исключения для Git (venv, .env, media)
+├── requirements.txt        # Список зависимостей Python
+├── manage.py               # Главный скрипт управления
+│
+├── config/                 # ⚙️ ВАШЕ ГЛАВНОЕ ПРИЛОЖЕНИЕ (Настройки)
+│   ├── __init__.py
+│   ├── settings.py         # Основные настройки проекта
+│   ├── urls.py             # Главный роутер (подключает urls других аппов)
+│   ├── wsgi.py             # Для деплоя (например, через Gunicorn)
+│   └── asgi.py             # Для асинхронных задач в будущем
+│
+├── users/                  # 👤 APP: Пользователи и Builders Space
+│   ├── models.py           # BuilderProfile (кастомный профиль)
+│   ├── forms.py            # Формы регистрации и редактирования профиля
+│   ├── views.py            # Логика авторизации, личного кабинета
+│   ├── urls.py             # Роуты (login, logout, profile/<id>)
+│   └── admin.py            # Настройка админки для юзеров
+│
+├── hubs/                   # 🎓 APP: University Space (Инфраструктура)
+│   ├── models.py           # Модели: University, Incubator
+│   ├── views.py            # Списки инкубаторов, детальные страницы вузов
+│   ├── urls.py             # Роуты (hubs/, hubs/<id>/)
+│   └── admin.py            
+│
+├── projects/               # 🚀 APP: Стартапы (Студенческие инициативы)
+│   ├── models.py           # Модель: StartupProject
+│   ├── views.py            
+│   ├── urls.py             
+│   └── admin.py            
+│
+├── templates/              # 🎨 ГЛОБАЛЬНЫЕ ШАБЛОНЫ (UI)
+│   ├── base.html           # Базовый скелет сайта (здесь подключаем Tailwind/HTMX)
+│   ├── components/         # Переиспользуемые куски: navbar.html, footer.html
+│   ├── users/              # Шаблоны аппа users (login.html, builder_list.html)
+│   ├── hubs/               # Шаблоны аппа hubs (incubator_detail.html)
+│   └── projects/           # Шаблоны аппа projects
+│
+├── static/                 # 📂 СТАТИЧЕСКИЕ ФАЙЛЫ (Код и дизайн)
+│   ├── css/                # Ваш скомпилированный Tailwind (output.css)
+│   ├── js/                 # HTMX скрипты и кастомный JS
+│   └── images/             # Логотип сайта, иконки, дефолтные аватарки
+│
+└── media/                  # 🖼️ ПОЛЬЗОВАТЕЛЬСКИЙ КОНТЕНТ (UGC)
+    ├── avatars/            # Фотографии людей (Builders)
+    └── logos/              # Логотипы университетов и инкубаторов

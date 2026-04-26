@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<section class="container">
+    <div class="layout-grid">
+        <section class="layout-block span-col-2">
+            <div class="layout-block-heading">
+                <h2 class="medium-bold">{% trans "Check your email" %}</h2>
+                <p class="light">{% trans "We've sent a verification link to your email address. Click the link to activate your account." %}</p>
+            </div>
+            <p class="form-footer">
+                {% trans "Already verified?" %}
+                <a class="form-link" href="{% url 'account_login' %}">{% trans "Sign in" %}</a>
+            </p>
+        </section>
+    </div>
+</section>
+{% endblock %}

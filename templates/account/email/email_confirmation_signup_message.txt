@@ -1,0 +1,17 @@
+{% load i18n %}
+{% autoescape off %}
+{% blocktrans with email=user.email %}
+
+Hi {{ email }},
+
+Welcome! We're glad you joined us.
+
+Please confirm your email address by clicking the link below:
+
+{{ activate_url }}
+
+This link will expire in 3 days. If you didn't create an account, you can safely ignore this email.
+
+{% endblocktrans %}
+
+{% endautoescape %}

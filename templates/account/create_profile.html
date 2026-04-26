@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<section class="container">
+    <div class="layout-grid">
+
+        <div class="layout-block span-col-2">
+            <div class="layout-block-heading">
+                <h2 class="meduim-bold">{% trans 'Create profile' %}</h2>
+                <p class="light">{% trans 'Manage profile here' %}</p>
+            </div>
+
+            {% include 'partials/profile_form.html' %} 
+
+        </div>
+
+    </div>
+</section>
+{% endblock %}

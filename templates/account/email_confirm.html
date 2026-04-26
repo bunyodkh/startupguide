@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<section class="container">
+    <div class="layout-grid">
+        <section class="layout-block span-col-2">
+            <div class="layout-block-heading">
+                <h2 class="medium-bold">{% trans "Confirm your email" %}</h2>
+                {% if confirmation %}
+                    <p class="light">{% blocktrans with email=confirmation.email_address.email %}Please confirm that <strong>{{ email }}</strong> is your email address.{% endblocktrans %}</p>
+                {% else %}
+                    <p class="light">{% trans "This confirmation link is invalid or has expired." %}</p>
+                {% endif %}
+            </div>
+
+            {% if confirmation %}
+            <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-primary">{% trans "Confirm" %}</button>
+            </form>
+            {% else %}
+            <p class="form-footer">
+                <a class="form-link" href="{% url 'account_signup' %}">{% trans "Sign up again" %}</a>
+            </p>
+            {% endif %}
+        </section>
+    </div>
+</section>
+{% endblock %}
