@@ -4,6 +4,7 @@ from django.contrib.auth.models import User, Group
 from django.contrib.sites.admin import SiteAdmin
 from django.contrib.sites.models import Site
 from unfold.admin import ModelAdmin
+from unfold.forms import AdminPasswordChangeForm, UserChangeForm, UserCreationForm
 from modeltranslation.admin import TabbedTranslationAdmin
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
@@ -16,17 +17,21 @@ admin.site.unregister(Site)
 
 
 @admin.register(Site)
-class CustomSiteAdmin(SiteAdmin, ModelAdmin):
+class CustomSiteAdmin(ModelAdmin, SiteAdmin):
     pass
 
 
 @admin.register(User)
-class CustomUserAdmin(UserAdmin, ModelAdmin):
-    pass
+class CustomUserAdmin(ModelAdmin, UserAdmin):
+    form = UserChangeForm
+    add_form = UserCreationForm
+    change_password_form = AdminPasswordChangeForm
+    fieldsets = UserAdmin.fieldsets
+    add_fieldsets = UserAdmin.add_fieldsets
 
 
 @admin.register(Group)
-class CustomGroupAdmin(GroupAdmin, ModelAdmin):
+class CustomGroupAdmin(ModelAdmin, GroupAdmin):
     pass
 
 @admin.register(BuilderProfile)

@@ -17,93 +17,25 @@
 
             <div class="people-cards">
 
+            {% for person in people %}
                 <div class="person-card">
                     <div class="person-image">
-                        <img src="{% static 'images/2.jpg'%}" alt="">
+                        <img src="{{ person.get_thumbnail_url }}" alt="{{ person.user.first_name }}{{ person.user.last_name }}">
                     </div>
 
                     <div class="person-info">
-                        <h4 class="person-name"><a href="#">Aziz Daurov</a></h4>
-                        <p class="person-place">Contributer</p>
-                        <p class="person-place">Webster</p>
-                        <div class="person-contacts">
-                            <p class="person-contact"><a href="#" target="_blank">tg</a></p>
-                            <p class="person-contact"><a href="#" target="_blank">e-mail</a></p>
-                        </div>
+                        <h4 class="person-name"><a href="#">{{person.user.first_name}} {{ person.user.last_name }}</a></h4>
+                        
+                        {% if person.affiliated_entities %}
+                            <p class="person-place">{{ person.affiliated_entities.first.short_name }}</p>
+                        {% endif %}
+
+                        {% if person.position %}
+                            <p class="person-tg"><a href="#" target="_blank">@{{ person.telegram_handle }}</a></p>
+                        {% endif %}
                     </div>
                 </div>
-
-                <div class="person-card">
-                    <div class="person-image">
-                        <img src="{% static 'images/2.jpg'%}" alt="">
-                    </div>
-
-                    <div class="person-info">
-                        <h4 class="person-name"><a href="#">Aziz Daurov</a></h4>
-                        <p class="person-place">Webster</p>
-                        <p class="person-tg"><a href="#" target="_blank">@azizdaurov</a></p>
-                    </div>
-                </div>
-
-                 <div class="person-card">
-                    <div class="person-image">
-                        <img src="{% static 'images/2.jpg'%}" alt="">
-                    </div>
-
-                    <div class="person-info">
-                        <h4 class="person-name"><a href="#">Bunyod Khoshimkhujaev</a></h4>
-                        <p class="person-place">Webster</p>
-                        <p class="person-tg"><a href="#" target="_blank">@azizdaurov</a></p>
-                    </div>
-                </div>
-
-                <div class="person-card">
-                    <div class="person-image">
-                        <img src="{% static 'images/2.jpg'%}" alt="">
-                    </div>
-
-                    <div class="person-info">
-                        <h4 class="person-name"><a href="#">Aziz Daurov</a></h4>
-                        <p class="person-place">Webster</p>
-                        <p class="person-tg"><a href="#" target="_blank">@azizdaurov</a></p>
-                    </div>
-                </div>
-
-                <div class="person-card">
-                    <div class="person-image">
-                        <img src="{% static 'images/2.jpg'%}" alt="">
-                    </div>
-
-                    <div class="person-info">
-                        <h4 class="person-name"><a href="#">Aziz Daurov</a></h4>
-                        <p class="person-place">Webster</p>
-                        <p class="person-tg"><a href="#" target="_blank">@azizdaurov</a></p>
-                    </div>
-                </div>
-
-                 <div class="person-card">
-                    <div class="person-image">
-                        <img src="{% static 'images/2.jpg'%}" alt="">
-                    </div>
-
-                    <div class="person-info">
-                        <h4 class="person-name"><a href="#">Aziz Daurov</a></h4>
-                        <p class="person-place">Webster</p>
-                        <p class="person-tg"><a href="#" target="_blank">@azizdaurov</a></p>
-                    </div>
-                </div>
-
-                <div class="person-card">
-                    <div class="person-image">
-                        <img src="{% static 'images/2.jpg'%}" alt="">
-                    </div>
-
-                    <div class="person-info">
-                        <h4 class="person-name"><a href="#">Aziz Daurov</a></h4>
-                        <p class="person-place">Webster</p>
-                        <p class="person-tg"><a href="#" target="_blank">@azizdaurov</a></p>
-                    </div>
-                </div>
+            {% endfor %}
 
             </div>
         </section>
@@ -115,32 +47,17 @@
             </div>
 
             <div class="program-list">
-                <article class="program-item">
-                    <div class="program-heading">
-                        <h4><a class="program-title" href="#">{% trans 'Startup Init'%}</a></h4>
-                        <p class="program-reg-deadline">3 days left</p>
-                    </div>
-                    <p class="program-dates">April 15 - May 30</p>
-                    <p class="program-about">Pre-incubation mentorship in Termez and Ferghana cities.</p>
-                </article>
-
-                <article class="program-item">
-                    <div class="program-heading">
-                        <h4><a class="program-title" href="#">{% trans 'Digital Startup Award' %}</a></h4>
-                        <p class="program-reg-deadline">3 days left</p>
-                    </div>
-                    <p class="program-dates">April 15 - May 30</p>
-                    <p class="program-about">Pre-incubation mentorship in Termez and Ferghana cities.</p>
-                </article>
-
-                <article class="program-item">
-                    <div class="program-heading">
-                        <h4><a class="program-title" href="#">{% trans 'Investment Readiness Accelerator' %}</a></h4>
-                        <p class="program-reg-deadline">3 days left</p>
-                    </div>
-                    <p class="program-dates">April 15 - May 30</p>
-                    <p class="program-about">Pre-incubation mentorship in Termez and Ferghana cities. Pre-incubation mentorship in Termez and Ferghana cities.</p>
-                </article>
+                
+                {% for program in programs %}
+                    <article class="program-item">
+                        <div class="program-heading">
+                            <h4><a class="program-title" href="#">{{ program.name }}</a></h4>
+                            <p class="program-reg-deadline">3 days left</p>
+                        </div>
+                        <p class="program-dates">April 15 - May 30</p>
+                        <p class="program-about">{{ program.description }}</p>
+                    </article>
+                {% endfor %}
 
             </div>
         </section>

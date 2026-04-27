@@ -104,10 +104,19 @@ class BuilderProfile(models.Model):
         self._original_photo = self.photo.name if self.photo else None
 
     def save(self, *args, **kwargs):
+        old_photo = self._original_photo
+        old_thumbnail = self.photo_thumbnail.name if self.photo_thumbnail else None
+
         super().save(*args, **kwargs)
+
         current_photo = self.photo.name if self.photo else None
-        if self.photo and current_photo != self._original_photo:
-            self._generate_thumbnail()
+        if current_photo != old_photo:
+            if old_photo:
+                self._delete_file(old_photo)
+            if old_thumbnail:
+                self._delete_file(old_thumbnail)
+            if self.photo:
+                self._generate_thumbnail()
             self._original_photo = current_photo
 
     def _generate_thumbnail(self):
@@ -123,6 +132,11 @@ class BuilderProfile(models.Model):
         thumb_name = f"{base}_thumb.jpg"
         self.photo_thumbnail.save(thumb_name, ContentFile(thumb_io.getvalue()), save=False)
         BuilderProfile.objects.filter(pk=self.pk).update(photo_thumbnail=self.photo_thumbnail.name)
+
+    def _delete_file(self, name):
+        from django.core.files.storage import default_storage
+        if name and default_storage.exists(name):
+            default_storage.delete(name)
 
     def __str__(self):
         full_name = self.user.get_full_name()

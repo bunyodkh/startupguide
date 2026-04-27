@@ -1,13 +1,56 @@
+{% load i18n %}
+{% load static %}
+
 <nav class="container navbar">
     <div class="logo">
         <h1 class="extra-bold"><a class="neon-split" data-text="Startup Guide" href="{% url 'hub:index' %}">Startup Guide</a></h1>
     </div>
 
     <menu class="nav">
-        <a class="nav-item light active" href="#">en</a>
-        <a class="nav-item light" href="#">ru</a>
-        <a class="nav-item light" href="#">uz</a>
+        <a class="nav-item light{% if LANGUAGE_CODE == 'en' %} active-lang{% endif %}" href="/en{{ request.path|slice:'3:' }}">en</a>
+        <a class="nav-item light{% if LANGUAGE_CODE == 'ru' %} active-lang{% endif %}" href="/ru{{ request.path|slice:'3:' }}">ru</a>
+        <a class="nav-item light{% if LANGUAGE_CODE == 'uz' %} active-lang{% endif %}" href="/uz{{ request.path|slice:'3:' }}">uz</a>
     </menu>
+
+    <div class="nav-cta">
+        {% if user.is_authenticated %}
+            <div class="nav-user-wrap">
+                <button class="nav-user" id="navUserBtn" type="button">
+                    <span>{% trans "Hi" %}, {{ user.first_name|default:user.email }}</span>
+                    {% if user.builder_profile.photo %}
+                        <div class="nav-avatar-container">
+                            <img src="{{ user.builder_profile.photo.url }}" alt="{{ user.first_name }}" width="30" height="30">
+                        </div>
+                    {% else %}
+                        <div class="nav-avatar-container">
+                            <img src="{% static 'images/default-avatar.png' %}" alt="{{ user.first_name }}" width="30" height="30">
+                        </div>
+                    {% endif %}
+                </button>
+                <div class="nav-dropdown" id="navDropdown">
+                    <a href="{% url 'users:manage_profile' %}" class="nav-dropdown-item">{% trans "Profile" %}</a>
+                    <form method="post" action="{% url 'account_signout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-dropdown-item">{% trans "Sign out" %}</button>
+                    </form>
+                </div>
+            </div>
+        {% else %}
+            <a href="{% url 'account_login' %}" class="cta">{% trans "Start here" %}</a>
+        {% endif %}
+    </div>
 </nav>
 
 <div class="line"></div>
+
+<script>
+    const btn = document.getElementById('navUserBtn');
+    const dropdown = document.getElementById('navDropdown');
+    if (btn) {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdown.classList.toggle('open');
+        });
+        document.addEventListener('click', () => dropdown.classList.remove('open'));
+    }
+</script>

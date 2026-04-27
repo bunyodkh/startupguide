@@ -1,0 +1,149 @@
+{% load i18n %}
+
+<div id="profile-form-container">
+
+  {% if success %}
+  <div class="profile-success-banner">
+    {% trans "Profile saved successfully." %}
+  </div>
+  {% endif %}
+
+  <div class="profile-layout">
+
+    <!-- Avatar column -->
+    <div class="profile-avatar-col">
+      <img
+        id="avatar-preview"
+        src="{{ profile.get_photo_url }}"
+        alt="{{ request.user.get_full_name }}"
+        class="profile-avatar"
+      >
+      <label for="id_photo" class="avatar-upload-label">{% trans "Change photo" %}</label>
+      <p class="profile-avatar-hint">{% trans "Square image, at least 200×200 px" %}</p>
+      {% if form.photo.errors %}
+        <div class="form-error">{{ form.photo.errors.0 }}</div>
+      {% endif %}
+    </div>
+
+    <!-- Form column -->
+    <div class="profile-form-col">
+      <form
+        id="profile-form"
+        hx-post="{% url 'users:manage_profile' %}"
+        hx-target="#profile-form-container"
+        hx-swap="outerHTML"
+        hx-encoding="multipart/form-data"
+        class="profile-form"
+      >
+        {% csrf_token %}
+
+        <!-- Hidden file input — triggered by the label in the avatar column -->
+        <input
+          type="file"
+          name="photo"
+          id="id_photo"
+          accept="image/*"
+          class="avatar-file-input"
+        >
+
+        <div class="profile-name-row">
+          <div class="form-field">
+            <label class="form-input-label" for="{{ user_form.first_name.id_for_label }}">
+              {{ user_form.first_name.label }}
+            </label>
+            {{ user_form.first_name }}
+            {% if user_form.first_name.errors %}
+              <div class="form-error">{{ user_form.first_name.errors.0 }}</div>
+            {% endif %}
+          </div>
+          <div class="form-field">
+            <label class="form-input-label" for="{{ user_form.last_name.id_for_label }}">
+              {{ user_form.last_name.label }}
+            </label>
+            {{ user_form.last_name }}
+            {% if user_form.last_name.errors %}
+              <div class="form-error">{{ user_form.last_name.errors.0 }}</div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-input-label" for="{{ form.position.id_for_label }}">
+            {{ form.position.label }}
+          </label>
+          {{ form.position }}
+          {% if form.position.errors %}
+            <div class="form-error">{{ form.position.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <div class="form-field">
+          <label class="form-input-label" for="{{ form.bio.id_for_label }}">
+            {{ form.bio.label }}
+          </label>
+          {{ form.bio }}
+          {% if form.bio.errors %}
+            <div class="form-error">{{ form.bio.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <div class="form-field">
+          <label class="form-input-label" for="{{ form.linkedin_url.id_for_label }}">
+            {{ form.linkedin_url.label }}
+          </label>
+          {{ form.linkedin_url }}
+          {% if form.linkedin_url.errors %}
+            <div class="form-error">{{ form.linkedin_url.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <div class="form-field">
+          <label class="form-input-label" for="{{ form.telegram_handle.id_for_label }}">
+            {{ form.telegram_handle.label }}
+          </label>
+          {{ form.telegram_handle }}
+          {% if form.telegram_handle.errors %}
+            <div class="form-error">{{ form.telegram_handle.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <div class="form-field">
+          <label class="form-input-label" for="{{ form.affiliated_entities.id_for_label }}">
+            {{ form.affiliated_entities.label }}
+          </label>
+          {{ form.affiliated_entities }}
+          {% if form.affiliated_entities.errors %}
+            <div class="form-error">{{ form.affiliated_entities.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <div class="form-submit">
+          <button type="submit" class="btn-primary">
+            <span class="htmx-indicator-hide">{% trans "Save changes" %}</span>
+            <span class="htmx-indicator">{% trans "Saving…" %}</span>
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  (function () {
+    var input = document.getElementById('id_photo');
+    if (input) {
+      input.addEventListener('change', function () {
+        if (!this.files || !this.files[0]) return;
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          var preview = document.getElementById('avatar-preview');
+          if (preview) preview.src = e.target.result;
+        };
+        reader.readAsDataURL(this.files[0]);
+      });
+    }
+  })();
+</script>

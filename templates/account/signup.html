@@ -29,6 +29,16 @@
                 {% endif %}
 
                 <div class="form-field">
+                    <label class="form-input-label" for="{{ form.first_name.id_for_label }}">{{ form.first_name.label }}</label>
+                    {{ form.first_name }}
+                </div>
+
+                <div class="form-field">
+                    <label class="form-input-label" for="{{ form.last_name.id_for_label }}">{{ form.last_name.label }}</label>
+                    {{ form.last_name }}
+                </div>
+
+                <div class="form-field">
                     <label class="form-input-label" for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
                     {{ form.email }}
                 </div>
