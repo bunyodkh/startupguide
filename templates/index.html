@@ -31,7 +31,7 @@
                         {% endif %}
 
                         {% if person.position %}
-                            <p class="person-tg"><a href="#" target="_blank">@{{ person.telegram_handle }}</a></p>
+                            <p class="person-tg"><a href="#" target="_blank">{{ person.position }}</a></p>
                         {% endif %}
                     </div>
                 </div>
@@ -49,13 +49,26 @@
             <div class="program-list">
                 
                 {% for program in programs %}
+
                     <article class="program-item">
-                        <div class="program-heading">
-                            <h4><a class="program-title" href="#">{{ program.name }}</a></h4>
-                            <p class="program-reg-deadline">3 days left</p>
+                        {% if program.registration_open %}
+                        <div class="ring-container">
+                            <div class="ringring"></div>
+                            <div class="circle"></div>
                         </div>
-                        <p class="program-dates">April 15 - May 30</p>
+                        {% else %}
+                        <div class="ring-container">
+                            <div class="circle-inactive"></div>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="program-heading">
+                            <h4><a class="program-title" href="#">{{ program.short_name }}</a></h4>
+                            {% if program.deadline_label %}<p class="program-reg-deadline">{{ program.deadline_label }}</p>{% endif %}
+                        </div>
+                        <p class="program-dates">{{ program.duration_display }}</p>
                         <p class="program-about">{{ program.description }}</p>
+                        <p class="program-status">{{ program.get_status_display }}</p>
                     </article>
                 {% endfor %}
 

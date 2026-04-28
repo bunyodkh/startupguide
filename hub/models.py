@@ -3,11 +3,33 @@ from io import BytesIO
 from django.db import models
 from django.urls import reverse
 from django.core.files.base import ContentFile
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFit
 
 from config.utils import UploadToPath
+
+
+class Region(models.Model):
+    name = models.CharField(
+        max_length=100,
+        verbose_name=_("Name")
+    )
+
+    slug = models.SlugField(
+        max_length=100,
+        unique=True,
+        verbose_name=_("Slug")
+    )
+
+    class Meta:
+        verbose_name = _("Region")
+        verbose_name_plural = _("Regions")
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
 
 
 class EntityCategory(models.Model):
@@ -124,12 +146,66 @@ class EcosystemEntity(models.Model):
         verbose_name=_("Logo Thumbnail"),
     )
 
+    cover_image = ProcessedImageField(
+        upload_to=UploadToPath('covers/entities'),
+        processors=[ResizeToFit(1200, 630)],
+        format='JPEG',
+        options={'quality': 85},
+        blank=True,
+        null=True,
+        verbose_name=_("Cover Image"),
+        help_text=_("Used for programs. Recommended: 1200×630px.")
+    )
+
     founded_year = models.PositiveIntegerField(
-        null=True, 
-        blank=True, 
+        null=True,
+        blank=True,
         verbose_name=_("Founded Year")
     )
-    
+
+    start_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_("Start Date"),
+        help_text=_("Program start date.")
+    )
+
+    end_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_("End Date"),
+        help_text=_("Program end date.")
+    )
+
+    registration_deadline = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_("Registration Deadline")
+    )
+
+    regions = models.ManyToManyField(
+        Region,
+        blank=True,
+        related_name='entities',
+        verbose_name=_("Regions"),
+        help_text=_("Regions covered by this program.")
+    )
+
+    class ProgramStatus(models.TextChoices):
+        UPCOMING    = 'upcoming',    _("Upcoming")
+        ACCEPTING   = 'accepting',   _("Accepting Applications")
+        IN_PROGRESS = 'in_progress', _("In Progress")
+        COMPLETED   = 'completed',   _("Completed")
+        CANCELLED   = 'cancelled',   _("Cancelled")
+
+    status = models.CharField(
+        max_length=20,
+        choices=ProgramStatus.choices,
+        blank=True,
+        verbose_name=_("Status"),
+        help_text=_("Program lifecycle status. Leave blank for non-program entities.")
+    )
+
     is_active = models.BooleanField(
         default=True, 
         verbose_name=_("Is Active")
@@ -176,6 +252,48 @@ class EcosystemEntity(models.Model):
         if self.logo_thumbnail and hasattr(self.logo_thumbnail, 'url'):
             return self.logo_thumbnail.url
         return self.get_logo_url
+
+    @property
+    def days_until_deadline(self):
+        if not self.registration_deadline:
+            return None
+        return (self.registration_deadline - timezone.now().date()).days
+
+    @property
+    def registration_open(self):
+        days = self.days_until_deadline
+        return days is not None and days >= 0
+
+    @property
+    def deadline_label(self):
+        days = self.days_until_deadline
+        if days is None:
+            return None
+        if days > 1:
+            return _("%(days)d days left") % {'days': days}
+        if days == 1:
+            return _("Last day to apply!")
+        if days == 0:
+            return _("Closes today")
+        return _("Reg. closed")
+
+    @property
+    def duration_display(self):
+        if not self.start_date and not self.end_date:
+            return None
+
+        def fmt(date, include_year):
+            month = date.strftime("%b")
+            day = date.day
+            return f"{month} {day}, {date.year}" if include_year else f"{month} {day}"
+
+        if self.start_date and self.end_date:
+            if self.start_date.year == self.end_date.year:
+                return f"{fmt(self.start_date, False)} – {fmt(self.end_date, False)}, {self.end_date.year}"
+            return f"{fmt(self.start_date, True)} – {fmt(self.end_date, True)}"
+        if self.start_date:
+            return _("%(date)s") % {'date': fmt(self.start_date, True)}
+        return _("Until %(date)s") % {'date': fmt(self.end_date, True)}
 
     def __str__(self):
         if self.parent:

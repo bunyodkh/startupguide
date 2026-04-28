@@ -19,7 +19,7 @@
                     <span>{% trans "Hi" %}, {{ user.first_name|default:user.email }}</span>
                     {% if user.builder_profile.photo %}
                         <div class="nav-avatar-container">
-                            <img src="{{ user.builder_profile.photo.url }}" alt="{{ user.first_name }}" width="30" height="30">
+                            <img src="{{ user.builder_profile.get_thumbnail_url }}" alt="{{ user.first_name }}" width="30" height="30">
                         </div>
                     {% else %}
                         <div class="nav-avatar-container">

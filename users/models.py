@@ -39,6 +39,7 @@ class BuilderProfile(models.Model):
 
     position = models.CharField(
         max_length=255,
+        blank=True,
         verbose_name=_("Role in the Ecosystem"),
         help_text=_("e.g., Tracker, Program Coordinator, Fund Partner")
     )
@@ -146,13 +147,13 @@ class BuilderProfile(models.Model):
 
     @property
     def get_photo_url(self):
-        if self.photo and hasattr(self.photo, 'url'):
+        if self.photo and self.photo.storage.exists(self.photo.name):
             return self.photo.url
         from django.templatetags.static import static
         return static('images/default-avatar.png')
 
     @property
     def get_thumbnail_url(self):
-        if self.photo_thumbnail and hasattr(self.photo_thumbnail, 'url'):
+        if self.photo_thumbnail and self.photo_thumbnail.storage.exists(self.photo_thumbnail.name):
             return self.photo_thumbnail.url
         return self.get_photo_url

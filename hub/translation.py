@@ -1,9 +1,14 @@
 from modeltranslation.translator import register, TranslationOptions
-from .models import EntityCategory, EcosystemEntity
+from .models import EntityCategory, EcosystemEntity, Region
+
+
+@register(Region)
+class RegionTranslationOptions(TranslationOptions):
+    fields = ('name',)
+
 
 @register(EntityCategory)
 class EntityCategoryTranslationOptions(TranslationOptions):
-    # Указываем поля для перевода (slug переводить не нужно, он один для всех языков)
     fields = ('name',)
 
 @register(EcosystemEntity)
