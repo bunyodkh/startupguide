@@ -34,13 +34,13 @@ class Region(models.Model):
 
 class EntityCategory(models.Model):
     name = models.CharField(
-        max_length=100, 
+        max_length=100,
         verbose_name=_("Name")
     )
 
     slug = models.SlugField(
-        max_length=100, 
-        unique=True, 
+        max_length=100,
+        unique=True,
         verbose_name=_("Slug (URL identifying name)"),
         help_text=_("Leave blank to auto-generate")
     )
@@ -60,43 +60,25 @@ class EntityCategory(models.Model):
 class EcosystemEntity(models.Model):
 
     name = models.CharField(
-        max_length=255, 
+        max_length=255,
         verbose_name=_("Name")
     )
-    
+
     category = models.ForeignKey(
         EntityCategory,
-        on_delete=models.PROTECT, # Запрещаем удалять категорию, если к ней уже привязаны организации!
+        on_delete=models.PROTECT,
         related_name='entities',
         verbose_name=_("Category")
     )
 
-
     parent = models.ForeignKey(
-        'self', 
-        on_delete=models.SET_NULL, 
-        null=True, 
-        blank=True, 
+        'self',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name='children',
         verbose_name=_("Parent Organization"),
         help_text=_("E.g., An incubator belongs to a university.")
-    )
-
-    organizers = models.ManyToManyField(
-        'self',
-        blank=True,
-        symmetrical=False,
-        related_name='organized_entities',
-        verbose_name=_("Organizers"),
-        help_text=_("Organizations that run or host this program/entity.")
-    )
-
-    coordinators = models.ManyToManyField(
-        'users.BuilderProfile',
-        blank=True,
-        related_name='coordinated_entities',
-        verbose_name=_("Coordinators"),
-        help_text=_("People (builders) responsible for this program/entity.")
     )
 
     has_physical_space = models.BooleanField(
@@ -106,28 +88,28 @@ class EcosystemEntity(models.Model):
     )
 
     short_name = models.CharField(
-        max_length=50, 
-        blank=True, 
+        max_length=50,
+        blank=True,
         verbose_name=_("Abbreviation / Short Name")
     )
-    
+
     description = models.TextField(
-        blank=True, 
+        blank=True,
         verbose_name=_("Description")
     )
-    
+
     city = models.CharField(
-        max_length=100, 
-        default=_("Tashkent"), 
+        max_length=100,
+        default=_("Tashkent"),
         verbose_name=_("City")
     )
-    
+
     website = models.URLField(
-        blank=True, 
-        null=True, 
+        blank=True,
+        null=True,
         verbose_name=_("Website")
     )
-    
+
     logo = ProcessedImageField(
         upload_to=UploadToPath('logos/entities'),
         processors=[ResizeToFit(800, 800)],
@@ -146,68 +128,14 @@ class EcosystemEntity(models.Model):
         verbose_name=_("Logo Thumbnail"),
     )
 
-    cover_image = ProcessedImageField(
-        upload_to=UploadToPath('covers/entities'),
-        processors=[ResizeToFit(1200, 630)],
-        format='JPEG',
-        options={'quality': 85},
-        blank=True,
-        null=True,
-        verbose_name=_("Cover Image"),
-        help_text=_("Used for programs. Recommended: 1200×630px.")
-    )
-
     founded_year = models.PositiveIntegerField(
         null=True,
         blank=True,
         verbose_name=_("Founded Year")
     )
 
-    start_date = models.DateField(
-        null=True,
-        blank=True,
-        verbose_name=_("Start Date"),
-        help_text=_("Program start date.")
-    )
-
-    end_date = models.DateField(
-        null=True,
-        blank=True,
-        verbose_name=_("End Date"),
-        help_text=_("Program end date.")
-    )
-
-    registration_deadline = models.DateField(
-        null=True,
-        blank=True,
-        verbose_name=_("Registration Deadline")
-    )
-
-    regions = models.ManyToManyField(
-        Region,
-        blank=True,
-        related_name='entities',
-        verbose_name=_("Regions"),
-        help_text=_("Regions covered by this program.")
-    )
-
-    class ProgramStatus(models.TextChoices):
-        UPCOMING    = 'upcoming',    _("Upcoming")
-        ACCEPTING   = 'accepting',   _("Accepting Applications")
-        IN_PROGRESS = 'in_progress', _("In Progress")
-        COMPLETED   = 'completed',   _("Completed")
-        CANCELLED   = 'cancelled',   _("Cancelled")
-
-    status = models.CharField(
-        max_length=20,
-        choices=ProgramStatus.choices,
-        blank=True,
-        verbose_name=_("Status"),
-        help_text=_("Program lifecycle status. Leave blank for non-program entities.")
-    )
-
     is_active = models.BooleanField(
-        default=True, 
+        default=True,
         verbose_name=_("Is Active")
     )
 
@@ -253,6 +181,136 @@ class EcosystemEntity(models.Model):
             return self.logo_thumbnail.url
         return self.get_logo_url
 
+    def __str__(self):
+        if self.parent:
+            return f"{self.name} ({self.parent.short_name or self.parent.name})"
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('hub:view_program', kwargs={'pk': self.pk})
+
+
+class ProgramCycle(models.Model):
+
+    class ProgramStatus(models.TextChoices):
+        UPCOMING    = 'upcoming',    _("Upcoming")
+        ACCEPTING   = 'accepting',   _("Accepting Applications")
+        IN_PROGRESS = 'in_progress', _("In Progress")
+        COMPLETED   = 'completed',   _("Completed")
+        CANCELLED   = 'cancelled',   _("Cancelled")
+
+    program = models.ForeignKey(
+        EcosystemEntity,
+        on_delete=models.CASCADE,
+        related_name='cycles',
+        verbose_name=_("Program")
+    )
+
+    cycle_number = models.PositiveIntegerField(
+        blank=True,
+        verbose_name=_("Cycle Number"),
+        help_text=_("Auto-assigned if left blank.")
+    )
+
+    title = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name=_("Title"),
+        help_text=_("Optional label, e.g. 'Cohort 3' or 'Spring 2024'")
+    )
+
+    description = models.TextField(
+        blank=True,
+        verbose_name=_("Notes"),
+        help_text=_("Cycle-specific description or notes.")
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=ProgramStatus.choices,
+        blank=True,
+        verbose_name=_("Status")
+    )
+
+    start_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_("Start Date")
+    )
+
+    end_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_("End Date")
+    )
+
+    registration_deadline = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_("Registration Deadline")
+    )
+
+    cover_image = ProcessedImageField(
+        upload_to=UploadToPath('covers/cycles'),
+        processors=[ResizeToFit(1200, 630)],
+        format='JPEG',
+        options={'quality': 85},
+        blank=True,
+        null=True,
+        verbose_name=_("Cover Image"),
+        help_text=_("Recommended: 1200×630px.")
+    )
+
+    organizers = models.ManyToManyField(
+        EcosystemEntity,
+        blank=True,
+        symmetrical=False,
+        related_name='organized_cycles',
+        verbose_name=_("Organizers"),
+        help_text=_("Organizations that run or host this cycle.")
+    )
+
+    coordinators = models.ManyToManyField(
+        'users.BuilderProfile',
+        blank=True,
+        related_name='coordinated_cycles',
+        verbose_name=_("Contributors"),
+        help_text=_("People contributing to this specific cycle.")
+    )
+
+    regions = models.ManyToManyField(
+        Region,
+        blank=True,
+        related_name='cycles',
+        verbose_name=_("Regions"),
+        help_text=_("Regions covered by this cycle.")
+    )
+
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name=_("Is Active")
+    )
+
+    class Meta:
+        verbose_name = _("Program Cycle")
+        verbose_name_plural = _("Program Cycles")
+        ordering = ['-cycle_number']
+        unique_together = [('program', 'cycle_number')]
+
+    def save(self, *args, **kwargs):
+        if not self.cycle_number:
+            last = ProgramCycle.objects.filter(program=self.program).order_by('-cycle_number').first()
+            self.cycle_number = (last.cycle_number + 1) if last else 1
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        label = self.title or f"#{self.cycle_number}"
+        return f"{self.program.name} — {label}"
+
+    @property
+    def display_label(self):
+        return self.title or f"#{self.cycle_number}"
+
     @property
     def days_until_deadline(self):
         if not self.registration_deadline:
@@ -278,6 +336,19 @@ class EcosystemEntity(models.Model):
         return _("Reg. closed")
 
     @property
+    def deadline_verbose(self):
+        days = self.days_until_deadline
+        if days is None:
+            return None
+        if days > 1:
+            return _("%(days)d days left till the end of registration") % {'days': days}
+        if days == 1:
+            return _("Last day to apply!")
+        if days == 0:
+            return _("Registration closes today")
+        return _("Registration closed")
+
+    @property
     def duration_display(self):
         if not self.start_date and not self.end_date:
             return None
@@ -294,11 +365,3 @@ class EcosystemEntity(models.Model):
         if self.start_date:
             return _("%(date)s") % {'date': fmt(self.start_date, True)}
         return _("Until %(date)s") % {'date': fmt(self.end_date, True)}
-
-    def __str__(self):
-        if self.parent:
-            return f"{self.name} ({self.parent.short_name or self.parent.name})"
-        return self.name
-
-    def get_absolute_url(self):
-        return reverse('hub:entity_detail', kwargs={'pk': self.pk})

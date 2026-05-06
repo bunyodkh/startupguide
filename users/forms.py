@@ -88,9 +88,10 @@ class UserInfoForm(forms.ModelForm):
 class BuilderProfileForm(forms.ModelForm):
     class Meta:
         model = BuilderProfile
-        fields = ['photo', 'position', 'bio', 'linkedin_url', 'telegram_handle', 'affiliated_entities']
+        fields = ['photo', 'position', 'bio', 'linkedin_url', 'telegram_handle', 'gender', 'affiliated_entities']
         widgets = {
             'photo': forms.FileInput(attrs={'accept': 'image/*'}),
+            'gender': forms.Select(attrs={'class': 'form-input'}),
             'position': forms.TextInput(attrs={
                 'class': 'form-input',
                 'placeholder': _('e.g. Founder, Investor, Program Manager'),

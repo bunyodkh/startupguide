@@ -49,18 +49,6 @@ a {
     font-weight: 800;
 }
 
-.bold {
-    font-weight: 600;
-}
-
-.medium {
-    font-weight: 500;
-}
-
-.regular {
-    font-weight: 400;
-}
-
 .light {
     font-weight: 300;
 }
@@ -279,15 +267,7 @@ a {
     font-weight: 600;
 }
 
-.person-contacts {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.person-contact a {
-    text-decoration: dotted;
-    cursor: pointer;
-}
+.small-text { font-size: 0.7rem; }
 
 .program-list { margin-top: 0.5rem; }
 
@@ -351,23 +331,21 @@ a {
 
 
 .ringring {
-    /* border: 3px solid #62bd19; */
     border: 3px solid var(--accent);
-    -webkit-border-radius: 30px;
+    border-radius: 30px;
     height: 15px;
     width: 15px;
     position: absolute;
     left: -1.15rem;
     top: 0.15rem;
-    -webkit-animation: pulsate 3s ease-out;
-    -webkit-animation-iteration-count: infinite; 
-    opacity: 0.0
+    animation: pulsate 3s ease-out infinite;
+    opacity: 0;
 }
 
-@-webkit-keyframes pulsate {
-    0% {-webkit-transform: scale(0.5, 0.5); opacity: 0.0;}
-    50% {opacity: 1.0;}
-    100% {-webkit-transform: scale(0.9, 0.9); opacity: 0.0;}
+@keyframes pulsate {
+    0%   { transform: scale(0.5); opacity: 0; }
+    50%  { opacity: 1; }
+    100% { transform: scale(0.9); opacity: 0; }
 }
 
 
@@ -453,6 +431,8 @@ a {
 
 .form-link {
     color: var(--alt-accent);
+    font-size: 0.8rem;
+    font-weight: 800;
 }
 
 .utility-text {
@@ -471,28 +451,55 @@ a {
     .span-row-3 { grid-row: span 3 ; }
 }
 
-/* ── Profile Page ── */
 
-.profile-page-header {
-    padding: 2rem 0 0.5rem;
-}
-
-.profile-page-header h1 {
-    font-size: 1.5rem;
-}
 
 .profile-layout {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: 120px 1fr;
     gap: 2rem;
     padding: 1.5rem 0 3rem;
+    align-items: start;
 }
 
 @media (min-width: 768px) {
     .profile-layout {
         grid-template-columns: 200px 1fr;
-        align-items: start;
     }
+}
+
+.profile-display-name {
+    font-size: 1.1rem;
+    text-align: center;
+}
+
+.profile-muted {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.profile-section {
+    padding: 0.75rem 0;
+}
+
+.profile-value {
+    font-size: 0.8rem;
+    line-height: 1.7;
+    margin-top: 0.3rem;
+}
+
+.profile-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+}
+
+.profile-contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-top: 0.3rem;
 }
 
 .profile-avatar-col {
@@ -542,6 +549,7 @@ a {
 .profile-form-col {
     display: flex;
     flex-direction: column;
+    gap: 0.25rem;
 }
 
 .profile-form {
@@ -579,6 +587,89 @@ a {
     animation: banner-fade 0.4s ease 3s forwards;
 }
 
+.ms-wrapper { position: relative; }
+.ms-control {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    row-gap: 0.6rem;
+    column-gap: 0.4rem;
+    min-height: 2.4rem;
+    padding: 0.6rem 0.8rem;
+    cursor: text;
+}
+
+.ms-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.ms-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.2rem 0.55rem;
+    background: var(--accent, #fde68a);
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #92400e;
+    white-space: nowrap;
+}
+
+.ms-chip-remove {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    line-height: 1;
+    font-size: 1rem;
+    cursor: pointer;
+    color: #92400e;
+    opacity: 0.6;
+}
+
+.ms-chip-remove:hover { opacity: 1; }
+.ms-search {
+    border: none;
+    outline: none;
+    font-size: 0.8rem;
+    font-family: var(--font-sans, inherit);
+    background: transparent;
+    flex: 1;
+    min-width: 120px;
+    padding: 0;
+}
+
+.ms-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 2px);
+    left: 0; right: 0;
+    background: #fff;
+    border: 1px solid var(--border-color, #d1d5db);
+    border-radius: var(--radius-soft, 6px);
+    box-shadow: 0 4px 12px rgba(0,0,0,.08);
+    z-index: 100;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.ms-dropdown.open { display: block; }
+.ms-option {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.ms-option:hover { background: var(--accent, #fde68a); }
+.ms-no-results {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.8rem;
+    color: #9ca3af;
+}
+
 @keyframes banner-fade {
     to { opacity: 0; max-height: 0; padding: 0; margin: 0; overflow: hidden; }
 }
@@ -588,3 +679,96 @@ a {
 form.htmx-request .htmx-indicator { display: inline; }
 form.htmx-request .htmx-indicator-hide { display: none; }
 form.htmx-request .btn-primary { opacity: 0.7; cursor: not-allowed; }
+
+/* Read-only display fields */
+.form-input--readonly {
+    background: #f9fafb;
+    color: #6b7280;
+    cursor: default;
+    user-select: text;
+}
+
+/* ── Program Detail ── */
+
+.program-cover {
+    width: 100%;
+    max-height: 260px;
+    object-fit: cover;
+    border-radius: var(--radius-soft);
+    margin-bottom: 1.25rem;
+}
+
+.program-detail-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.program-detail-identity {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.program-detail-logo {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: var(--radius-soft);
+    object-fit: contain;
+    border: 1px solid var(--border-color);
+}
+
+.program-detail-badges {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.program-people-cards {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 0.75rem 0 0;
+}
+
+.cycle-header-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.5rem;
+}
+
+.cycle-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.cycle-deadline-text {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-align: right;
+    white-space: nowrap;
+}
+
+.program-people-cards .person-card {
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    padding: 0.35rem 0.75rem 0.35rem 0.35rem;
+    gap: 0.5rem;
+}
+
+.program-people-cards .person-image {
+    width: auto;
+    flex-shrink: 0;
+}
+
+.program-people-cards .person-image img {
+    width: 2rem;
+    height: 2rem;
+}
+
+.program-people-cards .person-info {
+    width: auto;
+}

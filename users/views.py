@@ -1,7 +1,9 @@
 from django.contrib.auth.decorators import login_required
+from django.db.models import Prefetch
 from django.shortcuts import render, redirect
 
-from .forms import BuilderProfileForm, UserInfoForm
+from hub.models import ProgramCycle
+from .forms import BuilderProfileForm
 from .models import BuilderProfile
 
 
@@ -10,14 +12,11 @@ def manage_profile(request):
     profile, _ = BuilderProfile.objects.get_or_create(user=request.user)
 
     if request.method == 'POST':
-        user_form = UserInfoForm(request.POST, instance=request.user)
         profile_form = BuilderProfileForm(request.POST, request.FILES, instance=profile)
-        if user_form.is_valid() and profile_form.is_valid():
-            user_form.save()
+        if profile_form.is_valid():
             profile_form.save()
             profile.refresh_from_db()
             ctx = {
-                'user_form': UserInfoForm(instance=request.user),
                 'form': BuilderProfileForm(instance=profile),
                 'profile': profile,
                 'success': True,
@@ -27,16 +26,37 @@ def manage_profile(request):
             return redirect('users:manage_profile')
         if request.headers.get('HX-Request'):
             return render(request, 'users/partials/profile_form.html', {
-                'user_form': user_form,
                 'form': profile_form,
                 'profile': profile,
             })
     else:
-        user_form = UserInfoForm(instance=request.user)
         profile_form = BuilderProfileForm(instance=profile)
 
-    return render(request, 'users/profile.html', {
-        'user_form': user_form,
+    return render(request, 'users/manage_profile.html', {
         'form': profile_form,
+        'profile': profile,
+    })
+
+
+def view_profile(request, username):
+    cycles_qs = ProgramCycle.objects.select_related('program').only(
+        'id', 'title', 'cycle_number',
+        'program__id', 'program__name', 'program__short_name',
+    ).order_by('program__name', '-cycle_number')
+
+    profile = (
+        BuilderProfile.objects
+        .select_related('user')
+        .prefetch_related(
+            'affiliated_entities',
+            Prefetch('coordinated_cycles', queryset=cycles_qs),
+        )
+        .filter(user__username=username)
+        .first()
+    )
+    if not profile:
+        return render(request, 'users/profile_not_found.html', status=404)
+
+    return render(request, 'users/view_profile.html', {
         'profile': profile,
     })

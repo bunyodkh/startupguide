@@ -24,7 +24,7 @@
                     </div>
 
                     <div class="person-info">
-                        <h4 class="person-name"><a href="#">{{person.user.first_name}} {{ person.user.last_name }}</a></h4>
+                        <h4 class="person-name"><a href="{{ person.get_absolute_url }}">{{person.user.first_name}} {{ person.user.last_name }}</a></h4>
                         
                         {% if person.affiliated_entities %}
                             <p class="person-place">{{ person.affiliated_entities.first.short_name }}</p>
@@ -48,10 +48,10 @@
 
             <div class="program-list">
                 
-                {% for program in programs %}
+                {% for program, cycle in programs %}
 
                     <article class="program-item">
-                        {% if program.registration_open %}
+                        {% if cycle.registration_open %}
                         <div class="ring-container">
                             <div class="ringring"></div>
                             <div class="circle"></div>
@@ -61,14 +61,13 @@
                             <div class="circle-inactive"></div>
                         </div>
                         {% endif %}
-                        
+
                         <div class="program-heading">
-                            <h4><a class="program-title" href="#">{{ program.short_name }}</a></h4>
-                            {% if program.deadline_label %}<p class="program-reg-deadline">{{ program.deadline_label }}</p>{% endif %}
+                            <h4><a class="program-title" href="{{ program.get_absolute_url }}">{{ cycle.title|default:program.name }}</a></h4>
+                            {% if cycle.deadline_label %}<p class="program-reg-deadline">{{ cycle.deadline_label }}</p>{% endif %}
                         </div>
-                        <p class="program-dates">{{ program.duration_display }}</p>
-                        <p class="program-about">{{ program.description }}</p>
-                        <p class="program-status">{{ program.get_status_display }}</p>
+                        {% if cycle.duration_display %}<p class="program-dates">{{ cycle.duration_display }}</p>{% endif %}
+                        {% if cycle.status %}<p class="program-status">{{ cycle.get_status_display }}</p>{% endif %}
                     </article>
                 {% endfor %}
 

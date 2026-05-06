@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+<section class="container">
+  <div class="layout-grid">
+
+    <!-- Header -->
+    <div class="layout-block span-col-3">
+
+      {% if latest_cycle.cover_image %}
+        <img src="{{ latest_cycle.cover_image.url }}" alt="{{ program.name }}" class="program-cover">
+      {% endif %}
+
+      <div class="program-detail-header">
+        <div class="program-detail-identity">
+          <img src="{{ program.get_thumbnail_url }}" alt="{{ program.name }}" class="program-detail-logo">
+          <h1 class="meduim-bold">{{ program.name }}</h1>
+        </div>
+        {% if latest_cycle.status %}
+          <span class="program-status">{{ latest_cycle.get_status_display }}</span>
+        {% endif %}
+      </div>
+
+    </div>
+
+    <!-- Current cycle content -->
+    <div class="layout-block span-col-2">
+
+      {% if latest_cycle %}
+        <div class="cycle-header-row">
+          <span class="cycle-title">{{ latest_cycle.display_label }}</span>
+          {% if latest_cycle.deadline_verbose %}
+            <span class="cycle-deadline-text">{{ latest_cycle.deadline_verbose }}</span>
+          {% endif %}
+        </div>
+
+        {% if latest_cycle.description %}
+          <div class="profile-section">
+            <div class="profile-value">{{ latest_cycle.description|linebreaksbr }}</div>
+          </div>
+        {% endif %}
+
+        {% if latest_cycle.duration_display %}
+          <div class="profile-section">
+            <label class="form-input-label">{% trans "Dates" %}</label>
+            <div class="profile-value">{{ latest_cycle.duration_display }}</div>
+          </div>
+        {% endif %}
+
+        {% if latest_cycle.registration_deadline %}
+          <div class="profile-section">
+            <label class="form-input-label">{% trans "Registration Deadline" %}</label>
+            <div class="profile-value">{{ latest_cycle.registration_deadline }}</div>
+          </div>
+        {% endif %}
+
+        {% if latest_cycle.regions.exists %}
+          <div class="profile-section">
+            <label class="form-input-label">{% trans "Regions" %}</label>
+            <div class="profile-chips">
+              {% for region in latest_cycle.regions.all %}
+                <span class="ms-chip">{{ region.name }}</span>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+
+      {% endif %}
+
+      {% if cycles|length > 1 %}
+        <div class="profile-section">
+          <label class="form-input-label">{% trans "All Cycles" %}</label>
+          <div class="cycles-list">
+            {% for cycle in cycles %}
+              <div class="cycle-item {% if forloop.first %}cycle-item--current{% endif %}">
+                <div class="cycle-item-header">
+                  <span class="cycle-item-label">{{ cycle.display_label }}</span>
+                  {% if cycle.status %}
+                    <span class="program-status program-status--small">{{ cycle.get_status_display }}</span>
+                  {% endif %}
+                </div>
+                {% if cycle.duration_display %}
+                  <div class="profile-muted">{{ cycle.duration_display }}</div>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+    </div>
+
+    <!-- Sidebar -->
+    <div class="layout-block span-col-1">
+
+      {% if program.description %}
+        <div class="profile-section">
+          <label class="form-input-label">{% trans "About" %}</label>
+          <div class="profile-value">{{ program.description|linebreaksbr }}</div>
+        </div>
+      {% endif %}
+
+      {% if latest_cycle and latest_cycle.coordinators.exists %}
+        <div class="profile-section">
+          <label class="form-input-label">{% trans "Contributors" %}</label>
+          <div class="people-cards program-people-cards">
+            {% for person in latest_cycle.coordinators.all %}
+              <a href="{{ person.get_absolute_url }}" class="person-card">
+                <div class="person-image">
+                  <img src="{{ person.get_thumbnail_url }}" alt="{{ person.user.get_full_name }}">
+                </div>
+                <div class="person-info">
+                  <div class="person-name small-text">{{ person.user.get_full_name }}</div>
+                </div>
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      {% if latest_cycle and latest_cycle.organizers.exists %}
+        <div class="profile-section">
+          <label class="form-input-label">{% trans "Organizers" %}</label>
+          <div class="profile-chips">
+            {% for org in latest_cycle.organizers.all %}
+              <span class="ms-chip">{{ org.short_name|default:org.name }}</span>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      {% if program.website %}
+        <div class="profile-section">
+          <label class="form-input-label">{% trans "Website" %}</label>
+          <div class="profile-contact-links">
+            <a href="{{ program.website }}" target="_blank" rel="noopener" class="form-link">{{ program.website }}</a>
+          </div>
+        </div>
+      {% endif %}
+
+
+      {% if program.parent %}
+        <div class="profile-section">
+          <label class="form-input-label">{% trans "Part of" %}</label>
+          <div class="profile-value">{{ program.parent.name }}</div>
+        </div>
+      {% endif %}
+
+    </div>
+
+  </div>
+</section>
+{% endblock %}

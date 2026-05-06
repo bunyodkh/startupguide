@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+<section class="container">
+  <div class="layout-grid">
+
+    <div class="layout-block span-col-2">
+      <div class="profile-layout">
+
+        <!-- Avatar column -->
+        <div class="profile-avatar-col">
+          <img
+            src="{{ profile.get_photo_url }}"
+            alt="{{ profile.user.get_full_name }}"
+            class="profile-avatar"
+          >
+          <div class="meduim-bold profile-display-name">{{ profile.user.get_full_name }}</div>
+          {% if profile.position %}
+            <div class="profile-muted">{{ profile.position }}</div>
+          {% endif %}
+          {% if request.user == profile.user %}
+            <a href="{% url 'users:manage_profile' %}" class="cta">{% trans "Edit profile" %}</a>
+          {% endif %}
+        </div>
+
+        <!-- Content column -->
+        <div class="profile-form-col">
+
+          {% if profile.bio %}
+          <div class="profile-section">
+            <label class="form-input-label">{% trans "Bio" %}</label>
+            <div class="profile-value">{{ profile.bio|linebreaksbr }}</div>
+          </div>
+          {% endif %}
+
+          {% if profile.affiliated_entities.exists %}
+          <div class="profile-section">
+            <label class="form-input-label">{% trans "Affiliated Organizations" %}</label>
+            <div class="profile-chips">
+              {% for entity in profile.affiliated_entities.all %}
+                <span class="ms-chip">{{ entity.short_name|default:entity.name }}</span>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+
+          {% if profile.linkedin_url or profile.telegram_handle %}
+          <div class="profile-section">
+            <label class="form-input-label">{% trans "Contacts" %}</label>
+            <div class="profile-contact-links">
+              {% if profile.linkedin_url %}
+                <a href="{{ profile.linkedin_url }}" target="_blank" rel="noopener" class="form-link">LinkedIn</a>
+              {% endif %}
+              {% if profile.telegram_handle %}
+                <a href="https://t.me/{{ profile.telegram_handle }}" target="_blank" rel="noopener" class="form-link">Telegram</a>
+              {% endif %}
+            </div>
+          </div>
+          {% endif %}
+
+          {% if not profile.bio and not profile.affiliated_entities.exists and not profile.linkedin_url and not profile.telegram_handle %}
+          <div class="profile-section">
+            <div class="profile-muted">{% trans "This builder hasn't filled in their profile yet." %}</div>
+          </div>
+          {% endif %}
+
+        </div>
+
+      </div>
+    </div>
+
+    {% with cycles=profile.coordinated_cycles.all %}
+    {% if cycles %}
+    <div class="layout-block span-col-2">
+      <div class="profile-layout">
+
+        <div class="profile-avatar-col"></div>
+
+        <div class="profile-form-col">
+          <div class="profile-section">
+            <label class="form-input-label">{% trans "Programs" %}</label>
+            <div class="profile-chips">
+              {% for cycle in cycles %}
+                <span class="ms-chip">
+                  {{ cycle.program.short_name|default:cycle.program.name }}{% if cycle.title %} — {{ cycle.title }}{% else %} — #{{ cycle.cycle_number }}{% endif %}
+                </span>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    {% endif %}
+    {% endwith %}
+
+  </div>
+</section>
+{% endblock %}

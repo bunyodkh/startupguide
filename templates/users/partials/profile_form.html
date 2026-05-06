@@ -48,22 +48,12 @@
 
         <div class="profile-name-row">
           <div class="form-field">
-            <label class="form-input-label" for="{{ user_form.first_name.id_for_label }}">
-              {{ user_form.first_name.label }}
-            </label>
-            {{ user_form.first_name }}
-            {% if user_form.first_name.errors %}
-              <div class="form-error">{{ user_form.first_name.errors.0 }}</div>
-            {% endif %}
+            <label class="form-input-label">{% trans "First Name" %}</label>
+            <div class="form-input form-input--readonly">{{ request.user.first_name }}</div>
           </div>
           <div class="form-field">
-            <label class="form-input-label" for="{{ user_form.last_name.id_for_label }}">
-              {{ user_form.last_name.label }}
-            </label>
-            {{ user_form.last_name }}
-            {% if user_form.last_name.errors %}
-              <div class="form-error">{{ user_form.last_name.errors.0 }}</div>
-            {% endif %}
+            <label class="form-input-label">{% trans "Last Name" %}</label>
+            <div class="form-input form-input--readonly">{{ request.user.last_name }}</div>
           </div>
         </div>
 
@@ -108,10 +98,37 @@
         </div>
 
         <div class="form-field">
-          <label class="form-input-label" for="{{ form.affiliated_entities.id_for_label }}">
+          <label class="form-input-label" for="{{ form.gender.id_for_label }}">
+            {{ form.gender.label }}
+          </label>
+          {{ form.gender }}
+          {% if form.gender.errors %}
+            <div class="form-error">{{ form.gender.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <div class="form-field">
+          <label class="form-input-label" for="ms-search-affiliated">
             {{ form.affiliated_entities.label }}
           </label>
-          {{ form.affiliated_entities }}
+
+          <!-- Native select hidden — JS syncs selections to it for submission -->
+          <div style="display:none">{{ form.affiliated_entities }}</div>
+
+          <div class="ms-wrapper" id="ms-wrapper-affiliated">
+            <div class="ms-control form-input">
+              <div class="ms-chips" id="ms-chips-affiliated"></div>
+              <input
+                type="text"
+                class="ms-search"
+                id="ms-search-affiliated"
+                placeholder="{% trans 'Search organizations…' %}"
+                autocomplete="off"
+              >
+            </div>
+            <div class="ms-dropdown" id="ms-dropdown-affiliated"></div>
+          </div>
+
           {% if form.affiliated_entities.errors %}
             <div class="form-error">{{ form.affiliated_entities.errors.0 }}</div>
           {% endif %}
@@ -133,9 +150,10 @@
 
 <script>
   (function () {
-    var input = document.getElementById('id_photo');
-    if (input) {
-      input.addEventListener('change', function () {
+    // Avatar preview
+    var photoInput = document.getElementById('id_photo');
+    if (photoInput) {
+      photoInput.addEventListener('change', function () {
         if (!this.files || !this.files[0]) return;
         var reader = new FileReader();
         reader.onload = function (e) {
@@ -145,5 +163,111 @@
         reader.readAsDataURL(this.files[0]);
       });
     }
+
+    // Searchable multi-select
+    function initMultiSelect(selectId, wrapperId, chipsId, searchId, dropdownId) {
+      var select = document.getElementById(selectId);
+      var chips  = document.getElementById(chipsId);
+      var search = document.getElementById(searchId);
+      var drop   = document.getElementById(dropdownId);
+      var ctrl   = document.getElementById(wrapperId).querySelector('.ms-control');
+      if (!select || !chips || !search || !drop) return;
+
+      var options = Array.from(select.options).map(function (o) {
+        return { value: o.value, text: o.text, selected: o.selected };
+      });
+
+      function syncNative() {
+        Array.from(select.options).forEach(function (o) {
+          var found = options.find(function (x) { return x.value === o.value; });
+          o.selected = found ? found.selected : false;
+        });
+      }
+
+      function renderChips() {
+        chips.innerHTML = '';
+        options.filter(function (o) { return o.selected; }).forEach(function (o) {
+          var chip = document.createElement('span');
+          chip.className = 'ms-chip';
+          chip.innerHTML =
+            o.text +
+            '<button type="button" class="ms-chip-remove" data-value="' + o.value + '">×</button>';
+          chips.appendChild(chip);
+        });
+      }
+
+      function renderDrop(q) {
+        drop.innerHTML = '';
+        var lower = (q || '').toLowerCase();
+        var visible = options.filter(function (o) {
+          return !o.selected && (!lower || o.text.toLowerCase().indexOf(lower) !== -1);
+        });
+        if (!visible.length) {
+          var msg = document.createElement('div');
+          msg.className = 'ms-no-results';
+          msg.textContent = 'No results';
+          drop.appendChild(msg);
+        } else {
+          visible.forEach(function (o) {
+            var item = document.createElement('div');
+            item.className = 'ms-option';
+            item.textContent = o.text;
+            item.dataset.value = o.value;
+            drop.appendChild(item);
+          });
+        }
+      }
+
+      function open() { renderDrop(search.value); drop.classList.add('open'); }
+      function close() { drop.classList.remove('open'); }
+
+      // Click chip × to deselect
+      chips.addEventListener('click', function (e) {
+        var btn = e.target.closest('.ms-chip-remove');
+        if (!btn) return;
+        options.forEach(function (o) { if (o.value === btn.dataset.value) o.selected = false; });
+        syncNative();
+        renderChips();
+        if (drop.classList.contains('open')) renderDrop(search.value);
+      });
+
+      // Click option to select
+      drop.addEventListener('mousedown', function (e) {
+        var item = e.target.closest('.ms-option');
+        if (!item) return;
+        e.preventDefault();
+        options.forEach(function (o) { if (o.value === item.dataset.value) o.selected = true; });
+        syncNative();
+        renderChips();
+        search.value = '';
+        renderDrop('');
+      });
+
+      search.addEventListener('input', function () { renderDrop(this.value); });
+      search.addEventListener('focus', open);
+      search.addEventListener('blur', function () { setTimeout(close, 150); });
+      ctrl.addEventListener('click', function (e) { if (e.target !== search) search.focus(); });
+
+      renderChips();
+    }
+
+    function init() {
+      initMultiSelect(
+        'id_affiliated_entities',
+        'ms-wrapper-affiliated',
+        'ms-chips-affiliated',
+        'ms-search-affiliated',
+        'ms-dropdown-affiliated'
+      );
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+
+    // Re-init after HTMX swaps the form back in
+    document.body.addEventListener('htmx:afterSwap', init);
   })();
 </script>

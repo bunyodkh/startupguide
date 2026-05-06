@@ -1,10 +1,10 @@
 from django.contrib import admin
-from unfold.admin import ModelAdmin
+from unfold.admin import ModelAdmin, TabularInline
 from modeltranslation.admin import TabbedTranslationAdmin
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
-from .models import EntityCategory, EcosystemEntity, Region
+from .models import EntityCategory, EcosystemEntity, Region, ProgramCycle
 
 
 @admin.register(Region)
@@ -21,30 +21,56 @@ class EntityCategoryAdmin(ModelAdmin, TabbedTranslationAdmin):
     search_fields = ('name',)
 
 
+class ProgramCycleInline(TabularInline):
+    model = ProgramCycle
+    extra = 0
+    fields = ('cycle_number', 'title', 'status', 'start_date', 'end_date', 'registration_deadline', 'is_active')
+    ordering = ('-cycle_number',)
+    readonly_fields = ('cycle_number',)
+
+
+@admin.register(ProgramCycle)
+class ProgramCycleAdmin(ModelAdmin):
+    list_display = ('__str__', 'program', 'cycle_number', 'status', 'start_date', 'end_date', 'registration_deadline', 'is_active')
+    list_filter = ('status', 'is_active', 'program')
+    search_fields = ('program__name', 'title')
+    autocomplete_fields = ['program', 'organizers']
+    filter_horizontal = ('coordinators', 'regions')
+
+    fieldsets = (
+        (_("Cycle"), {
+            'fields': ('program', 'cycle_number', 'title', 'description', 'status', 'is_active'),
+        }),
+        (_("Dates"), {
+            'fields': ('start_date', 'end_date', 'registration_deadline'),
+        }),
+        (_("Media"), {
+            'fields': ('cover_image',),
+        }),
+        (_("People & Places"), {
+            'fields': ('organizers', 'coordinators', 'regions'),
+        }),
+    )
+
+
 @admin.register(EcosystemEntity)
 class EcosystemEntityAdmin(ModelAdmin, TabbedTranslationAdmin):
-    list_display = ('get_logo', 'name', 'category', 'city', 'status', 'start_date', 'end_date', 'registration_deadline', 'is_active')
+    inlines = [ProgramCycleInline]
+    list_display = ('get_logo', 'name', 'category', 'city', 'is_active')
     list_display_links = ('get_logo', 'name')
-    list_filter = ('category', 'status', 'is_active', 'has_physical_space', 'regions')
+    list_filter = ('category', 'is_active', 'has_physical_space')
     search_fields = ('name', 'short_name', 'category__name')
-    autocomplete_fields = ['parent', 'category', 'organizers']
-    filter_horizontal = ('coordinators', 'regions')
+    autocomplete_fields = ['parent', 'category']
 
     fieldsets = (
         (_("General"), {
             'fields': ('name', 'short_name', 'category', 'parent', 'description', 'website', 'is_active'),
         }),
         (_("Media"), {
-            'fields': ('logo', 'cover_image'),
+            'fields': ('logo',),
         }),
         (_("Location"), {
-            'fields': ('has_physical_space', 'city', 'regions'),
-        }),
-        (_("Program Details"), {
-            'fields': ('status', 'start_date', 'end_date', 'registration_deadline'),
-        }),
-        (_("People"), {
-            'fields': ('organizers', 'coordinators'),
+            'fields': ('has_physical_space', 'city'),
         }),
         (_("Other"), {
             'fields': ('founded_year',),

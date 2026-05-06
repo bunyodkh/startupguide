@@ -3,6 +3,7 @@ from io import BytesIO
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFit
@@ -63,6 +64,18 @@ class BuilderProfile(models.Model):
         null=True,
         verbose_name=_("Telegram Username"),
         help_text=_("Without @, e.g., durov")
+    )
+
+    class Gender(models.TextChoices):
+        MALE = 'male', _("Male")
+        FEMALE = 'female', _("Female")
+        NA = 'na', _("Not Specified")
+
+    gender = models.CharField(
+        max_length=6,
+        choices=Gender.choices,
+        default=Gender.NA,
+        verbose_name=_("Gender")
     )
 
     is_published = models.BooleanField(
@@ -145,11 +158,16 @@ class BuilderProfile(models.Model):
             return f"{full_name} — {self.position}"
         return f"{self.user.username} — {self.position}"
 
+    def get_absolute_url(self):
+        return reverse('users:view_profile', kwargs={'username': self.user.username})
+
     @property
     def get_photo_url(self):
         if self.photo and self.photo.storage.exists(self.photo.name):
             return self.photo.url
         from django.templatetags.static import static
+        if self.gender == self.Gender.FEMALE:
+            return static('images/default-favatar.png')
         return static('images/default-avatar.png')
 
     @property

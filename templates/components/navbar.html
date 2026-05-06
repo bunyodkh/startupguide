@@ -17,15 +17,9 @@
             <div class="nav-user-wrap">
                 <button class="nav-user" id="navUserBtn" type="button">
                     <span>{% trans "Hi" %}, {{ user.first_name|default:user.email }}</span>
-                    {% if user.builder_profile.photo %}
-                        <div class="nav-avatar-container">
-                            <img src="{{ user.builder_profile.get_thumbnail_url }}" alt="{{ user.first_name }}" width="30" height="30">
-                        </div>
-                    {% else %}
-                        <div class="nav-avatar-container">
-                            <img src="{% static 'images/default-avatar.png' %}" alt="{{ user.first_name }}" width="30" height="30">
-                        </div>
-                    {% endif %}
+                    <div class="nav-avatar-container">
+                        <img src="{{ user.builder_profile.get_thumbnail_url }}" alt="{{ user.first_name }}" width="30" height="30">
+                    </div>
                 </button>
                 <div class="nav-dropdown" id="navDropdown">
                     <a href="{% url 'users:manage_profile' %}" class="nav-dropdown-item">{% trans "Profile" %}</a>
