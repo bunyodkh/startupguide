@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block content %}
+<section class="container">
+  <div class="layout-grid">
+
+    <!-- Main content -->
+    <div class="layout-block span-col-2">
+      <div class="profile-layout">
+
+        <!-- Logo column -->
+        <div class="profile-avatar-col">
+          <img
+            src="{% if place.logo %}{{ place.get_thumbnail_url }}{% else %}{% static 'images/default-place.png' %}{% endif %}"
+            alt="{{ place.name }}"
+            class="place-detail-logo"
+          >
+          <div class="meduim-bold profile-display-name">{{ place.name }}</div>
+          <div class="profile-muted">{{ place.category.name }}</div>
+        </div>
+
+        <!-- Content column -->
+        <div class="profile-form-col">
+
+          <div class="profile-section">
+            <label class="form-input-label">{% trans "Location" %}</label>
+            <div class="profile-value">{{ place.city }}</div>
+          </div>
+
+          {% if place.founded_year %}
+          <div class="profile-section">
+            <label class="form-input-label">{% trans "Founded" %}</label>
+            <div class="profile-value">{{ place.founded_year }}</div>
+          </div>
+          {% endif %}
+
+          {% if place.parent %}
+          <div class="profile-section">
+            <label class="form-input-label">{% trans "Part of" %}</label>
+            <div class="profile-value">
+              <a href="{{ place.parent.get_absolute_url }}" class="form-link">{{ place.parent.name }}</a>
+            </div>
+          </div>
+          {% endif %}
+
+          {% if place.description %}
+          <div class="profile-section">
+            <label class="form-input-label">{% trans "About" %}</label>
+            <div class="profile-value">{{ place.description|linebreaksbr }}</div>
+          </div>
+          {% endif %}
+
+          {% if place.website %}
+          <div class="profile-section">
+            <label class="form-input-label">{% trans "Website" %}</label>
+            <div class="profile-contact-links">
+              <a href="{{ place.website }}" target="_blank" rel="noopener" class="form-link">{{ place.website }}</a>
+            </div>
+          </div>
+          {% endif %}
+
+          {% if place.children.exists %}
+          <div class="profile-section">
+            <label class="form-input-label">{% trans "Units" %}</label>
+            <div class="profile-chips">
+              {% for child in place.children.all %}
+                <a href="{{ child.get_absolute_url }}" class="ms-chip">{{ child.short_name|default:child.name }}</a>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+
+          {% if place.coordinators.exists %}
+          <div class="profile-section">
+            <label class="form-input-label">{% trans "Team" %}</label>
+            <div class="people-cards program-people-cards" style="margin-top:0.5rem;">
+              {% for person in place.coordinators.all %}
+                <a href="{{ person.get_absolute_url }}" class="person-card">
+                  <div class="person-image">
+                    <img src="{{ person.get_thumbnail_url }}" alt="{{ person.user.get_full_name }}">
+                  </div>
+                  <div class="person-info">
+                    <div class="person-name small-text">{{ person.user.get_full_name }}</div>
+                    {% if person.position %}<div class="small-text" style="color:var(--text-muted);">{{ person.position }}</div>{% endif %}
+                  </div>
+                </a>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+
+          {% if place.affiliated_builders.exists %}
+          <div class="profile-section">
+            <label class="form-input-label">{% trans "People" %}</label>
+            <div class="people-cards program-people-cards" style="margin-top:0.5rem;">
+              {% for person in place.affiliated_builders.all %}
+                <a href="{{ person.get_absolute_url }}" class="person-card">
+                  <div class="person-image">
+                    <img src="{{ person.get_thumbnail_url }}" alt="{{ person.user.get_full_name }}">
+                  </div>
+                  <div class="person-info">
+                    <div class="person-name small-text">{{ person.user.get_full_name }}</div>
+                    {% if person.position %}<div class="small-text" style="color:var(--text-muted);">{{ person.position }}</div>{% endif %}
+                  </div>
+                </a>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+
+    {% if cycles %}
+    <!-- Supported programs -->
+    <div class="layout-block span-col-3">
+      <label class="form-input-label" style="display:block;margin-bottom:1rem;">{% trans "Supported programs" %}</label>
+      <div class="place-cycles-grid">
+        {% for cycle in cycles %}
+        <a href="{{ cycle.program.get_absolute_url }}" class="place-cycle-card">
+          <img src="{{ cycle.program.get_thumbnail_url }}" alt="{{ cycle.program.name }}" class="place-cycle-logo">
+          <div class="place-cycle-program">{{ cycle.program.name }}</div>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+{% endblock %}

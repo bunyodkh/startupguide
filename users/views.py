@@ -7,6 +7,32 @@ from .forms import BuilderProfileForm
 from .models import BuilderProfile
 
 
+def people_list(request):
+    people = (
+        BuilderProfile.objects
+        .filter(is_published=True)
+        .select_related('user')
+        .prefetch_related('affiliated_entities__category')
+        .order_by('user__first_name', 'user__last_name')
+    )
+
+    grouped = {}
+    ungrouped = []
+    for person in people:
+        entity = person.affiliated_entities.first()
+        if entity and entity.category:
+            key = entity.category.name
+            grouped.setdefault(key, []).append(person)
+        else:
+            ungrouped.append(person)
+
+    groups = [(label, members) for label, members in sorted(grouped.items())]
+    if ungrouped:
+        groups.append((None, ungrouped))
+
+    return render(request, 'users/people_list.html', {'groups': groups})
+
+
 @login_required
 def manage_profile(request):
     profile, _ = BuilderProfile.objects.get_or_create(user=request.user)

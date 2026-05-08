@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+<section class="container">
+
+  <div class="pl-header">
+    <h1 class="meduim-bold">{% trans 'Places' %}</h1>
+  </div>
+
+  {% for category_label, places in groups %}
+    <div class="pl-month-group">
+      <p class="pl-month-label">{% if category_label %}{{ category_label }}{% else %}{% trans 'Other' %}{% endif %}</p>
+
+      <div class="place-list place-list--grid">
+        {% for place in places %}
+          <a href="{{ place.get_absolute_url }}" class="place-item">
+            {% if place.logo %}
+              <img src="{{ place.get_thumbnail_url }}" alt="{{ place.name }}" class="place-logo">
+            {% else %}
+              <img src="{% static 'images/default-place.png' %}" alt="{{ place.name }}" class="place-logo">
+            {% endif %}
+            <div class="place-info">
+              <span class="place-name">{{ place.short_name|default:place.name }}</span>
+              {% if place.city %}<span class="place-category">{{ place.city }}</span>{% endif %}
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  {% empty %}
+    <p class="light" style="padding: 2rem 0;">{% trans 'No places found.' %}</p>
+  {% endfor %}
+
+</section>
+{% endblock %}

@@ -12,7 +12,7 @@
         <section class="layout-block span-col-2 span-row-3">
             <div class="layout-block-heading">
                 <h2 class="meduim-bold">{% trans 'People' %}</h2>
-                <p class="light">{% trans 'Startup Ecosystem Contributers' %}</p>
+                <a href="{% url 'users:people_list' %}" class="section-link-all">{% trans 'See more' %} &rarr;</a>
             </div>
 
             <div class="people-cards">
@@ -43,7 +43,7 @@
         <section class="layout-block span-col-1 span-row-2">
             <div class="layout-block-heading">
                 <h2 class="meduim-bold">{% trans 'Programs' %}</h2>
-                <p class="light">{% trans 'Upcoming events.' %}</p>
+                <a href="{% url 'hub:program_list' %}" class="section-link-all">{% trans 'See more' %} &rarr;</a>
             </div>
 
             <div class="program-list">
@@ -77,10 +77,11 @@
         <section class="layout-block span-col-1 span-row-1">
             <div class="layout-block-heading">
                 <h2 class="meduim-bold">{% trans 'Places' %}</h2>
+                <a href="{% url 'hub:place_list' %}" class="section-link-all">{% trans 'See more' %} &rarr;</a>
             </div>
             <div class="place-list">
                 {% for place in places %}
-                <div class="place-item">
+                <a href="{{ place.get_absolute_url }}" class="place-item">
                     {% if place.logo %}
                     <img src="{{ place.get_thumbnail_url }}" alt="{{ place.name }}" class="place-logo">
                     {% else %}
@@ -90,7 +91,7 @@
                         <span class="place-name">{{ place.short_name|default:place.name }}</span>
                         {% if place.category %}<span class="place-category">{{ place.category.name }}</span>{% endif %}
                     </div>
-                </div>
+                </a>
                 {% endfor %}
             </div>
         </section>
@@ -98,7 +99,24 @@
         <section class="layout-block span-col-3">
             <div class="layout-block-heading">
                 <h2 class="meduim-bold">{% trans 'Resources' %}</h2>
-                <p class="light">{% trans 'Reports, channels, podcasts, news, etc.' %}</p>
+                <a href="{% url 'wiki:resource_list' %}" class="section-link-all">{% trans 'See more' %} &rarr;</a>
+            </div>
+            <div class="resource-list">
+                {% for resource in resources %}
+                <div class="resource-item">
+                    {% if resource.logo %}
+                    <img src="{{ resource.get_logo_url }}" alt="{{ resource.title }}" class="resource-logo">
+                    {% endif %}
+                    <div class="resource-item-text">
+                        <div class="resource-item-top">
+                            <span class="resource-category">{{ resource.category.name }}</span>
+                            {% if resource.attached_file %}<span class="resource-badge">{% trans 'File' %}</span>{% endif %}
+                            {% if resource.video_url %}<span class="resource-badge">{% trans 'Video' %}</span>{% endif %}
+                        </div>
+                        <p class="resource-title">{{ resource.title }}</p>
+                    </div>
+                </div>
+                {% endfor %}
             </div>
         </section>
     </div>

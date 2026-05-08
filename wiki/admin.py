@@ -27,6 +27,6 @@ class ResourceAdmin(ModelAdmin, TabbedTranslationAdmin):
             'fields': ('content',)
         }),
         (_('Media & Attachments'), {
-            'fields': ('attached_file', 'video_url')
+            'fields': ('logo', 'attached_file', 'video_url')
         }),
     )

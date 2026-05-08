@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+<section class="container">
+
+  <div class="pl-header">
+    <h1 class="meduim-bold">{% trans 'Resources' %}</h1>
+  </div>
+
+  {% for category_label, items in groups %}
+    <div class="pl-month-group">
+      <p class="pl-month-label">{% if category_label %}{{ category_label }}{% else %}{% trans 'Other' %}{% endif %}</p>
+
+      <div class="resource-list resource-list--grid">
+        {% for resource in items %}
+          <div class="resource-item">
+            {% if resource.logo %}
+            <img src="{{ resource.get_logo_url }}" alt="{{ resource.title }}" class="resource-logo">
+            {% endif %}
+            <div class="resource-item-text">
+              <div class="resource-item-top">
+                {% if resource.attached_file %}<span class="resource-badge">{% trans 'File' %}</span>{% endif %}
+                {% if resource.video_url %}<span class="resource-badge">{% trans 'Video' %}</span>{% endif %}
+              </div>
+              <p class="resource-title">{{ resource.title }}</p>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% empty %}
+    <p class="light" style="padding: 2rem 0;">{% trans 'No resources found.' %}</p>
+  {% endfor %}
+
+</section>
+{% endblock %}

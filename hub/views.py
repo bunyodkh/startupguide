@@ -1,4 +1,6 @@
 import random
+from itertools import groupby
+from calendar import month_name
 
 from django import forms as django_forms
 from django.contrib.auth.decorators import login_required
@@ -147,8 +149,8 @@ def index(request):
     resources = (
         Resource.objects
         .filter(is_published=True)
-        .select_related('category', 'author')
-        .order_by('category__name', 'title')
+        .select_related('category')
+        .order_by('-created_at')[:6]
     )
 
     return render(request, 'index.html', {
@@ -158,6 +160,51 @@ def index(request):
         'programs': programs,
         'resources': resources,
     })
+
+
+def program_list(request):
+    programs_qs = (
+        EcosystemEntity.objects
+        .filter(has_physical_space=False, is_active=True)
+        .select_related('category', 'parent')
+        .prefetch_related(
+            Prefetch('cycles', queryset=_active_cycle_qs, to_attr='active_cycles')
+        )
+        .order_by('name')
+    )
+
+    pairs = []
+    for program in programs_qs:
+        if program.active_cycles:
+            for cycle in program.active_cycles:
+                pairs.append((program, cycle))
+        else:
+            pairs.append((program, None))
+
+    def _sort_key(pair):
+        cycle = pair[1]
+        if cycle:
+            d = cycle.start_date or cycle.registration_deadline
+            if d:
+                return (0, d.year, d.month)
+        return (1, 0, 0)
+
+    def _group_key(pair):
+        cycle = pair[1]
+        if cycle:
+            d = cycle.start_date or cycle.registration_deadline
+            if d:
+                return (d.year, d.month)
+        return None
+
+    pairs.sort(key=_sort_key)
+
+    groups = []
+    for key, items in groupby(pairs, key=_group_key):
+        label = f"{month_name[key[1]]} {key[0]}" if key else None
+        groups.append((label, list(items)))
+
+    return render(request, 'hub/program_list.html', {'groups': groups})
 
 
 def program_detail(request, slug):
@@ -201,6 +248,48 @@ def program_detail(request, slug):
         'reg_form': reg_form,
         'apply_form': apply_form,
         'custom_fields': custom_fields,
+    })
+
+
+def place_list(request):
+    places = (
+        EcosystemEntity.objects
+        .filter(has_physical_space=True, is_active=True)
+        .select_related('category', 'parent')
+        .order_by('category__name', 'name')
+    )
+
+    grouped = {}
+    for place in places:
+        key = place.category.name if place.category else None
+        grouped.setdefault(key, []).append(place)
+
+    groups = [(label, members) for label, members in sorted(grouped.items(), key=lambda x: (x[0] is None, x[0]))]
+
+    return render(request, 'hub/place_list.html', {'groups': groups})
+
+
+def place_detail(request, slug):
+    place = get_object_or_404(
+        EcosystemEntity.objects
+            .select_related('category', 'parent')
+            .prefetch_related(
+                'coordinators__user',
+                'children__category',
+                'affiliated_builders__user',
+            ),
+        slug=slug,
+        has_physical_space=True,
+    )
+    cycles = (
+        ProgramCycle.objects
+        .filter(organizers=place, is_active=True)
+        .select_related('program')
+        .order_by('-cycle_number')
+    )
+    return render(request, 'hub/place_detail.html', {
+        'place': place,
+        'cycles': cycles,
     })
 
 

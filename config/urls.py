@@ -19,6 +19,7 @@ urlpatterns += i18n_patterns(
     path('accounts/signout/', LogoutView.as_view(), name='account_signout'),
     path('', include('hub.urls')),
     path('', include('users.urls')),
+    path('', include('wiki.urls')),
 
     prefix_default_language=True,
 )

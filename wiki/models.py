@@ -1,6 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
+from django.templatetags.static import static
+from imagekit.models import ProcessedImageField
+from imagekit.processors import ResizeToFit
+
+from config.utils import UploadToPath
 
 class ResourceCategory(models.Model):
     """
@@ -77,8 +82,18 @@ class Resource(models.Model):
         help_text=_("YouTube or Vimeo link.")
     )
     
+    logo = ProcessedImageField(
+        upload_to=UploadToPath('logos/resources'),
+        processors=[ResizeToFit(400, 400)],
+        format='JPEG',
+        options={'quality': 85},
+        blank=True,
+        null=True,
+        verbose_name=_("Logo"),
+    )
+
     is_published = models.BooleanField(
-        default=False, 
+        default=False,
         verbose_name=_("Is Published")
     )
     created_at = models.DateTimeField(
@@ -97,3 +112,9 @@ class Resource(models.Model):
 
     def __str__(self):
         return self.title
+
+    @property
+    def get_logo_url(self):
+        if self.logo and hasattr(self.logo, 'url'):
+            return self.logo.url
+        return None

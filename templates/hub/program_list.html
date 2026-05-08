@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+<section class="container">
+
+  <div class="pl-header">
+    <h1 class="meduim-bold">{% trans 'Programs' %}</h1>
+  </div>
+
+  {% for month_label, pairs in groups %}
+
+    <div class="pl-month-group">
+      {% if month_label %}
+        <p class="pl-month-label">{{ month_label }}</p>
+      {% else %}
+        <p class="pl-month-label">{% trans 'Date TBD' %}</p>
+      {% endif %}
+
+      <div class="pl-cards">
+        {% for program, cycle in pairs %}
+          <a href="{{ program.get_absolute_url }}{% if cycle and cycle.slug %}?cycle={{ cycle.slug }}{% endif %}" class="pl-card">
+
+            {% if program.logo %}
+            <div class="pl-card-logo">
+              <img src="{{ program.get_thumbnail_url }}" alt="{{ program.short_name|default:program.name }}">
+            </div>
+            {% endif %}
+
+            <div class="pl-card-body">
+              <p class="pl-card-title">{% if cycle %}{{ cycle.title|default:program.name }}{% else %}{{ program.name }}{% endif %}</p>
+              {% if cycle and cycle.title %}
+                <p class="pl-card-program">{{ program.short_name|default:program.name }}</p>
+              {% endif %}
+
+              <div class="pl-card-meta">
+                {% if cycle and cycle.status %}
+                  <span class="pl-badge pl-badge--{{ cycle.status }}">{{ cycle.get_status_display }}</span>
+                {% endif %}
+                {% if cycle and cycle.deadline_label %}
+                  <span class="pl-badge pl-badge--deadline">{{ cycle.deadline_label }}</span>
+                {% endif %}
+              </div>
+
+              {% if cycle and cycle.duration_display %}
+                <p class="pl-card-dates">{{ cycle.duration_display }}</p>
+              {% endif %}
+            </div>
+
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+
+  {% empty %}
+    <p class="light" style="padding: 2rem 0;">{% trans 'No programs found.' %}</p>
+  {% endfor %}
+
+</section>
+{% endblock %}

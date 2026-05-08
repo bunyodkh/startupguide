@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+<section class="container">
+
+  <div class="pl-header">
+    <h1 class="meduim-bold">{% trans 'People' %}</h1>
+  </div>
+
+  {% for category_label, members in groups %}
+    <div class="pl-month-group">
+      <p class="pl-month-label">{% if category_label %}{{ category_label }}{% else %}{% trans 'Other' %}{% endif %}</p>
+
+      <div class="people-cards">
+        {% for person in members %}
+          <div class="person-card">
+            <div class="person-image">
+              <img src="{{ person.get_thumbnail_url }}" alt="{{ person.user.get_full_name }}">
+            </div>
+            <div class="person-info">
+              <h4 class="person-name"><a href="{{ person.get_absolute_url }}">{{ person.user.first_name }} {{ person.user.last_name }}</a></h4>
+              {% if person.affiliated_entities.exists %}
+                <p class="person-place">{{ person.affiliated_entities.first.short_name|default:person.affiliated_entities.first.name }}</p>
+              {% endif %}
+              {% if person.position %}
+                <p class="person-tg">{{ person.position }}</p>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% empty %}
+    <p class="light" style="padding: 2rem 0;">{% trans 'No people found.' %}</p>
+  {% endfor %}
+
+</section>
+{% endblock %}

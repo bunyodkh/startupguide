@@ -2,6 +2,9 @@ from django.urls import path
 
 from .views import (
     index,
+    place_detail,
+    place_list,
+    program_list,
     program_detail,
     program_apply,
     cycle_register_page,
@@ -25,7 +28,10 @@ app_name = 'hub'
 
 urlpatterns = [
     path('', index, name='index'),
+    path('programs/', program_list, name='program_list'),
     path('r/<slug:slug>/', cycle_register_page, name='cycle_register'),
+    path('places/', place_list, name='place_list'),
+    path('places/<slug:slug>/', place_detail, name='place_detail'),
     path('programs/<slug:slug>/', program_detail, name='view_program'),
     path('programs/<slug:slug>/apply/', program_apply, name='program_apply'),
     path('programs/<int:pk>/manage/', program_manage, name='program_manage'),

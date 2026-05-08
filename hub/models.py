@@ -220,6 +220,8 @@ class EcosystemEntity(models.Model):
         return self.name
 
     def get_absolute_url(self):
+        if self.has_physical_space:
+            return reverse('hub:place_detail', kwargs={'slug': self.slug})
         return reverse('hub:view_program', kwargs={'slug': self.slug})
 
 
