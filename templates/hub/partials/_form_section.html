@@ -1,0 +1,179 @@
+{% load i18n %}
+<div id="form-settings-section">
+
+  {% if form_mode == 'choice' %}
+  <!-- ── Step 1: choose mode ───────────────────────────────────────────── -->
+  <div id="reg-mode-choice">
+  <p style="font-size:1rem;font-weight:600;margin-bottom:1rem;">
+    {% trans "How will you collect registrations?" %}
+  </p>
+  <div style="display:flex;gap:0.75rem;">
+
+    <button type="button" class="reg-mode-card" onclick="showRegSection('link')">
+      <div class="reg-mode-title">{% trans "External link" %}</div>
+      <div class="reg-mode-desc">{% trans "Send applicants to your own form or website." %}</div>
+    </button>
+
+    <button type="button" class="reg-mode-card reg-mode-card--accent" onclick="showRegSection('form')">
+      <div class="reg-mode-title">{% trans "Create form" %}</div>
+      <div class="reg-mode-desc">{% trans "Collect registrations directly on this platform." %}</div>
+    </button>
+
+  </div>
+  </div>
+  {% endif %}
+
+  <!-- ── Step 2a: external link ────────────────────────────────────────── -->
+  <div id="reg-section-link" {% if form_mode != 'link' %}style="display:none;"{% endif %}>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+      <p style="font-size:1rem;font-weight:600;margin:0;">{% trans "Use external registration form" %}</p>
+      <button type="button" class="form-link" style="background:none;border:none;cursor:pointer;font-size:0.75rem;" onclick="showRegSection('form')">
+        {% trans "Switch to built-in form" %}
+      </button>
+    </div>
+
+    <form hx-post="{% url 'hub:form_settings' pk=program.pk cycle_pk=cycle.pk %}" hx-target="#form-settings-section" hx-swap="outerHTML">
+      {% csrf_token %}
+      <input type="hidden" name="is_open" value="">
+      <div class="form-field" style="margin-bottom:0.75rem;">
+        <label class="form-input-label" for="{{ settings_form.external_url.id_for_label }}">
+          {% trans "Registration URL" %}
+        </label>
+        {{ settings_form.external_url }}
+        <div class="form-hint visible">{% trans "Applicants will be redirected to this URL." %}</div>
+        {% if settings_form.external_url.errors %}
+          <div class="form-error">{{ settings_form.external_url.errors.0 }}</div>
+        {% endif %}
+      </div>
+      <button type="submit" class="btn-primary">
+        <span class="htmx-indicator-hide">{% trans "Save" %}</span>
+        <span class="htmx-indicator">{% trans "Saving…" %}</span>
+      </button>
+    </form>
+
+  </div>
+
+  <!-- ── Step 2b: built-in form ────────────────────────────────────────── -->
+  <div id="reg-section-form" {% if form_mode != 'form' %}style="display:none;"{% endif %}>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+      <p style="font-size:1rem;font-weight:600;margin:0;">{% trans "Create form" %}</p>
+      <button type="button" class="form-link" style="background:none;border:none;cursor:pointer;font-size:0.75rem;" onclick="showRegSection('link')">
+        {% trans "Switch to external link" %}
+      </button>
+    </div>
+
+    <form hx-post="{% url 'hub:form_settings' pk=program.pk cycle_pk=cycle.pk %}" hx-target="#form-settings-section" hx-swap="outerHTML" style="margin-bottom:0.75rem;">
+      {% csrf_token %}
+      <input type="hidden" name="external_url" value="">
+      <label class="toggle-switch" style="margin-bottom:0.75rem;">
+        {{ settings_form.is_open }}
+        <span class="toggle-track"><span class="toggle-thumb"></span></span>
+        {% trans "Open registration form" %}
+      </label>
+      <button type="submit" class="btn-primary">
+        <span class="htmx-indicator-hide">{% trans "Save" %}</span>
+        <span class="htmx-indicator">{% trans "Saving…" %}</span>
+      </button>
+    </form>
+
+    <div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border-color);">
+      <label class="form-input-label" style="margin-bottom:0.5rem;">{% trans "Custom Questions" %}</label>
+
+      {% if custom_fields %}
+      <div style="margin-bottom:0.5rem;">
+        {% for field in custom_fields %}
+        <div class="custom-question-row">
+          <div class="custom-question-label">
+            <div style="font-size:0.85rem;">{{ field.label_en|default:"—" }}</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);">
+              {{ field.label_ru|default:"—" }} &middot; {{ field.label_uz|default:"—" }}
+            </div>
+          </div>
+          <span class="custom-question-type-badge">{{ field.get_field_type_display }}</span>
+          {% if field.is_required %}
+            <span class="custom-question-badge">{% trans "Required" %}</span>
+          {% endif %}
+          <button
+            class="custom-question-remove"
+            title="{% trans 'Remove question' %}"
+            hx-post="{% url 'hub:field_delete' pk=program.pk cycle_pk=cycle.pk field_pk=field.pk %}"
+            hx-target="#form-settings-section"
+            hx-swap="outerHTML">×</button>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <form
+        hx-post="{% url 'hub:field_add' pk=program.pk cycle_pk=cycle.pk %}"
+        hx-target="#form-settings-section"
+        hx-swap="outerHTML"
+        hx-on:htmx:after-request="this.reset()">
+        {% csrf_token %}
+        <div style="display:flex;flex-direction:column;gap:0.35rem;margin-bottom:0.5rem;">
+          {% for lang_code, lang_placeholder in langs %}
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <span style="font-size:0.7rem;font-weight:700;color:var(--text-muted);width:1.6rem;flex-shrink:0;text-transform:uppercase;">{{ lang_code }}</span>
+            <input
+              type="text"
+              name="label_{{ lang_code }}"
+              class="form-input"
+              placeholder="{{ lang_placeholder }}"
+              autocomplete="off"
+              {% if lang_code == 'en' %}required{% endif %}>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="custom-question-add-row">
+          <div class="custom-question-type-toggle" role="group">
+            <label class="custom-question-type-opt">
+              <input type="radio" name="field_type" value="text" checked> {% trans "Short" %}
+            </label>
+            <label class="custom-question-type-opt">
+              <input type="radio" name="field_type" value="textarea"> {% trans "Long" %}
+            </label>
+          </div>
+          <label class="toggle-switch custom-question-required-toggle">
+            <input type="checkbox" name="is_required">
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+            {% trans "Required" %}
+          </label>
+          <button type="submit" class="custom-question-add-btn" style="margin-left:auto;">{% trans "Add" %}</button>
+        </div>
+      </form>
+    </div>
+
+    {% if cycle.slug and reg_form.is_open %}
+    <div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border-color);">
+      <button
+        type="button"
+        class="copy-link-btn"
+        data-url="{% url 'hub:cycle_register' slug=cycle.slug %}"
+        onclick="copyRegLink(this)">
+        {% trans "Copy mini registration form link" %}
+      </button>
+    </div>
+    {% endif %}
+
+  </div>
+
+</div>
+
+<script>
+function showRegSection(mode) {
+  var choice = document.getElementById('reg-mode-choice');
+  if (choice) choice.style.display = 'none';
+  document.getElementById('reg-section-link').style.display = mode === 'link' ? 'block' : 'none';
+  document.getElementById('reg-section-form').style.display = mode === 'form' ? 'block' : 'none';
+}
+function copyRegLink(btn) {
+  var url = window.location.origin + btn.dataset.url;
+  navigator.clipboard.writeText(url).then(function () {
+    var orig = btn.textContent;
+    btn.textContent = '{% trans "Copied!" %}';
+    setTimeout(function () { btn.textContent = orig; }, 2000);
+  });
+}
+</script>

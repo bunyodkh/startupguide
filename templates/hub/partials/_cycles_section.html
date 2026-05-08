@@ -1,0 +1,58 @@
+{% load i18n %}
+<div id="cycles-section">
+
+  {% if cycles %}
+    <div class="cycles-list">
+      {% for cycle in cycles %}
+        {% include "hub/partials/_cycle_item.html" with cycle=cycle program=program %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="profile-muted" style="margin-bottom:1rem;">{% trans "No cycles yet." %}</div>
+  {% endif %}
+
+  <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border-color);">
+    <label class="form-input-label" style="margin-bottom:0.75rem;">{% trans "New Cycle" %}</label>
+    <form
+      hx-post="{% url 'hub:cycle_create' pk=program.pk %}"
+      hx-target="#cycles-section"
+      hx-swap="outerHTML"
+      hx-encoding="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="form-field" style="margin-bottom:0.5rem;">
+        <label class="form-input-label" for="{{ cycle_create_form.title.id_for_label }}">{{ cycle_create_form.title.label }}</label>
+        {{ cycle_create_form.title }}
+        {% if cycle_create_form.title.errors %}<div class="form-error">{{ cycle_create_form.title.errors.0 }}</div>{% endif %}
+      </div>
+
+      <div class="form-field" style="margin-bottom:0.5rem;">
+        <label class="form-input-label" for="{{ cycle_create_form.status.id_for_label }}">{{ cycle_create_form.status.label }}</label>
+        {{ cycle_create_form.status }}
+        {% if cycle_create_form.status.errors %}<div class="form-error">{{ cycle_create_form.status.errors.0 }}</div>{% endif %}
+      </div>
+
+      <div class="form-field" style="margin-bottom:0.5rem;">
+        <label class="form-input-label" for="{{ cycle_create_form.start_date.id_for_label }}">{{ cycle_create_form.start_date.label }}</label>
+        {{ cycle_create_form.start_date }}
+      </div>
+
+      <div class="form-field" style="margin-bottom:0.5rem;">
+        <label class="form-input-label" for="{{ cycle_create_form.end_date.id_for_label }}">{{ cycle_create_form.end_date.label }}</label>
+        {{ cycle_create_form.end_date }}
+      </div>
+
+      <div class="form-field" style="margin-bottom:0.75rem;">
+        <label class="form-input-label" for="{{ cycle_create_form.registration_deadline.id_for_label }}">{{ cycle_create_form.registration_deadline.label }}</label>
+        {{ cycle_create_form.registration_deadline }}
+      </div>
+
+      <button type="submit" class="btn-primary" style="width:auto;padding:0.4rem 1rem;">
+        <span class="htmx-indicator-hide">{% trans "Create Cycle" %}</span>
+        <span class="htmx-indicator">{% trans "Creating…" %}</span>
+      </button>
+
+    </form>
+  </div>
+
+</div>

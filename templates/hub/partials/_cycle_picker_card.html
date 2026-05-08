@@ -1,0 +1,24 @@
+{% load i18n %}
+<div id="cycle-card-{{ cycle.pk }}" class="cycle-picker-card{% if not cycle.is_active %} cycle-picker-card--inactive{% endif %}">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.5rem;margin-bottom:0.35rem;">
+    {% if cycle.is_active %}
+      <a href="?cycle={{ cycle.pk }}" class="cycle-picker-title">{{ cycle.display_label }}</a>
+    {% else %}
+      <span class="cycle-picker-title" style="color:var(--text-muted);">{{ cycle.display_label }}</span>
+    {% endif %}
+    <form
+      hx-post="{% url 'hub:cycle_toggle' pk=program.pk cycle_pk=cycle.pk %}"
+      hx-target="#cycle-card-{{ cycle.pk }}"
+      hx-swap="outerHTML"
+      hx-trigger="change"
+      style="margin:0;flex-shrink:0;">
+      {% csrf_token %}
+      <label class="toggle-switch" style="margin:0;">
+        <input type="checkbox" {% if cycle.is_active %}checked{% endif %}>
+        <span class="toggle-track"><span class="toggle-thumb"></span></span>
+      </label>
+    </form>
+  </div>
+  {% if cycle.status %}<div class="cycle-picker-status">{{ cycle.get_status_display }}</div>{% endif %}
+  {% if cycle.duration_display %}<div class="cycle-picker-date">{{ cycle.duration_display }}</div>{% endif %}
+</div>

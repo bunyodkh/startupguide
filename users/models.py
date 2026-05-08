@@ -4,11 +4,25 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 from django.urls import reverse
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFit
 
 from config.utils import UploadToPath
+
+
+def _unique_profile_slug(base, exclude_pk=None):
+    slug = slugify(base)[:200] or 'person'
+    qs = BuilderProfile.objects.all()
+    if exclude_pk:
+        qs = qs.exclude(pk=exclude_pk)
+    if not qs.filter(slug=slug).exists():
+        return slug
+    n = 2
+    while qs.filter(slug=f"{slug}-{n}").exists():
+        n += 1
+    return f"{slug}-{n}"
 
 
 class BuilderProfile(models.Model):
@@ -100,6 +114,14 @@ class BuilderProfile(models.Model):
         verbose_name=_("Update Date")
     )
 
+    slug = models.SlugField(
+        max_length=255,
+        unique=True,
+        blank=True,
+        verbose_name=_("Slug"),
+        help_text=_("Leave blank to auto-generate from name.")
+    )
+
     affiliated_entities = models.ManyToManyField(
         'hub.EcosystemEntity',
         blank=True,
@@ -118,6 +140,10 @@ class BuilderProfile(models.Model):
         self._original_photo = self.photo.name if self.photo else None
 
     def save(self, *args, **kwargs):
+        if not self.slug:
+            full_name = f"{self.user.first_name} {self.user.last_name}".strip()
+            base = full_name or self.user.username
+            self.slug = _unique_profile_slug(base, exclude_pk=self.pk)
         old_photo = self._original_photo
         old_thumbnail = self.photo_thumbnail.name if self.photo_thumbnail else None
 
@@ -159,7 +185,7 @@ class BuilderProfile(models.Model):
         return f"{self.user.username} — {self.position}"
 
     def get_absolute_url(self):
-        return reverse('users:view_profile', kwargs={'username': self.user.username})
+        return reverse('users:view_profile', kwargs={'slug': self.slug})
 
     @property
     def get_photo_url(self):

@@ -1,0 +1,18 @@
+{% load i18n %}
+{% if latest_cycle.cover_image %}
+  <img src="{{ latest_cycle.cover_image.url }}" alt="{{ program.name }}" class="program-cover">
+{% endif %}
+
+<div class="cycle-header-row">
+  <span class="cycle-title">{{ latest_cycle.display_label }}</span>
+  {% if latest_cycle.deadline_verbose %}
+    <span class="cycle-deadline-text">{{ latest_cycle.deadline_verbose }}</span>
+  {% endif %}
+</div>
+
+{% if latest_cycle.description %}
+  <div class="profile-section">
+    <div class="profile-value">{{ latest_cycle.description|linebreaksbr }}</div>
+  </div>
+{% endif %}
+

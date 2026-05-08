@@ -1,0 +1,53 @@
+{% load i18n %}
+<div id="apply-block">
+
+  {% if applied %}
+
+    <div class="profile-success-banner" id="apply-success-banner" style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.5rem;">
+      <span>{% trans "Your application has been submitted successfully. We'll be in touch!" %}</span>
+      <button type="button" onclick="document.getElementById('apply-success-banner').style.display='none';" style="background:none;border:none;cursor:pointer;font-size:1rem;line-height:1;color:#166534;padding:0;flex-shrink:0;">×</button>
+    </div>
+
+  {% endif %}
+
+  {% if already_applied %}
+
+    <div class="profile-section">
+      <label class="form-input-label">{% trans "Register" %}</label>
+      <div class="profile-muted">{% trans "You have already submitted an application with this email." %}</div>
+    </div>
+
+  {% else %}
+
+    <label class="form-input-label" style="display:block;margin-bottom:1rem;">{% trans "Register" %}</label>
+
+    <form
+      hx-post="{% url 'hub:program_apply' slug=program.slug %}"
+      hx-target="#apply-block"
+      hx-swap="outerHTML">
+      {% csrf_token %}
+
+      {% for field in apply_form %}
+      <div class="form-field" style="margin-bottom:0.75rem;">
+        <label class="form-input-label" for="{{ field.id_for_label }}">
+          {{ field.label }}{% if field.field.required %} *{% endif %}
+        </label>
+        {{ field }}
+        {% if field.errors %}
+          <div class="form-error">{{ field.errors.0 }}</div>
+        {% endif %}
+      </div>
+      {% endfor %}
+
+      <div class="form-submit">
+        <button type="submit" class="btn-primary">
+          <span class="htmx-indicator-hide">{% trans "Submit Application" %}</span>
+          <span class="htmx-indicator">{% trans "Submitting…" %}</span>
+        </button>
+      </div>
+
+    </form>
+
+  {% endif %}
+
+</div>

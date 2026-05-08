@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<section class="container">
+  <div class="layout-grid">
+    <div class="layout-block span-col-3">
+      <div class="profile-section">
+        <h2 class="meduim-bold">{{ program.name }}</h2>
+        <div class="profile-value">{% trans "Registrations are not open at this time." %}</div>
+        <a href="{% url 'hub:view_program' slug=program.slug %}" class="form-link" style="display:inline-block;margin-top:1rem;">← {% trans "Back to program" %}</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

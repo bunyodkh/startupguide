@@ -1,0 +1,10 @@
+{% load i18n %}
+<label class="form-input-label">{% trans "Contributors" %}</label>
+<div class="program-people-cards" style="margin-top:0.5rem;">
+  {% for person in latest_cycle.contributors.all %}
+    <a href="{{ person.get_absolute_url }}" class="person-card">
+      <div class="person-image"><img src="{{ person.get_thumbnail_url }}" alt="{{ person.user.get_full_name }}"></div>
+      <div class="person-info"><div class="person-name small-text">{{ person.user.get_full_name }}</div></div>
+    </a>
+  {% endfor %}
+</div>

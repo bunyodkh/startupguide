@@ -1,0 +1,40 @@
+{% load i18n %}
+<div class="cycle-meta-grid">
+
+  {% if latest_cycle.duration_display %}
+  <div class="cycle-meta-block">
+    <label class="form-input-label">{% if latest_cycle.start_date and latest_cycle.end_date %}{% trans "Dates" %}{% else %}{% trans "Date" %}{% endif %}</label>
+    <div class="profile-value">{{ latest_cycle.duration_display }}</div>
+  </div>
+  {% endif %}
+
+  {% if latest_cycle.registration_deadline %}
+  <div class="cycle-meta-block">
+    <label class="form-input-label">{% trans "Registration Deadline" %}</label>
+    <div class="profile-value">{{ latest_cycle.registration_deadline }}</div>
+  </div>
+  {% endif %}
+
+  {% with orgs=latest_cycle.organizers.all %}
+  {% if orgs %}
+  <div class="cycle-meta-block">
+    <label class="form-input-label">{% if orgs|length == 1 %}{% trans "Organizer" %}{% else %}{% trans "Organizers" %}{% endif %}</label>
+    <div class="profile-chips" style="margin-top:0.35rem;">
+      {% for org in orgs %}<span class="ms-chip">{{ org.short_name|default:org.name }}</span>{% endfor %}
+    </div>
+  </div>
+  {% endif %}
+  {% endwith %}
+
+  {% with regions=latest_cycle.regions.all %}
+  {% if regions %}
+  <div class="cycle-meta-block">
+    <label class="form-input-label">{% if regions|length == 1 %}{% trans "Region" %}{% else %}{% trans "Regions" %}{% endif %}</label>
+    <div class="profile-chips" style="margin-top:0.35rem;">
+      {% for region in regions %}<span class="ms-chip">{{ region.name }}</span>{% endfor %}
+    </div>
+  </div>
+  {% endif %}
+  {% endwith %}
+
+</div>

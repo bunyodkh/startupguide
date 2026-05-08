@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Prefetch
 from django.shortcuts import render, redirect
 
-from hub.models import ProgramCycle
+from hub.models import EcosystemEntity, ProgramCycle
 from .forms import BuilderProfileForm
 from .models import BuilderProfile
 
@@ -38,20 +38,23 @@ def manage_profile(request):
     })
 
 
-def view_profile(request, username):
+def view_profile(request, slug):
     cycles_qs = ProgramCycle.objects.select_related('program').only(
         'id', 'title', 'cycle_number',
         'program__id', 'program__name', 'program__short_name',
     ).order_by('program__name', '-cycle_number')
+
+    programs_qs = EcosystemEntity.objects.only('id', 'name', 'short_name').order_by('name')
 
     profile = (
         BuilderProfile.objects
         .select_related('user')
         .prefetch_related(
             'affiliated_entities',
-            Prefetch('coordinated_cycles', queryset=cycles_qs),
+            Prefetch('coordinated_programs', queryset=programs_qs),
+            Prefetch('contributed_cycles', queryset=cycles_qs),
         )
-        .filter(user__username=username)
+        .filter(slug=slug)
         .first()
     )
     if not profile:

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<section class="container">
+  <div class="layout-grid">
+
+    <!-- Header -->
+    <div class="layout-block span-col-3">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:1rem;">
+        <div>
+          <h2 class="meduim-bold">{{ program.name }} {% trans "All Cycles" %}</h2>
+        </div>
+        <div style="display:flex;gap:1.25rem;align-items:center;">
+          <a href="{% url 'hub:cycle_create_page' pk=program.pk %}" class="btn-primary" style="display:inline-block;width:auto;padding:0.4rem 1rem;font-size:0.85rem;">+ {% trans "New Cycle" %}</a>
+          <a href="{% url 'hub:program_manage' pk=program.pk %}" class="form-link">← {% trans "Back to manage" %}</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="layout-block span-col-3" style="padding:0;overflow:hidden;">
+      {% if cycles %}
+      <table class="cycle-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>{% trans "Title" %}</th>
+            <th>{% trans "Status" %}</th>
+            <th>{% trans "Start" %}</th>
+            <th>{% trans "End" %}</th>
+            <th>{% trans "Reg. deadline" %}</th>
+            <th>{% trans "State" %}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for cycle in cycles %}
+          <tr class="{% if not cycle.is_active %}cycle-table-row--archived{% endif %}">
+            <td class="cycle-table-num">{{ cycle.cycle_number }}</td>
+            <td>{{ cycle.display_label }}</td>
+            <td>
+              {% if cycle.status %}
+                <span class="program-status program-status--small">{{ cycle.get_status_display }}</span>
+              {% else %}
+                <span class="profile-muted">—</span>
+              {% endif %}
+            </td>
+            <td class="profile-muted">{{ cycle.start_date|default:"—" }}</td>
+            <td class="profile-muted">{{ cycle.end_date|default:"—" }}</td>
+            <td class="profile-muted">{{ cycle.registration_deadline|default:"—" }}</td>
+            <td>
+              {% if cycle.is_active %}
+                <span class="cycle-state-badge cycle-state-badge--active">{% trans "Active" %}</span>
+              {% else %}
+                <span class="cycle-state-badge cycle-state-badge--archived">{% trans "Archived" %}</span>
+              {% endif %}
+            </td>
+            <td>
+              <div style="display:flex;align-items:center;gap:0.75rem;justify-content:flex-end;">
+
+                <a href="{% url 'hub:cycle_edit_page' pk=program.pk cycle_pk=cycle.pk %}" class="form-link" style="font-size:0.8rem;">{% trans "Edit" %}</a>
+
+                <form method="post" action="{% url 'hub:cycle_archive' pk=program.pk cycle_pk=cycle.pk %}" style="margin:0;">
+                  {% csrf_token %}
+                  <button type="submit" class="cycle-table-action">
+                    {% if cycle.is_active %}{% trans "Archive" %}{% else %}{% trans "Restore" %}{% endif %}
+                  </button>
+                </form>
+
+
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+        <div style="padding:1.5rem;">
+          <div class="profile-muted" style="margin-bottom:1rem;">{% trans "No cycles yet." %}</div>
+          <a href="{% url 'hub:cycle_create_page' pk=program.pk %}" class="btn-primary" style="display:inline-block;width:auto;padding:0.4rem 1rem;font-size:0.85rem;">{% trans "Create first cycle" %}</a>
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+</section>
+{% endblock %}

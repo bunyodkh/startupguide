@@ -1,0 +1,53 @@
+{% load i18n %}
+<tr id="cycle-row-{{ cycle.pk }}" class="{% if not cycle.is_active %}cycle-table-row--archived{% endif %}">
+  <td class="cycle-table-num">{{ cycle.cycle_number }}</td>
+  <td>
+    {% if cycle.is_active %}
+      <a href="?cycle={{ cycle.pk }}" class="form-link" style="font-weight:500;">{{ cycle.display_label }}</a>
+    {% else %}
+      <span style="font-weight:500;color:var(--text-muted);">{{ cycle.display_label }}</span>
+    {% endif %}
+  </td>
+  <td>
+    {% if cycle.status %}
+      <span class="program-status program-status--small">{{ cycle.get_status_display }}</span>
+    {% else %}
+      <span class="profile-muted">—</span>
+    {% endif %}
+  </td>
+  <td class="profile-muted">{{ cycle.start_date|date:"M d, Y"|default:"—" }}</td>
+  <td class="profile-muted">{{ cycle.end_date|date:"M d, Y"|default:"—" }}</td>
+  <td class="profile-muted">{{ cycle.registration_deadline|date:"M d, Y"|default:"—" }}</td>
+  <td>
+    {% if cycle.is_active %}
+    <form
+      hx-post="{% url 'hub:cycle_toggle' pk=program.pk cycle_pk=cycle.pk %}"
+      hx-target="#cycle-row-{{ cycle.pk }}"
+      hx-swap="outerHTML"
+      hx-trigger="change"
+      style="margin:0;">
+      {% csrf_token %}
+      <label class="toggle-switch" style="margin:0;">
+        <input type="checkbox" checked>
+        <span class="toggle-track"><span class="toggle-thumb"></span></span>
+      </label>
+    </form>
+    {% else %}
+      <span class="profile-muted" style="font-size:0.75rem;">{% trans "Archived" %}</span>
+    {% endif %}
+  </td>
+  <td>
+    <div style="display:flex;align-items:center;gap:0.75rem;justify-content:flex-end;">
+      {% if cycle.is_active %}
+        <a href="?cycle={{ cycle.pk }}" class="form-link" style="font-size:0.8rem;">{% trans "Manage" %}</a>
+        <a href="{% url 'hub:cycle_edit_page' pk=program.pk cycle_pk=cycle.pk %}" class="form-link" style="font-size:0.8rem;">{% trans "Edit" %}</a>
+      {% endif %}
+      <form method="post" action="{% url 'hub:cycle_archive' pk=program.pk cycle_pk=cycle.pk %}" style="margin:0;">
+        {% csrf_token %}
+        <button type="submit" class="cycle-table-action cycle-table-action--danger">
+          {% if cycle.is_active %}{% trans "Archive" %}{% else %}{% trans "Restore" %}{% endif %}
+        </button>
+      </form>
+    </div>
+  </td>
+</tr>

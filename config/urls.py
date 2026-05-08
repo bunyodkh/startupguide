@@ -18,7 +18,7 @@ urlpatterns += i18n_patterns(
     path('accounts/signup/', SignupView.as_view(), name='account_signup'),
     path('accounts/signout/', LogoutView.as_view(), name='account_signout'),
     path('', include('hub.urls')),
-    path('users/', include('users.urls')),
+    path('', include('users.urls')),
 
     prefix_default_language=True,
 )

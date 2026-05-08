@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<section class="container">
+  <div class="layout-grid">
+
+    <div class="layout-block span-col-3">
+      <h2 class="meduim-bold">{{ program.name }}</h2>
+      <div class="profile-muted">{{ cycle.display_label }} — {% trans "Registration" %}</div>
+    </div>
+
+    <div class="layout-block span-col-2">
+
+      {% if already_applied %}
+        <div class="profile-section">
+          <div class="profile-value">{% trans "You have already submitted a registration with this email address." %}</div>
+        </div>
+      {% else %}
+        <form method="post" novalidate>
+          {% csrf_token %}
+
+          {% for field in form %}
+          <div class="profile-section">
+            <label class="form-input-label" for="{{ field.id_for_label }}">
+              {{ field.label }}{% if field.field.required %} *{% endif %}
+            </label>
+            {{ field }}
+            {% if field.errors %}
+              {% for error in field.errors %}
+                <div class="profile-muted" style="color:#dc2626;margin-top:0.2rem;">{{ error }}</div>
+              {% endfor %}
+            {% endif %}
+          </div>
+          {% endfor %}
+
+          <button type="submit" class="cta">{% trans "Submit Application" %}</button>
+        </form>
+      {% endif %}
+
+    </div>
+
+    <div class="layout-block span-col-1">
+      {% if program.description %}
+        <div class="profile-section">
+          <label class="form-input-label">{% trans "About" %}</label>
+          <div class="profile-value">{{ program.description|linebreaksbr }}</div>
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+</section>
+{% endblock %}

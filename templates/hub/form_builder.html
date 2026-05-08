@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<section class="container">
+  <div class="layout-grid">
+
+    <div class="layout-block span-col-3">
+      <h2 class="meduim-bold">{{ program.name }} — {% trans "Registration Form" %}</h2>
+      <div class="profile-muted">{{ cycle.display_label }}</div>
+    </div>
+
+    <!-- Settings -->
+    <div class="layout-block span-col-1">
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="settings">
+
+        <div class="profile-section">
+          <label class="form-input-label">{% trans "Form Settings" %}</label>
+
+          <div class="form-check-row">
+            <input type="checkbox" name="is_open" id="is_open" {% if reg_form.is_open %}checked{% endif %}>
+            <label for="is_open">{% trans "Accepting registrations" %}</label>
+          </div>
+          <div class="form-check-row">
+            <input type="checkbox" name="ask_phone" id="ask_phone" {% if reg_form.ask_phone %}checked{% endif %}>
+            <label for="ask_phone">{% trans "Ask phone number" %}</label>
+          </div>
+          <div class="form-check-row">
+            <input type="checkbox" name="ask_role" id="ask_role" {% if reg_form.ask_role %}checked{% endif %}>
+            <label for="ask_role">{% trans "Ask who they are" %}</label>
+          </div>
+        </div>
+
+        <button type="submit" class="cta">{% trans "Save settings" %}</button>
+      </form>
+    </div>
+
+    <!-- Custom fields -->
+    <div class="layout-block span-col-2">
+
+      <div class="profile-section">
+        <label class="form-input-label">{% trans "Fixed Fields" %}</label>
+        <div class="profile-muted">{% trans "Full Name, Email" %} {% if reg_form.ask_phone %}, {% trans "Phone" %}{% endif %} {% if reg_form.ask_role %}, {% trans "Who are you?" %}{% endif %}</div>
+      </div>
+
+      <div class="profile-section">
+        <label class="form-input-label">{% trans "Custom Questions" %}</label>
+
+        {% if custom_fields %}
+        <div class="cycles-list" style="margin-bottom: 1rem;">
+          {% for field in custom_fields %}
+          <div class="cycle-item">
+            <div class="cycle-item-header">
+              <span class="cycle-item-label">{{ field.label }}</span>
+              {% if field.is_required %}<span class="program-status program-status--small">{% trans "Required" %}</span>{% endif %}
+              <form method="post" style="margin-left:auto;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="delete_field">
+                <input type="hidden" name="field_id" value="{{ field.pk }}">
+                <button type="submit" class="profile-muted" style="background:none;border:none;cursor:pointer;font-size:0.8rem;">{% trans "Remove" %}</button>
+              </form>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="add_field">
+          <div style="display:flex;gap:0.5rem;align-items:flex-end;flex-wrap:wrap;">
+            <div style="flex:1;min-width:200px;">
+              <label class="form-input-label" for="label">{% trans "Question label" %}</label>
+              <input type="text" name="label" id="label" class="form-input" placeholder="{% trans "e.g. Tell us about your project" %}">
+            </div>
+            <div style="display:flex;align-items:center;gap:0.4rem;padding-bottom:0.1rem;">
+              <input type="checkbox" name="is_required" id="field_required">
+              <label for="field_required" style="font-size:0.8rem;">{% trans "Required" %}</label>
+            </div>
+            <button type="submit" class="cta">{% trans "Add" %}</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="profile-section">
+        <a href="{% url 'hub:form_responses' pk=program.pk %}" class="form-link">{% trans "View responses" %} →</a>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<section class="container">
+  <div class="layout-grid">
+    <div class="layout-block span-col-3">
+      <div class="profile-section">
+        <h2 class="meduim-bold">{% trans "Access Denied" %}</h2>
+        <div class="profile-value">{% trans "You do not have permission to access this page." %}</div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

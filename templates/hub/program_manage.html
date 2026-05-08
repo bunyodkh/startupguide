@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<section class="container">
+  <div class="layout-grid">
+
+    <!-- Header -->
+    <div class="layout-block span-col-3">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:1rem;">
+        <div>
+          <h2 class="meduim-bold">{{ program.name }} {% trans 'Dashboard' %}</h2>
+        </div>
+        <div style="display:flex;gap:1.25rem;align-items:center;">
+          {% if latest_cycle %}
+            <a href="{% url 'hub:program_manage' pk=program.pk %}" class="form-link" style="font-size:0.8rem;">← {% trans "All cycles" %}</a>
+          {% else %}
+            <a href="{% url 'hub:cycle_create_page' pk=program.pk %}" class="form-link" style="font-size:0.8rem;">+ {% trans "New cycle" %}</a>
+          {% endif %}
+          {% if reg_form and latest_cycle %}
+            <a href="{% url 'hub:form_responses' pk=program.pk %}" class="form-link" style="font-size:0.8rem;">{% trans "View responses" %}</a>
+          {% endif %}
+          <a href="{% url 'hub:view_program' slug=program.slug %}" class="form-link">{% trans "Public page" %} →</a>
+        </div>
+      </div>
+    </div>
+
+    {% if latest_cycle %}
+
+    <!-- Cycle dashboard -->
+    <div class="span-col-3" style="display:flex;gap:1rem;align-items:stretch;">
+
+      <div class="layout-block" style="flex:1;min-width:0;">
+        {% include "hub/partials/_active_cycle_form.html" %}
+      </div>
+
+      <div class="layout-block" style="flex:1;min-width:0;">
+        {% if reg_form %}
+          {% include "hub/partials/_form_section.html" %}
+        {% else %}
+          <div class="profile-muted">{% trans "Create a cycle first to set up the registration form." %}</div>
+        {% endif %}
+      </div>
+
+    </div>
+
+    <!-- Recent Registrations -->
+    <div class="layout-block span-col-3">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.75rem;">
+        <label class="form-input-label">{% trans "Recent Registrations" %}</label>
+        {% if reg_form %}
+          <a href="{% url 'hub:form_responses' pk=program.pk %}" class="form-link" style="font-size:0.75rem;">{% trans "View all" %} →</a>
+        {% endif %}
+      </div>
+      {% if recent_responses %}
+        <div>
+          {% for response in recent_responses %}
+            <div style="display:flex;justify-content:space-between;align-items:baseline;padding:0.5rem 0;border-bottom:1px solid var(--border-color);">
+              <div>
+                <span style="font-size:0.85rem;font-weight:500;">{{ response.full_name }}</span>
+                <span class="profile-muted" style="font-size:0.75rem;margin-left:0.5rem;">{{ response.email }}</span>
+              </div>
+              <div class="profile-muted" style="font-size:0.75rem;white-space:nowrap;margin-left:1rem;">{{ response.submitted_at|date:"M d, H:i" }}</div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="profile-muted" style="font-size:0.85rem;">{% trans "No registrations yet." %}</div>
+      {% endif %}
+    </div>
+
+    {% else %}
+
+    <!-- Cycles table -->
+    <div class="layout-block span-col-3" style="padding:0;overflow:hidden;">
+      {% if all_cycles %}
+      <table class="cycle-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>{% trans "Title" %}</th>
+            <th>{% trans "Status" %}</th>
+            <th>{% trans "Start" %}</th>
+            <th>{% trans "End" %}</th>
+            <th>{% trans "Reg. deadline" %}</th>
+            <th>{% trans "Active" %}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in all_cycles %}
+            {% include "hub/partials/_cycle_table_row.html" with cycle=c %}
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+        <div style="padding:1.5rem;">
+          <div class="profile-muted" style="margin-bottom:1rem;">{% trans "No cycles yet." %}</div>
+          <a href="{% url 'hub:cycle_create_page' pk=program.pk %}" class="btn-primary" style="display:inline-block;width:auto;padding:0.4rem 1rem;font-size:0.85rem;">{% trans "Create first cycle" %}</a>
+        </div>
+      {% endif %}
+    </div>
+
+    {% endif %}
+
+  </div>
+</section>
+{% endblock %}

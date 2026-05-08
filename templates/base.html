@@ -13,5 +13,28 @@
     {% include "components/navbar.html" %}
 
     {% block content %}{% endblock %}
+
+<script>
+document.body.addEventListener('htmx:configRequest', function (evt) {
+    evt.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+});
+
+function autoResizeTextarea(el) {
+    el.style.height = 'auto';
+    el.style.height = el.scrollHeight + 'px';
+}
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('textarea.form-input').forEach(function (el) {
+        autoResizeTextarea(el);
+        el.addEventListener('input', function () { autoResizeTextarea(el); });
+    });
+});
+document.addEventListener('htmx:afterSettle', function () {
+    document.querySelectorAll('textarea.form-input').forEach(function (el) {
+        autoResizeTextarea(el);
+        el.addEventListener('input', function () { autoResizeTextarea(el); });
+    });
+});
+</script>
 </body>
 </html>

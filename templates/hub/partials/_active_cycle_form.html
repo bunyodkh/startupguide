@@ -1,0 +1,100 @@
+{% load i18n %}
+<div id="active-cycle-section">
+
+  {% if cycle %}
+
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.75rem;">
+    <span class="form-input-label">{{ cycle.display_label }}</span>
+  </div>
+
+    <form
+      hx-post="{% url 'hub:cycle_manage' pk=program.pk %}"
+      hx-target="#active-cycle-section"
+      hx-swap="outerHTML"
+      hx-encoding="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="form-field" style="margin-bottom:0.5rem;">
+        <label class="form-input-label" for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+        {{ form.title }}
+        {% if form.title.errors %}<div class="form-error">{{ form.title.errors.0 }}</div>{% endif %}
+      </div>
+
+      <div class="form-field" style="margin-bottom:0.5rem;">
+        <label class="form-input-label" for="{{ form.status.id_for_label }}">{{ form.status.label }}</label>
+        {{ form.status }}
+        {% if form.status.errors %}<div class="form-error">{{ form.status.errors.0 }}</div>{% endif %}
+      </div>
+
+      <div class="form-field" style="margin-bottom:0.5rem;">
+        <label class="form-input-label" for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+        {{ form.description }}
+        {% if form.description.errors %}<div class="form-error">{{ form.description.errors.0 }}</div>{% endif %}
+      </div>
+
+      <div class="form-field" style="margin-bottom:0.5rem;">
+        <label class="form-input-label" for="{{ form.start_date.id_for_label }}">{{ form.start_date.label }}</label>
+        {{ form.start_date }}
+      </div>
+
+      <div class="form-field" style="margin-bottom:0.5rem;">
+        <label class="form-input-label" for="{{ form.end_date.id_for_label }}">{{ form.end_date.label }}</label>
+        {{ form.end_date }}
+      </div>
+
+      <div class="form-field" style="margin-bottom:0.5rem;">
+        <label class="form-input-label" for="{{ form.registration_deadline.id_for_label }}">{{ form.registration_deadline.label }}</label>
+        {{ form.registration_deadline }}
+      </div>
+
+      <div class="form-field" style="margin-bottom:0.75rem;">
+        <label class="form-input-label">{{ form.cover_image.label }}</label>
+        <div class="image-upload-wrap">
+          <img
+            id="cover-preview"
+            class="image-upload-preview{% if not cycle.cover_image %} image-upload-preview--hidden{% endif %}"
+            src="{% if cycle.cover_image %}{{ cycle.cover_image.url }}{% else %}{% endif %}"
+            alt="">
+          <label class="image-upload-btn" for="{{ form.cover_image.id_for_label }}">
+            <span id="cover-upload-label">{% if cycle.cover_image %}{% trans "Change image" %}{% else %}{% trans "Upload image" %}{% endif %}</span>
+          </label>
+          <div style="display:none;">{{ form.cover_image }}</div>
+        </div>
+      </div>
+
+      <div class="form-submit" style="padding-top:0.25rem;">
+        <button type="submit" class="btn-primary">
+          <span class="htmx-indicator-hide">{% trans "Save Changes" %}</span>
+          <span class="htmx-indicator">{% trans "Saving…" %}</span>
+        </button>
+      </div>
+
+    </form>
+
+  {% else %}
+    <label class="form-input-label" style="display:block;margin-bottom:0.75rem;">{% trans "Active Cycle" %}</label>
+    <div class="profile-muted" style="margin-bottom:1rem;">{% trans "No cycles yet." %}</div>
+    <a href="{% url 'hub:cycle_create_page' pk=program.pk %}" class="btn-primary" style="display:inline-block;width:auto;padding:0.4rem 1rem;font-size:0.85rem;">{% trans "Create first cycle" %}</a>
+  {% endif %}
+
+</div>
+
+<script>
+(function () {
+  var input = document.getElementById('{{ form.cover_image.id_for_label }}');
+  if (!input) return;
+  input.addEventListener('change', function () {
+    var file = this.files[0];
+    if (!file) return;
+    var preview = document.getElementById('cover-preview');
+    var lbl = document.getElementById('cover-upload-label');
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      preview.src = e.target.result;
+      preview.classList.remove('image-upload-preview--hidden');
+    };
+    reader.readAsDataURL(file);
+    if (lbl) lbl.textContent = file.name;
+  });
+})();
+</script>

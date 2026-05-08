@@ -1,0 +1,30 @@
+{% load i18n %}
+{% if program.description %}
+  <div class="profile-section">
+    <label class="form-input-label">{% trans "About" %}</label>
+    <div class="profile-value" style="margin-top:0.5rem;">{{ program.description|linebreaksbr }}</div>
+  </div>
+{% endif %}
+
+{% if program.coordinators.exists %}
+  <div class="profile-section">
+    <label class="form-input-label">{% trans "Coordinators" %}</label>
+    <div class="people-cards program-people-cards" style="margin-top:0.5rem;">
+      {% for person in program.coordinators.all %}
+        <a href="{{ person.get_absolute_url }}" class="person-card">
+          <div class="person-image"><img src="{{ person.get_thumbnail_url }}" alt="{{ person.user.get_full_name }}"></div>
+          <div class="person-info"><div class="person-name small-text">{{ person.user.get_full_name }}</div></div>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}
+
+{% if program.website %}
+  <div class="profile-section">
+    <label class="form-input-label">{% trans "Website" %}</label>
+    <div class="profile-contact-links" style="margin-top:0.5rem;">
+      <a href="{{ program.website }}" target="_blank" rel="noopener" class="form-link">{{ program.website }}</a>
+    </div>
+  </div>
+{% endif %}

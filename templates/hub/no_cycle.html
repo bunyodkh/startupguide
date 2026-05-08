@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<section class="container">
+  <div class="layout-grid">
+    <div class="layout-block span-col-3">
+      <div class="profile-section">
+        <h2 class="meduim-bold">{{ program.name }}</h2>
+        <div class="profile-value">{% trans "This program has no active cycle. Create a cycle first before setting up a registration form." %}</div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% load i18n %}
+<div id="cycle-{{ cycle.pk }}" class="cycle-item">
+  <div class="cycle-item-header">
+    <span class="cycle-item-label">{{ cycle.display_label }}</span>
+    {% if cycle.status %}
+      <span class="program-status program-status--small">{{ cycle.get_status_display }}</span>
+    {% endif %}
+    <button
+      class="form-link"
+      style="margin-left:auto;background:none;border:none;cursor:pointer;padding:0;"
+      hx-get="{% url 'hub:cycle_edit' pk=program.pk cycle_pk=cycle.pk %}"
+      hx-target="#cycle-{{ cycle.pk }}"
+      hx-swap="outerHTML">{% trans "Edit" %}</button>
+  </div>
+  {% if cycle.duration_display %}
+    <div class="profile-muted" style="font-size:0.75rem;margin-top:0.25rem;">{{ cycle.duration_display }}</div>
+  {% endif %}
+</div>

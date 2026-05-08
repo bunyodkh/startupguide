@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load i18n hub_extras %}
+
+{% block content %}
+<section class="container">
+  <div class="layout-grid">
+
+    <div class="layout-block span-col-3">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:1rem;">
+        <div>
+          <h2 class="meduim-bold">{{ program.name }} — {% trans "Responses" %}</h2>
+          {% if cycle %}<div class="profile-muted">{{ cycle.display_label }}</div>{% endif %}
+        </div>
+        <a href="{% url 'hub:program_manage' pk=program.pk %}" class="form-link">← {% trans "Back to dashboard" %}</a>
+      </div>
+    </div>
+
+    <div class="layout-block span-col-3">
+      {% if not reg_form %}
+        <div class="profile-section">
+          <div class="profile-muted">{% trans "No registration form has been created for this program yet." %}</div>
+        </div>
+      {% elif not responses %}
+        <div class="profile-section">
+          <div class="profile-muted">{% trans "No responses yet." %}</div>
+        </div>
+      {% else %}
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:0.8rem;">
+            <thead>
+              <tr style="border-bottom:2px solid var(--border-color);text-align:left;">
+                <th style="padding:0.5rem 0.75rem;">{% trans "Name" %}</th>
+                <th style="padding:0.5rem 0.75rem;">{% trans "Email" %}</th>
+                {% if reg_form.ask_phone %}<th style="padding:0.5rem 0.75rem;">{% trans "Phone" %}</th>{% endif %}
+                {% if reg_form.ask_role %}<th style="padding:0.5rem 0.75rem;">{% trans "Role" %}</th>{% endif %}
+                {% for cf in custom_fields %}
+                  <th style="padding:0.5rem 0.75rem;">{{ cf.label }}</th>
+                {% endfor %}
+                <th style="padding:0.5rem 0.75rem;">{% trans "Submitted" %}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for resp in responses %}
+              <tr style="border-bottom:1px solid var(--border-color);">
+                <td style="padding:0.5rem 0.75rem;">{{ resp.full_name }}</td>
+                <td style="padding:0.5rem 0.75rem;">{{ resp.email }}</td>
+                {% if reg_form.ask_phone %}<td style="padding:0.5rem 0.75rem;">{{ resp.phone }}</td>{% endif %}
+                {% if reg_form.ask_role %}<td style="padding:0.5rem 0.75rem;">{{ resp.role }}</td>{% endif %}
+                {% for cf in custom_fields %}
+                  <td style="padding:0.5rem 0.75rem;">{{ resp.custom_answers|get_item:cf.label }}</td>
+                {% endfor %}
+                <td style="padding:0.5rem 0.75rem;white-space:nowrap;">{{ resp.submitted_at|date:"d M Y" }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+</section>
+{% endblock %}

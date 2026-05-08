@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<section class="container">
+  <div class="layout-grid">
+
+    <div class="layout-block span-col-3">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:1rem;">
+        <div>
+          <h2 class="meduim-bold">{{ program.name }}</h2>
+          <div class="profile-muted">{% if editing %}{% trans "Edit Cycle" %}{% else %}{% trans "New Cycle" %}{% endif %}</div>
+        </div>
+        <div style="display:flex;gap:1.25rem;align-items:center;">
+          <a href="{% url 'hub:cycle_list' pk=program.pk %}" class="form-link" style="font-size:0.8rem;">{% trans "All cycles" %}</a>
+          <a href="{% url 'hub:program_manage' pk=program.pk %}" class="form-link">← {% trans "Back to manage" %}</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="layout-block span-col-2">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="profile-section">
+          <label class="form-input-label" for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+          {{ form.title }}
+          {% if form.title.errors %}<div class="profile-muted" style="color:#dc2626;">{{ form.title.errors.0 }}</div>{% endif %}
+        </div>
+
+        <div class="profile-section">
+          <label class="form-input-label" for="{{ form.status.id_for_label }}">{{ form.status.label }}</label>
+          {{ form.status }}
+          {% if form.status.errors %}<div class="profile-muted" style="color:#dc2626;">{{ form.status.errors.0 }}</div>{% endif %}
+        </div>
+
+        <div class="profile-section">
+          <label class="form-input-label" for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+          {{ form.description }}
+          {% if form.description.errors %}<div class="profile-muted" style="color:#dc2626;">{{ form.description.errors.0 }}</div>{% endif %}
+        </div>
+
+        <div class="cycle-meta-grid">
+          <div class="cycle-meta-block">
+            <label class="form-input-label" for="{{ form.start_date.id_for_label }}">{{ form.start_date.label }}</label>
+            {{ form.start_date }}
+            {% if form.start_date.errors %}<div class="profile-muted" style="color:#dc2626;">{{ form.start_date.errors.0 }}</div>{% endif %}
+          </div>
+          <div class="cycle-meta-block">
+            <label class="form-input-label" for="{{ form.end_date.id_for_label }}">{{ form.end_date.label }}</label>
+            {{ form.end_date }}
+            {% if form.end_date.errors %}<div class="profile-muted" style="color:#dc2626;">{{ form.end_date.errors.0 }}</div>{% endif %}
+          </div>
+          <div class="cycle-meta-block">
+            <label class="form-input-label" for="{{ form.registration_deadline.id_for_label }}">{{ form.registration_deadline.label }}</label>
+            {{ form.registration_deadline }}
+            {% if form.registration_deadline.errors %}<div class="profile-muted" style="color:#dc2626;">{{ form.registration_deadline.errors.0 }}</div>{% endif %}
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <label class="form-input-label">{{ form.cover_image.label }}</label>
+          <div class="image-upload-wrap">
+            <img
+              id="cycle-cover-preview"
+              class="image-upload-preview{% if not editing or not cycle.cover_image %} image-upload-preview--hidden{% endif %}"
+              src="{% if editing and cycle.cover_image %}{{ cycle.cover_image.url }}{% endif %}"
+              alt="">
+            <label class="image-upload-btn" for="{{ form.cover_image.id_for_label }}">
+              <span id="cycle-cover-label">{% if editing and cycle.cover_image %}{% trans "Change image" %}{% else %}{% trans "Upload image" %}{% endif %}</span>
+            </label>
+            <div style="display:none;">{{ form.cover_image }}</div>
+          </div>
+          {% if form.cover_image.errors %}<div class="form-error">{{ form.cover_image.errors.0 }}</div>{% endif %}
+        </div>
+
+        <div style="display:flex;gap:0.75rem;align-items:center;margin-top:0.5rem;">
+          <button type="submit" class="btn-primary" style="width:auto;padding:0.4rem 1.25rem;">
+            {% if editing %}{% trans "Save Changes" %}{% else %}{% trans "Create Cycle" %}{% endif %}
+          </button>
+          <a href="{% url 'hub:program_manage' pk=program.pk %}" class="form-link">{% trans "Cancel" %}</a>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+</section>
+<script>
+(function () {
+  var input = document.getElementById('{{ form.cover_image.id_for_label }}');
+  if (!input) return;
+  input.addEventListener('change', function () {
+    var file = this.files[0];
+    if (!file) return;
+    var preview = document.getElementById('cycle-cover-preview');
+    var lbl = document.getElementById('cycle-cover-label');
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      preview.src = e.target.result;
+      preview.classList.remove('image-upload-preview--hidden');
+    };
+    reader.readAsDataURL(file);
+    if (lbl) lbl.textContent = file.name;
+  });
+})();
+</script>
+
+{% endblock %}

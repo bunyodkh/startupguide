@@ -63,7 +63,7 @@
                         {% endif %}
 
                         <div class="program-heading">
-                            <h4><a class="program-title" href="{{ program.get_absolute_url }}">{{ cycle.title|default:program.name }}</a></h4>
+                            <h4><a class="program-title" href="{{ program.get_absolute_url }}{% if cycle.slug %}?cycle={{ cycle.slug }}{% endif %}">{{ cycle.title|default:program.name }}</a></h4>
                             {% if cycle.deadline_label %}<p class="program-reg-deadline">{{ cycle.deadline_label }}</p>{% endif %}
                         </div>
                         {% if cycle.duration_display %}<p class="program-dates">{{ cycle.duration_display }}</p>{% endif %}
@@ -77,6 +77,21 @@
         <section class="layout-block span-col-1 span-row-1">
             <div class="layout-block-heading">
                 <h2 class="meduim-bold">{% trans 'Places' %}</h2>
+            </div>
+            <div class="place-list">
+                {% for place in places %}
+                <div class="place-item">
+                    {% if place.logo %}
+                    <img src="{{ place.get_thumbnail_url }}" alt="{{ place.name }}" class="place-logo">
+                    {% else %}
+                    <img src="{% static 'images/default-place.png' %}" alt="{{ place.name }}" class="place-logo">
+                    {% endif %}
+                    <div class="place-info">
+                        <span class="place-name">{{ place.short_name|default:place.name }}</span>
+                        {% if place.category %}<span class="place-category">{{ place.category.name }}</span>{% endif %}
+                    </div>
+                </div>
+                {% endfor %}
             </div>
         </section>
 

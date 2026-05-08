@@ -4,7 +4,7 @@ from modeltranslation.admin import TabbedTranslationAdmin
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
-from .models import EntityCategory, EcosystemEntity, Region, ProgramCycle
+from .models import EntityCategory, EcosystemEntity, Region, ProgramCycle, RegistrationForm, CustomField, RegistrationResponse
 
 
 @admin.register(Region)
@@ -30,12 +30,12 @@ class ProgramCycleInline(TabularInline):
 
 
 @admin.register(ProgramCycle)
-class ProgramCycleAdmin(ModelAdmin):
+class ProgramCycleAdmin(ModelAdmin, TabbedTranslationAdmin):
     list_display = ('__str__', 'program', 'cycle_number', 'status', 'start_date', 'end_date', 'registration_deadline', 'is_active')
     list_filter = ('status', 'is_active', 'program')
     search_fields = ('program__name', 'title')
     autocomplete_fields = ['program', 'organizers']
-    filter_horizontal = ('coordinators', 'regions')
+    filter_horizontal = ('contributors', 'regions')
 
     fieldsets = (
         (_("Cycle"), {
@@ -48,7 +48,7 @@ class ProgramCycleAdmin(ModelAdmin):
             'fields': ('cover_image',),
         }),
         (_("People & Places"), {
-            'fields': ('organizers', 'coordinators', 'regions'),
+            'fields': ('organizers', 'contributors', 'regions'),
         }),
     )
 
@@ -62,6 +62,8 @@ class EcosystemEntityAdmin(ModelAdmin, TabbedTranslationAdmin):
     search_fields = ('name', 'short_name', 'category__name')
     autocomplete_fields = ['parent', 'category']
 
+    filter_horizontal = ('coordinators',)
+
     fieldsets = (
         (_("General"), {
             'fields': ('name', 'short_name', 'category', 'parent', 'description', 'website', 'is_active'),
@@ -71,6 +73,9 @@ class EcosystemEntityAdmin(ModelAdmin, TabbedTranslationAdmin):
         }),
         (_("Location"), {
             'fields': ('has_physical_space', 'city'),
+        }),
+        (_("People"), {
+            'fields': ('coordinators',),
         }),
         (_("Other"), {
             'fields': ('founded_year',),
@@ -82,3 +87,38 @@ class EcosystemEntityAdmin(ModelAdmin, TabbedTranslationAdmin):
             return format_html('<img src="{}" style="height: 32px; border-radius: 4px; object-fit: contain;" />', obj.logo.url)
         return format_html('<span class="text-gray-400 text-xs">{}</span>', _("No logo"))
     get_logo.short_description = _("Logo")
+
+
+class CustomFieldInline(TabularInline):
+    model = CustomField
+    extra = 1
+    fields = ('label', 'is_required', 'order')
+
+
+@admin.register(RegistrationForm)
+class RegistrationFormAdmin(ModelAdmin):
+    list_display = ('__str__', 'is_open', 'ask_phone', 'ask_role', 'response_count')
+    list_filter = ('is_open',)
+    search_fields = ('cycle__program__name', 'cycle__title')
+    inlines = [CustomFieldInline]
+
+    fieldsets = (
+        (_("Form"), {
+            'fields': ('cycle', 'is_open'),
+        }),
+        (_("Fixed Fields"), {
+            'fields': ('ask_phone', 'ask_role'),
+        }),
+    )
+
+    def response_count(self, obj):
+        return obj.responses.count()
+    response_count.short_description = _("Responses")
+
+
+@admin.register(RegistrationResponse)
+class RegistrationResponseAdmin(ModelAdmin):
+    list_display = ('full_name', 'email', 'phone', 'role', 'submitted_at')
+    list_filter = ('form__cycle__program',)
+    search_fields = ('full_name', 'email')
+    readonly_fields = ('form', 'full_name', 'email', 'phone', 'role', 'custom_answers', 'submitted_at')

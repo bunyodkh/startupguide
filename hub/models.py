@@ -4,11 +4,25 @@ from django.db import models
 from django.urls import reverse
 from django.core.files.base import ContentFile
 from django.utils import timezone
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFit
 
 from config.utils import UploadToPath
+
+
+def _unique_slug(model_class, base, exclude_pk=None):
+    slug = slugify(base)[:200] or 'item'
+    qs = model_class.objects.all()
+    if exclude_pk:
+        qs = qs.exclude(pk=exclude_pk)
+    if not qs.filter(slug=slug).exists():
+        return slug
+    n = 2
+    while qs.filter(slug=f"{slug}-{n}").exists():
+        n += 1
+    return f"{slug}-{n}"
 
 
 class Region(models.Model):
@@ -62,6 +76,14 @@ class EcosystemEntity(models.Model):
     name = models.CharField(
         max_length=255,
         verbose_name=_("Name")
+    )
+
+    slug = models.SlugField(
+        max_length=255,
+        unique=True,
+        blank=True,
+        verbose_name=_("Slug"),
+        help_text=_("Leave blank to auto-generate from name.")
     )
 
     category = models.ForeignKey(
@@ -128,6 +150,14 @@ class EcosystemEntity(models.Model):
         verbose_name=_("Logo Thumbnail"),
     )
 
+    coordinators = models.ManyToManyField(
+        'users.BuilderProfile',
+        blank=True,
+        related_name='coordinated_programs',
+        verbose_name=_("Coordinators"),
+        help_text=_("People who coordinate this program.")
+    )
+
     founded_year = models.PositiveIntegerField(
         null=True,
         blank=True,
@@ -149,6 +179,9 @@ class EcosystemEntity(models.Model):
         self._original_logo = self.logo.name if self.logo else None
 
     def save(self, *args, **kwargs):
+        if not self.slug:
+            base = getattr(self, 'name_en', None) or self.name
+            self.slug = _unique_slug(EcosystemEntity, base, exclude_pk=self.pk)
         super().save(*args, **kwargs)
         current_logo = self.logo.name if self.logo else None
         if self.logo and current_logo != self._original_logo:
@@ -187,14 +220,14 @@ class EcosystemEntity(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('hub:view_program', kwargs={'pk': self.pk})
+        return reverse('hub:view_program', kwargs={'slug': self.slug})
 
 
 class ProgramCycle(models.Model):
 
     class ProgramStatus(models.TextChoices):
         UPCOMING    = 'upcoming',    _("Upcoming")
-        ACCEPTING   = 'accepting',   _("Accepting Applications")
+        ACCEPTING   = 'accepting',   _("Registration")
         IN_PROGRESS = 'in_progress', _("In Progress")
         COMPLETED   = 'completed',   _("Completed")
         CANCELLED   = 'cancelled',   _("Cancelled")
@@ -217,6 +250,14 @@ class ProgramCycle(models.Model):
         blank=True,
         verbose_name=_("Title"),
         help_text=_("Optional label, e.g. 'Cohort 3' or 'Spring 2024'")
+    )
+
+    slug = models.SlugField(
+        max_length=255,
+        unique=True,
+        blank=True,
+        verbose_name=_("Slug"),
+        help_text=_("Leave blank to auto-generate.")
     )
 
     description = models.TextField(
@@ -270,10 +311,10 @@ class ProgramCycle(models.Model):
         help_text=_("Organizations that run or host this cycle.")
     )
 
-    coordinators = models.ManyToManyField(
+    contributors = models.ManyToManyField(
         'users.BuilderProfile',
         blank=True,
-        related_name='coordinated_cycles',
+        related_name='contributed_cycles',
         verbose_name=_("Contributors"),
         help_text=_("People contributing to this specific cycle.")
     )
@@ -301,6 +342,11 @@ class ProgramCycle(models.Model):
         if not self.cycle_number:
             last = ProgramCycle.objects.filter(program=self.program).order_by('-cycle_number').first()
             self.cycle_number = (last.cycle_number + 1) if last else 1
+        if not self.slug:
+            title = getattr(self, 'title_en', None) or self.title
+            program_name = getattr(self.program, 'name_en', None) or self.program.name
+            base = title or f"{program_name}-{self.cycle_number}"
+            self.slug = _unique_slug(ProgramCycle, base, exclude_pk=self.pk)
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -365,3 +411,106 @@ class ProgramCycle(models.Model):
         if self.start_date:
             return _("%(date)s") % {'date': fmt(self.start_date, True)}
         return _("Until %(date)s") % {'date': fmt(self.end_date, True)}
+
+
+class RegistrationForm(models.Model):
+    cycle = models.OneToOneField(
+        ProgramCycle,
+        on_delete=models.CASCADE,
+        related_name='registration_form',
+        verbose_name=_("Cycle"),
+    )
+    is_open = models.BooleanField(
+        default=False,
+        verbose_name=_("Accepting Registrations"),
+    )
+    external_url = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name=_("External Registration URL"),
+        help_text=_("If set, shows a button to this URL instead of the built-in form."),
+    )
+    ask_phone = models.BooleanField(
+        default=True,
+        verbose_name=_("Ask Phone"),
+    )
+    ask_role = models.BooleanField(
+        default=True,
+        verbose_name=_("Ask Role"),
+        help_text=_("e.g. Student, Entrepreneur, Researcher"),
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = _("Registration Form")
+        verbose_name_plural = _("Registration Forms")
+
+    def __str__(self):
+        return f"{self.cycle} — Form"
+
+
+class CustomField(models.Model):
+
+    class FieldType(models.TextChoices):
+        TEXT     = 'text',     _("Short answer")
+        TEXTAREA = 'textarea', _("Long answer")
+
+    form = models.ForeignKey(
+        RegistrationForm,
+        on_delete=models.CASCADE,
+        related_name='custom_fields',
+        verbose_name=_("Form"),
+    )
+    label = models.CharField(
+        max_length=255,
+        verbose_name=_("Question"),
+    )
+    field_type = models.CharField(
+        max_length=20,
+        choices=FieldType.choices,
+        default=FieldType.TEXT,
+        verbose_name=_("Answer type"),
+    )
+    is_required = models.BooleanField(
+        default=False,
+        verbose_name=_("Required"),
+    )
+    order = models.PositiveIntegerField(
+        default=0,
+        verbose_name=_("Order"),
+    )
+
+    class Meta:
+        verbose_name = _("Custom Field")
+        verbose_name_plural = _("Custom Fields")
+        ordering = ['order']
+
+    def __str__(self):
+        return self.label
+
+
+class RegistrationResponse(models.Model):
+    form = models.ForeignKey(
+        RegistrationForm,
+        on_delete=models.CASCADE,
+        related_name='responses',
+        verbose_name=_("Form"),
+    )
+    full_name = models.CharField(max_length=255, verbose_name=_("Full Name"))
+    email = models.EmailField(verbose_name=_("Email"))
+    phone = models.CharField(max_length=50, blank=True, verbose_name=_("Phone"))
+    role = models.CharField(max_length=255, blank=True, verbose_name=_("Role"))
+    custom_answers = models.JSONField(default=dict, blank=True, verbose_name=_("Answers"))
+    submitted_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = _("Registration Response")
+        verbose_name_plural = _("Registration Responses")
+        ordering = ['-submitted_at']
+        constraints = [
+            models.UniqueConstraint(fields=['form', 'email'], name='unique_response_per_form'),
+        ]
+
+    def __str__(self):
+        return f"{self.full_name} — {self.form.cycle}"
