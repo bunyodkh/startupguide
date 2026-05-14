@@ -1,0 +1,41 @@
+{% load static %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Server Error — Startup Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600&family=Noto+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+  <nav class="container navbar">
+    <div class="logo">
+      <h1 class="extra-bold"><a href="/" class="neon-split">Startup Guide</a></h1>
+    </div>
+    <div></div>
+    <div></div>
+  </nav>
+
+  <section class="container">
+    <div class="layout-grid">
+
+      <div class="layout-block span-col-2">
+        <div class="error-page">
+          <p class="error-page-code">500</p>
+          <h1 class="meduim-bold error-page-title">Something went wrong</h1>
+          <p class="error-page-text">We're having trouble on our end. Please try again in a moment.</p>
+          <a href="/" class="error-page-link">Back to home →</a>
+        </div>
+      </div>
+
+      <div class="span-col-1"></div>
+
+    </div>
+  </section>
+</body>
+</html>

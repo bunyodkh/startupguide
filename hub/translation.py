@@ -1,5 +1,5 @@
 from modeltranslation.translator import register, TranslationOptions
-from .models import EntityCategory, EcosystemEntity, ProgramCycle, Region, CustomField
+from .models import EntityCategory, EcosystemEntity, ProgramCycle, Region, CustomField, Community
 
 
 @register(Region)
@@ -19,9 +19,14 @@ class EcosystemEntityTranslationOptions(TranslationOptions):
 
 @register(ProgramCycle)
 class ProgramCycleTranslationOptions(TranslationOptions):
-    fields = ('title', 'description')
+    fields = ('title', 'description', 'address')
 
 
 @register(CustomField)
 class CustomFieldTranslationOptions(TranslationOptions):
     fields = ('label',)
+
+
+@register(Community)
+class CommunityTranslationOptions(TranslationOptions):
+    fields = ('title', 'short_title', 'description')

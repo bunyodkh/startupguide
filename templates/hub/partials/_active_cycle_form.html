@@ -8,7 +8,7 @@
   </div>
 
     <form
-      hx-post="{% url 'hub:cycle_manage' pk=program.pk %}"
+      hx-post="{% url 'hub:cycle_manage' pk=program.pk cycle_pk=cycle.pk %}"
       hx-target="#active-cycle-section"
       hx-swap="outerHTML"
       hx-encoding="multipart/form-data">

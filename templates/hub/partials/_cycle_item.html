@@ -3,7 +3,7 @@
   <div class="cycle-item-header">
     <span class="cycle-item-label">{{ cycle.display_label }}</span>
     {% if cycle.status %}
-      <span class="program-status program-status--small">{{ cycle.get_status_display }}</span>
+      <span class="program-status program-status--small program-status--{{ cycle.status }}">{{ cycle.get_status_display }}</span>
     {% endif %}
     <button
       class="form-link"

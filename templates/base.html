@@ -9,10 +9,23 @@
     <title>{% trans "Startup Guide | Hub" %}</title>
     {% include "components/links.html" %}
 </head>
-<body>
+<body{% if cta_announcement %} class="has-cta"{% endif %}>
     {% include "components/navbar.html" %}
 
+    {% if technical_announcement %}
+    <div class="tech-announcement">
+        <p>{{ technical_announcement.message }}</p>
+    </div>
+    {% endif %}
+
     {% block content %}{% endblock %}
+
+    {% if cta_announcement %}
+    <div class="cta-announcement">
+        <span>{{ cta_announcement.message }}</span>
+        <a href="{{ cta_announcement.link }}" class="cta-announcement__link" target="_blank" rel="noopener noreferrer">{{ cta_announcement.link_text }}</a>
+    </div>
+    {% endif %}
 
 <script>
 document.body.addEventListener('htmx:configRequest', function (evt) {
@@ -36,5 +49,6 @@ document.addEventListener('htmx:afterSettle', function () {
     });
 });
 </script>
+{% block scripts %}{% endblock %}
 </body>
 </html>

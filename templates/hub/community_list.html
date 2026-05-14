@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block content %}
+<section class="container">
+
+  <nav class="breadcrumbs">
+    <a href="{% url 'hub:index' %}" class="breadcrumb-link">{% trans 'Home' %}</a>
+    <span class="breadcrumb-sep">·</span>
+    <span class="breadcrumb-current">{% trans 'Communities' %}</span>
+  </nav>
+
+  <div class="pl-header">
+    <h1 class="meduim-bold">{% trans 'Communities' %}</h1>
+  </div>
+
+  <div class="community-list-grid">
+    {% for community in communities %}
+    <a href="{{ community.get_absolute_url }}" class="community-list-card">
+      {% if community.cover_image %}
+      <img src="{{ community.cover_image.url }}" alt="{{ community.title }}" class="community-list-card-cover">
+      {% endif %}
+      <div class="community-list-card-body">
+        <div class="community-card-identity">
+          {% if community.logo %}
+          <img src="{{ community.get_thumbnail_url }}" alt="{{ community.title }}" class="community-card-logo">
+          {% endif %}
+          <div>
+            <h3 class="community-card-title">{{ community.title }}</h3>
+            {% if community.formed_year %}<span class="community-card-meta">{% trans "Since" %} {{ community.formed_year }}</span>{% endif %}
+          </div>
+        </div>
+        {% if community.description %}
+        <p class="community-card-desc">{{ community.description|truncatewords:15 }}</p>
+        {% endif %}
+        <div class="community-card-footer">
+          {% with mc=community.members.count %}{% if mc %}<span class="community-card-stat">{{ mc }} {% trans "members" %}</span>{% endif %}{% endwith %}
+          {% with oc=community.supporting_organizations.count %}{% if oc %}<span class="community-card-stat">{{ oc }} {% trans "orgs" %}</span>{% endif %}{% endwith %}
+        </div>
+      </div>
+    </a>
+    {% empty %}
+    <p class="profile-muted" style="padding: 1rem 0;">{% trans "No communities yet." %}</p>
+    {% endfor %}
+  </div>
+
+</section>
+{% endblock %}

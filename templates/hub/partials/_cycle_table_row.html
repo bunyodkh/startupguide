@@ -10,7 +10,7 @@
   </td>
   <td>
     {% if cycle.status %}
-      <span class="program-status program-status--small">{{ cycle.get_status_display }}</span>
+      <span class="program-status program-status--small program-status--{{ cycle.status }}">{{ cycle.get_status_display }}</span>
     {% else %}
       <span class="profile-muted">—</span>
     {% endif %}
@@ -39,7 +39,6 @@
   <td>
     <div style="display:flex;align-items:center;gap:0.75rem;justify-content:flex-end;">
       {% if cycle.is_active %}
-        <a href="?cycle={{ cycle.pk }}" class="form-link" style="font-size:0.8rem;">{% trans "Manage" %}</a>
         <a href="{% url 'hub:cycle_edit_page' pk=program.pk cycle_pk=cycle.pk %}" class="form-link" style="font-size:0.8rem;">{% trans "Edit" %}</a>
       {% endif %}
       <form method="post" action="{% url 'hub:cycle_archive' pk=program.pk cycle_pk=cycle.pk %}" style="margin:0;">

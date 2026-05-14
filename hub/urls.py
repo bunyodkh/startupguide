@@ -2,6 +2,8 @@ from django.urls import path
 
 from .views import (
     index,
+    community_list,
+    community_detail,
     place_detail,
     place_list,
     program_list,
@@ -47,9 +49,12 @@ urlpatterns = [
     path('programs/<int:pk>/cycles/add/', cycle_htmx_create, name='cycle_create'),
     path('programs/<int:pk>/cycles/<int:cycle_pk>/toggle/', cycle_toggle_htmx, name='cycle_toggle'),
     # HTMX — active cycle inline edit
-    path('programs/<int:pk>/cycles/active/save/', cycle_manage_htmx, name='cycle_manage'),
+    path('programs/<int:pk>/cycles/<int:cycle_pk>/manage/save/', cycle_manage_htmx, name='cycle_manage'),
     # HTMX — form settings
     path('programs/<int:pk>/cycles/<int:cycle_pk>/form/settings/', form_settings_htmx, name='form_settings'),
     path('programs/<int:pk>/cycles/<int:cycle_pk>/form/fields/add/', field_add_htmx, name='field_add'),
     path('programs/<int:pk>/cycles/<int:cycle_pk>/form/fields/<int:field_pk>/delete/', field_delete_htmx, name='field_delete'),
+    # Communities
+    path('communities/', community_list, name='community_list'),
+    path('communities/<slug:slug>/', community_detail, name='community_detail'),
 ]

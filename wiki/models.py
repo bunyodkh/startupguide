@@ -92,9 +92,31 @@ class Resource(models.Model):
         verbose_name=_("Logo"),
     )
 
+    quickinfo_image = ProcessedImageField(
+        upload_to=UploadToPath('quickinfo/images'),
+        processors=[ResizeToFit(800, 800)],
+        format='JPEG',
+        options={'quality': 85},
+        blank=True,
+        null=True,
+        verbose_name=_("Quick Info Image"),
+    )
+
+    original_link = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name=_("Original Link"),
+        help_text=_("Link to the original source or full article. Used in Quick Info as a 'See more' link."),
+    )
+
     is_published = models.BooleanField(
         default=False,
         verbose_name=_("Is Published")
+    )
+    show_on_quickinfo = models.BooleanField(
+        default=False,
+        verbose_name=_("Show on Quick Info"),
+        help_text=_("Show in the quick info carousel on the main page (requires 'quickinfo' category).")
     )
     created_at = models.DateTimeField(
         auto_now_add=True, 
@@ -112,6 +134,10 @@ class Resource(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse('wiki:resource_detail', kwargs={'slug': self.slug})
 
     @property
     def get_logo_url(self):

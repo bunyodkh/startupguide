@@ -41,7 +41,7 @@
             <td>{{ cycle.display_label }}</td>
             <td>
               {% if cycle.status %}
-                <span class="program-status program-status--small">{{ cycle.get_status_display }}</span>
+                <span class="program-status program-status--small program-status--{{ cycle.status }}">{{ cycle.get_status_display }}</span>
               {% else %}
                 <span class="profile-muted">—</span>
               {% endif %}

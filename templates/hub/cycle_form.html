@@ -18,7 +18,8 @@
       </div>
     </div>
 
-    <div class="layout-block span-col-2">
+    <!-- Cycle fields -->
+    <div class="layout-block span-col-2" style="{% if editing %}grid-row:1{% endif %}">
       <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
 
@@ -83,6 +84,40 @@
 
       </form>
     </div>
+
+    {% if editing %}
+
+    <!-- Registration form settings -->
+    <div class="layout-block span-col-1" style="grid-row:1">
+      {% include "hub/partials/_form_section.html" %}
+    </div>
+
+    <!-- Recent registrations -->
+    <div class="layout-block span-col-3">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.75rem;">
+        <label class="form-input-label">{% trans "Recent Registrations" %}</label>
+        {% if reg_form %}
+          <a href="{% url 'hub:form_responses' pk=program.pk %}" class="form-link" style="font-size:0.75rem;">{% trans "View all" %} →</a>
+        {% endif %}
+      </div>
+      {% if recent_responses %}
+        <div>
+          {% for response in recent_responses %}
+            <div style="display:flex;justify-content:space-between;align-items:baseline;padding:0.5rem 0;border-bottom:1px solid var(--border-color);">
+              <div>
+                <span style="font-size:0.85rem;font-weight:500;">{{ response.full_name }}</span>
+                <span class="profile-muted" style="font-size:0.75rem;margin-left:0.5rem;">{{ response.email }}</span>
+              </div>
+              <div class="profile-muted" style="font-size:0.75rem;white-space:nowrap;margin-left:1rem;">{{ response.submitted_at|date:"M d, H:i" }}</div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="profile-muted" style="font-size:0.85rem;">{% trans "No registrations yet." %}</div>
+      {% endif %}
+    </div>
+
+    {% endif %}
 
   </div>
 </section>

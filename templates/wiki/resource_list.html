@@ -5,34 +5,48 @@
 {% block content %}
 <section class="container">
 
-  <div class="pl-header">
-    <h1 class="meduim-bold">{% trans 'Resources' %}</h1>
-  </div>
+  <div class="layout-grid">
 
-  {% for category_label, items in groups %}
-    <div class="pl-month-group">
-      <p class="pl-month-label">{% if category_label %}{{ category_label }}{% else %}{% trans 'Other' %}{% endif %}</p>
+    <!-- Main content -->
+    <div class="span-col-2">
 
-      <div class="resource-list resource-list--grid">
-        {% for resource in items %}
-          <div class="resource-item">
-            {% if resource.logo %}
-            <img src="{{ resource.get_logo_url }}" alt="{{ resource.title }}" class="resource-logo">
-            {% endif %}
-            <div class="resource-item-text">
-              <div class="resource-item-top">
-                {% if resource.attached_file %}<span class="resource-badge">{% trans 'File' %}</span>{% endif %}
-                {% if resource.video_url %}<span class="resource-badge">{% trans 'Video' %}</span>{% endif %}
-              </div>
-              <p class="resource-title">{{ resource.title }}</p>
-            </div>
-          </div>
-        {% endfor %}
+      <nav class="breadcrumbs">
+        <a href="{% url 'hub:index' %}" class="breadcrumb-link">{% trans 'Home' %}</a>
+        <span class="breadcrumb-sep">·</span>
+        <span class="breadcrumb-current">{% trans 'Resources' %}</span>
+      </nav>
+
+      <div class="pl-header">
+        <h1 class="meduim-bold">{% trans 'Resources' %}</h1>
       </div>
+
+      {% for category_label, items in groups %}
+        <div class="pl-month-group">
+          <p class="pl-month-label">{% if category_label %}{{ category_label }}{% else %}{% trans 'Other' %}{% endif %}</p>
+
+          <div class="resource-list resource-list--grid">
+            {% for resource in items %}
+              <a href="{{ resource.get_absolute_url }}" class="resource-item">
+                {% if resource.logo %}
+                <img src="{{ resource.get_logo_url }}" alt="{{ resource.title }}" class="resource-logo">
+                {% endif %}
+                <div class="resource-item-text">
+                  <p class="resource-title">{{ resource.title }}</p>
+                </div>
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+      {% empty %}
+        <p class="light" style="padding: 2rem 0;">{% trans 'No resources found.' %}</p>
+      {% endfor %}
+
     </div>
-  {% empty %}
-    <p class="light" style="padding: 2rem 0;">{% trans 'No resources found.' %}</p>
-  {% endfor %}
+
+    <!-- Sidebar -->
+    <div class="span-col-1"></div>
+
+  </div>
 
 </section>
 {% endblock %}

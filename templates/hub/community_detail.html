@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block content %}
+<section class="container">
+
+  <div class="breadcrumbs">
+    <a href="{% url 'hub:index' %}" class="breadcrumb-link">{% trans 'Home' %}</a>
+    <span class="breadcrumb-sep">·</span>
+    <span class="breadcrumb-current">{{ community.title }}</span>
+  </div>
+
+  <div class="layout-grid">
+
+    <div class="layout-block span-col-2">
+      <div class="profile-layout">
+
+        <div class="profile-avatar-col">
+          {% if community.logo %}
+          <img src="{{ community.get_thumbnail_url }}" alt="{{ community.title }}" class="place-detail-logo">
+          {% endif %}
+          <div class="meduim-bold profile-display-name">{{ community.title }}</div>
+          {% if community.short_title %}
+          <div class="profile-muted">{{ community.short_title }}</div>
+          {% endif %}
+        </div>
+
+        <div class="profile-form-col">
+
+          {% if community.description %}
+          <div class="profile-section">
+            <label class="form-input-label">{% trans "About" %}</label>
+            <div class="profile-value">{{ community.description|linebreaksbr }}</div>
+          </div>
+          {% endif %}
+
+          {% if community.website %}
+          <div class="profile-section">
+            <label class="form-input-label">{% trans "Website" %}</label>
+            <div class="profile-contact-links">
+              <a href="{{ community.website }}" target="_blank" rel="noopener" class="form-link">{{ community.website }}</a>
+            </div>
+          </div>
+          {% endif %}
+
+          {% if community.telegram_handle %}
+          <div class="profile-section">
+            <label class="form-input-label">{% trans "Telegram" %}</label>
+            <div class="profile-contact-links">
+              <a href="https://t.me/{{ community.telegram_handle }}" target="_blank" rel="noopener" class="form-link">@{{ community.telegram_handle }}</a>
+            </div>
+          </div>
+          {% endif %}
+
+          {% if community.coordinators.exists %}
+          <div class="profile-section">
+            <label class="form-input-label">{% trans "Coordinators" %}</label>
+            <div class="people-cards program-people-cards" style="margin-top:0.5rem;">
+              {% for person in community.coordinators.all %}
+              <a href="{{ person.get_absolute_url }}" class="person-card">
+                <div class="person-image">
+                  <img src="{{ person.get_thumbnail_url }}" alt="{{ person.user.get_full_name }}">
+                </div>
+                <div class="person-info">
+                  <div class="person-name small-text">{{ person.user.get_full_name }}</div>
+                  {% if person.position %}<div class="small-text" style="color:var(--text-muted);">{{ person.position }}</div>{% endif %}
+                </div>
+              </a>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+
+          {% if community.members.exists %}
+          <div class="profile-section">
+            <label class="form-input-label">{% trans "Members" %}</label>
+            <div class="people-cards program-people-cards" style="margin-top:0.5rem;">
+              {% for person in community.members.all %}
+              <a href="{{ person.get_absolute_url }}" class="person-card">
+                <div class="person-image">
+                  <img src="{{ person.get_thumbnail_url }}" alt="{{ person.user.get_full_name }}">
+                </div>
+                <div class="person-info">
+                  <div class="person-name small-text">{{ person.user.get_full_name }}</div>
+                  {% if person.position %}<div class="small-text" style="color:var(--text-muted);">{{ person.position }}</div>{% endif %}
+                </div>
+              </a>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+
+          {% if community.supporting_organizations.exists %}
+          <div class="profile-section">
+            <label class="form-input-label">{% trans "Supporting Organizations" %}</label>
+            <div class="profile-chips">
+              {% for org in community.supporting_organizations.all %}
+              <a href="{{ org.get_absolute_url }}" class="ms-chip">{{ org.short_name|default:org.name }}</a>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

@@ -4,6 +4,15 @@
 
 {% block content %}
 <section class="container">
+
+  <nav class="breadcrumbs">
+    <a href="{% url 'hub:index' %}" class="breadcrumb-link">{% trans 'Home' %}</a>
+    <span class="breadcrumb-sep">·</span>
+    <a href="{% url 'users:people_list' %}" class="breadcrumb-link">{% trans 'People' %}</a>
+    <span class="breadcrumb-sep">·</span>
+    <span class="breadcrumb-current">{{ profile.user.get_full_name }}</span>
+  </nav>
+
   <div class="layout-grid">
 
     <div class="layout-block span-col-2">

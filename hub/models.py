@@ -1,6 +1,6 @@
 import os
 from io import BytesIO
-from django.db import models
+from django.db import models, transaction
 from django.urls import reverse
 from django.core.files.base import ContentFile
 from django.utils import timezone
@@ -329,9 +329,22 @@ class ProgramCycle(models.Model):
         help_text=_("Regions covered by this cycle.")
     )
 
+    address = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name=_("Event Address"),
+        help_text=_("Physical venue or address for this cycle.")
+    )
+
     is_active = models.BooleanField(
         default=True,
         verbose_name=_("Is Active")
+    )
+
+    is_featured = models.BooleanField(
+        default=False,
+        verbose_name=_("Featured on main page"),
+        help_text=_("Show this cycle in the featured block on the home page.")
     )
 
     class Meta:
@@ -342,8 +355,9 @@ class ProgramCycle(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.cycle_number:
-            last = ProgramCycle.objects.filter(program=self.program).order_by('-cycle_number').first()
-            self.cycle_number = (last.cycle_number + 1) if last else 1
+            with transaction.atomic():
+                last = ProgramCycle.objects.select_for_update().filter(program=self.program).order_by('-cycle_number').first()
+                self.cycle_number = (last.cycle_number + 1) if last else 1
         if not self.slug:
             title = getattr(self, 'title_en', None) or self.title
             program_name = getattr(self.program, 'name_en', None) or self.program.name
@@ -396,6 +410,10 @@ class ProgramCycle(models.Model):
             return _("Registration closes today")
         return _("Registration closed")
 
+    def get_absolute_url(self):
+        url = self.program.get_absolute_url()
+        return f"{url}?cycle={self.slug}" if self.slug else url
+
     @property
     def duration_display(self):
         if not self.start_date and not self.end_date:
@@ -413,6 +431,178 @@ class ProgramCycle(models.Model):
         if self.start_date:
             return _("%(date)s") % {'date': fmt(self.start_date, True)}
         return _("Until %(date)s") % {'date': fmt(self.end_date, True)}
+
+
+class Community(models.Model):
+
+    title = models.CharField(
+        max_length=255,
+        verbose_name=_("Title")
+    )
+
+    short_title = models.CharField(
+        max_length=50,
+        blank=True,
+        verbose_name=_("Short Title / Abbreviation")
+    )
+
+    slug = models.SlugField(
+        max_length=255,
+        unique=True,
+        blank=True,
+        verbose_name=_("Slug"),
+        help_text=_("Leave blank to auto-generate from title.")
+    )
+
+    description = models.TextField(
+        blank=True,
+        verbose_name=_("Description")
+    )
+
+    logo = ProcessedImageField(
+        upload_to=UploadToPath('logos/communities'),
+        processors=[ResizeToFit(800, 800)],
+        format='JPEG',
+        options={'quality': 85},
+        blank=True,
+        null=True,
+        verbose_name=_("Logo")
+    )
+
+    logo_thumbnail = models.ImageField(
+        upload_to=UploadToPath('logos/communities/thumbnails'),
+        blank=True,
+        null=True,
+        editable=False,
+        verbose_name=_("Logo Thumbnail")
+    )
+
+    cover_image = ProcessedImageField(
+        upload_to=UploadToPath('covers/communities'),
+        processors=[ResizeToFit(1200, 630)],
+        format='JPEG',
+        options={'quality': 85},
+        blank=True,
+        null=True,
+        verbose_name=_("Cover Image"),
+        help_text=_("Recommended: 1200×630px.")
+    )
+
+    website = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name=_("Website")
+    )
+
+    telegram_handle = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name=_("Telegram Channel / Group"),
+        help_text=_("Without @, e.g., mycomminity")
+    )
+
+    formed_year = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        verbose_name=_("Year Formed")
+    )
+
+    coordinators = models.ManyToManyField(
+        'users.BuilderProfile',
+        blank=True,
+        related_name='coordinated_communities',
+        verbose_name=_("Coordinators")
+    )
+
+    members = models.ManyToManyField(
+        'users.BuilderProfile',
+        blank=True,
+        related_name='communities',
+        verbose_name=_("Members"),
+        help_text=_("Individual people who are part of this community.")
+    )
+
+    supporting_organizations = models.ManyToManyField(
+        EcosystemEntity,
+        blank=True,
+        related_name='supporting_communities',
+        verbose_name=_("Supporting Organizations"),
+        help_text=_("Organizations that support this community.")
+    )
+
+    programs = models.ManyToManyField(
+        EcosystemEntity,
+        blank=True,
+        related_name='supported_by_communities',
+        verbose_name=_("Supported Programs"),
+        help_text=_("Programs supported or promoted by this community.")
+    )
+
+    is_published = models.BooleanField(
+        default=False,
+        verbose_name=_("Published")
+    )
+
+    is_featured = models.BooleanField(
+        default=False,
+        verbose_name=_("Featured on main page"),
+        help_text=_("Show this community in the featured block on the home page.")
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = _("Community")
+        verbose_name_plural = _("Communities")
+        ordering = ['title']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._original_logo = self.logo.name if self.logo else None
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base = getattr(self, 'title_en', None) or self.title
+            self.slug = _unique_slug(Community, base, exclude_pk=self.pk)
+        super().save(*args, **kwargs)
+        current_logo = self.logo.name if self.logo else None
+        if self.logo and current_logo != self._original_logo:
+            self._generate_thumbnail()
+            self._original_logo = current_logo
+
+    def _generate_thumbnail(self):
+        from PIL import Image
+        img = Image.open(self.logo)
+        img = img.convert('RGB')
+        img.thumbnail((150, 150), Image.LANCZOS)
+
+        thumb_io = BytesIO()
+        img.save(thumb_io, 'JPEG', quality=80)
+
+        base = os.path.splitext(os.path.basename(self.logo.name))[0]
+        self.logo_thumbnail.save(f"{base}_thumb.jpg", ContentFile(thumb_io.getvalue()), save=False)
+        Community.objects.filter(pk=self.pk).update(logo_thumbnail=self.logo_thumbnail.name)
+
+    def __str__(self):
+        return self.short_title or self.title
+
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse('hub:community_detail', kwargs={'slug': self.slug})
+
+    @property
+    def get_logo_url(self):
+        if self.logo and hasattr(self.logo, 'url'):
+            return self.logo.url
+        from django.templatetags.static import static
+        return static('images/default-logo.png')
+
+    @property
+    def get_thumbnail_url(self):
+        if self.logo_thumbnail and hasattr(self.logo_thumbnail, 'url'):
+            return self.logo_thumbnail.url
+        return self.get_logo_url
 
 
 class RegistrationForm(models.Model):

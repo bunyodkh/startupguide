@@ -44,13 +44,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='ecosystementity',
             name='slug',
-            field=models.SlugField(blank=True, default='', max_length=255, verbose_name='Slug'),
+            field=models.SlugField(blank=True, db_index=False, default='', max_length=255, verbose_name='Slug'),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='programcycle',
             name='slug',
-            field=models.SlugField(blank=True, default='', max_length=255, verbose_name='Slug'),
+            field=models.SlugField(blank=True, db_index=False, default='', max_length=255, verbose_name='Slug'),
             preserve_default=False,
         ),
         migrations.RunPython(populate_entity_slugs, migrations.RunPython.noop),

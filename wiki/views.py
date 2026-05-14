@@ -1,12 +1,18 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from .models import Resource
+
+
+def resource_detail(request, slug):
+    resource = get_object_or_404(Resource, slug=slug, is_published=True)
+    return render(request, 'wiki/resource_detail.html', {'resource': resource})
 
 
 def resource_list(request):
     resources = (
         Resource.objects
         .filter(is_published=True)
+        .exclude(category__slug='quickinfo')
         .select_related('category')
         .order_by('-created_at')
     )

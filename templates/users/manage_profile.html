@@ -6,9 +6,9 @@
     <div class="layout-grid">
 
         <div class="layout-block span-col-2">
-            <div class="layout-block-heading">
+            <div style="padding-bottom: 1rem;">
                 <h2 class="meduim-bold">{% trans 'Manage your profile' %}</h2>
-                <p class="light">{% trans 'Update your profile using this form.' %}</p>
+                <p class="light" style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">{% trans 'Update your profile using this form.' %}</p>
             </div>
 
             {% include 'users/partials/profile_form.html' %} 

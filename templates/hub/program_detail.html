@@ -4,9 +4,26 @@
 
 {% block content %}
 <section class="container">
+
+  <nav class="breadcrumbs">
+    <a href="{% url 'hub:index' %}" class="breadcrumb-link">{% trans 'Home' %}</a>
+    <span class="breadcrumb-sep">·</span>
+    <a href="{% url 'hub:program_list' %}" class="breadcrumb-link">{% trans 'Programs' %}</a>
+    <span class="breadcrumb-sep">·</span>
+    {% if latest_cycle %}
+      <a href="{{ program.get_absolute_url }}" class="breadcrumb-link">{{ program.name }}</a>
+      <span class="breadcrumb-sep">·</span>
+      <span class="breadcrumb-current">{{ latest_cycle.display_label }}</span>
+    {% else %}
+      <span class="breadcrumb-current">{{ program.name }}</span>
+    {% endif %}
+  </nav>
+
   <div class="layout-grid">
 
-    <!-- Header -->
+  {% if latest_cycle %}
+
+    {# ── Cycle mode header ────────────────────────────────────────────────────── #}
     <div class="layout-block span-col-3">
       <div class="program-detail-header">
         <div class="program-detail-identity">
@@ -19,78 +36,26 @@
       </div>
     </div>
 
-    {% if latest_cycle %}
+    {% if latest_cycle.status == 'completed' or latest_cycle.status == 'cancelled' %}
 
-    {% if apply_form %}
-
-    {# ── Layout A: open inline form ──────────────────────────────────────────── #}
-    {# Cycle (left) | Form (right)                                               #}
-    {# Meta (left)  | About spanning rows 2+3 (right)                           #}
-    {# Contributors (left, optional)                                             #}
-    <div class="span-col-3" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
-
-      <div class="layout-block">
-        {% include "hub/partials/_program_cycle_block.html" %}
-      </div>
-
-      <div class="layout-block">
-        {% include "hub/partials/_apply_block.html" %}
-        {% if program.parent %}
-          <div class="profile-section">
-            <label class="form-input-label">{% trans "Part of" %}</label>
-            <div class="profile-value">{{ program.parent.name }}</div>
-          </div>
-        {% endif %}
-      </div>
-
-      <div class="layout-block">
-        {% include "hub/partials/_cycle_meta_block.html" %}
-      </div>
-
-      <div class="layout-block" style="grid-row: span 2;">
-        {% include "hub/partials/_program_about_block.html" %}
-      </div>
-
-      {% if latest_cycle.contributors.exists %}
-      <div class="layout-block">
-        {% include "hub/partials/_contributors_block.html" %}
-      </div>
-      {% endif %}
-
-    </div>
-
-    {% else %}
-
-    {# ── Layout B: no inline form (external link, closed, or none) ────────────── #}
-    {# Cycle + Meta + Contributors (left) | Apply + About stacked (right)          #}
-    <div class="span-col-3" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;align-items:start;">
-
-      <div style="display:flex;flex-direction:column;gap:1rem;">
-        <div class="layout-block">
-          {% include "hub/partials/_program_cycle_block.html" %}
-        </div>
-
-        <div class="layout-block">
-          {% include "hub/partials/_cycle_meta_block.html" %}
-        </div>
-
+    {# ── Layout C: completed / cancelled ─────────────────────────────────────── #}
+    <div class="span-col-3 program-detail-grid">
+      <div class="program-detail-col">
+        <div class="layout-block">{% include "hub/partials/_program_cycle_block.html" %}</div>
+        <div class="layout-block">{% include "hub/partials/_cycle_meta_block.html" %}</div>
         {% if latest_cycle.contributors.exists %}
-        <div class="layout-block">
-          {% include "hub/partials/_contributors_block.html" %}
-        </div>
+        <div class="layout-block">{% include "hub/partials/_contributors_block.html" %}</div>
         {% endif %}
       </div>
-
-      <div style="display:flex;flex-direction:column;gap:1rem;">
-
+      <div class="program-detail-col">
         <div class="layout-block">
-          {% if reg_form and reg_form.external_url %}
-            <div class="profile-section">
-              <a href="{{ reg_form.external_url }}" target="_blank" rel="noopener" class="btn-primary" style="display:inline-block;width:auto;padding:0.5rem 1.5rem;">
-                {% trans "Apply Now" %} →
-              </a>
-            </div>
-          {% endif %}
+          <div class="profile-section">
+            {% if latest_cycle.status == 'completed' %}
+              <p class="profile-muted">{% trans "This event has been successfully conducted. Thank you to everyone who participated!" %}</p>
+            {% else %}
+              <p class="profile-muted">{% trans "This event has been cancelled." %}</p>
+            {% endif %}
+          </div>
           {% if program.parent %}
             <div class="profile-section">
               <label class="form-input-label">{% trans "Part of" %}</label>
@@ -98,61 +63,238 @@
             </div>
           {% endif %}
         </div>
-
-        <div class="layout-block">
-          {% include "hub/partials/_program_about_block.html" %}
-        </div>
-
+        <div class="layout-block">{% include "hub/partials/_program_about_block.html" %}</div>
       </div>
-
     </div>
 
-    {% endif %}{# end apply_form #}
+    {% elif apply_form %}
+
+    {# ── Layout A: open inline form ───────────────────────────────────────────── #}
+    <div class="span-col-3 program-detail-grid">
+      <div class="program-detail-col">
+        <div class="layout-block">{% include "hub/partials/_program_cycle_block.html" %}</div>
+        <div class="layout-block">{% include "hub/partials/_cycle_meta_block.html" %}</div>
+        {% if latest_cycle.contributors.exists %}
+        <div class="layout-block">{% include "hub/partials/_contributors_block.html" %}</div>
+        {% endif %}
+      </div>
+      <div class="program-detail-col">
+        <div class="layout-block">
+          {% include "hub/partials/_apply_block.html" %}
+          {% if program.parent %}
+            <div class="profile-section">
+              <label class="form-input-label">{% trans "Part of" %}</label>
+              <div class="profile-value">{{ program.parent.name }}</div>
+            </div>
+          {% endif %}
+        </div>
+        <div class="layout-block">{% include "hub/partials/_program_about_block.html" %}</div>
+      </div>
+    </div>
 
     {% else %}
 
-    {# ── No active cycle ──────────────────────────────────────────────────────── #}
-    <div class="layout-block span-col-2">
-      {% if program.description %}
-        <div class="profile-section">
-          <label class="form-input-label">{% trans "About" %}</label>
-          <div class="profile-value">{{ program.description|linebreaksbr }}</div>
+    {# ── Layout B: external link / closed / none ──────────────────────────────── #}
+    <div class="span-col-3 program-detail-grid">
+      <div class="program-detail-col">
+        <div class="layout-block">{% include "hub/partials/_program_cycle_block.html" %}</div>
+        <div class="layout-block">{% include "hub/partials/_cycle_meta_block.html" %}</div>
+        {% if latest_cycle.contributors.exists %}
+        <div class="layout-block">{% include "hub/partials/_contributors_block.html" %}</div>
+        {% endif %}
+      </div>
+      <div class="program-detail-col">
+        {% if reg_form and reg_form.external_url %}
+        <div class="layout-block">
+          <div class="profile-section">
+            <a href="{{ reg_form.external_url }}" target="_blank" rel="noopener" class="btn-primary" style="display:inline-block;width:auto;padding:0.5rem 1.5rem;">
+              {% trans "Apply Now" %} →
+            </a>
+          </div>
+          {% if program.parent %}
+            <div class="profile-section">
+              <label class="form-input-label">{% trans "Part of" %}</label>
+              <div class="profile-value">{{ program.parent.name }}</div>
+            </div>
+          {% endif %}
         </div>
-      {% endif %}
+        {% endif %}
+        <div class="layout-block">{% include "hub/partials/_program_about_block.html" %}</div>
+      </div>
     </div>
 
-    <div class="layout-block span-col-1">
-      {% if program.coordinators.exists %}
-        <div class="profile-section">
-          <label class="form-input-label">{% trans "Coordinators" %}</label>
-          <div class="people-cards program-people-cards">
-            {% for person in program.coordinators.all %}
-              <a href="{{ person.get_absolute_url }}" class="person-card">
-                <div class="person-image"><img src="{{ person.get_thumbnail_url }}" alt="{{ person.user.get_full_name }}"></div>
-                <div class="person-info"><div class="person-name small-text">{{ person.user.get_full_name }}</div></div>
-              </a>
-            {% endfor %}
+    {% endif %}{# end status check #}
+
+  {% else %}
+
+  {# ── Program info mode ────────────────────────────────────────────────────── #}
+  <div class="layout-block span-col-2">
+
+    <div class="pd-header">
+      <div class="pd-header__identity">
+        <img src="{{ program.get_thumbnail_url }}" alt="{{ program.name }}" class="program-detail-logo">
+        <div>
+          <h1 class="meduim-bold">{{ program.name }}</h1>
+          <div class="pd-header__sub">
+            {% if program.category %}<span>{{ program.category.name }}</span>{% endif %}
+            {% if program.founded_year %}
+              <span class="pd-meta-sep">·</span>
+              <span>{{ total_cycles }} {% trans "cycles since" %} {{ program.founded_year }}</span>
+            {% elif total_cycles %}
+              <span class="pd-meta-sep">·</span>
+              <span>{{ total_cycles }} {% blocktrans count c=total_cycles %}cycle total{% plural %}cycles total{% endblocktrans %}</span>
+            {% endif %}
           </div>
         </div>
+      </div>
+      <div class="pd-header__right">
+        {% with count=active_cycles|length %}{% if count %}
+          <span class="pd-active-badge">
+            <span class="pd-active-badge__dot"></span>
+            {{ count }} active {% if count == 1 %}{% trans "cycle" %}{% else %}{% trans "cycles" %}{% endif %}
+          </span>
+        {% endif %}{% endwith %}
+        {% if user_is_coordinator %}
+          <a href="{% url 'hub:program_manage' pk=program.pk %}" class="form-link" style="font-size:0.9rem;white-space:nowrap;">{% trans "Manage program" %}</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="pd-divider"></div>
+
+    {# About — always visible #}
+    {% if program.description %}
+      <p class="pd-about-text">{{ program.description|linebreaksbr }}</p>
+    {% endif %}
+    {% if total_cycles or program.coordinators.exists or program.website or program.parent %}
+    <div class="pd-about-meta">
+      {% if total_cycles %}
+      <div class="pd-stats">
+        <div class="pd-stat">
+          <span class="pd-stat__value">{{ total_cycles }}</span>
+          <span class="pd-stat__label">{% trans "Cycles run" %}</span>
+        </div>
+        {% with count=active_cycles|length %}{% if count %}
+        <div class="pd-stat">
+          <span class="pd-stat__value">{{ count }}</span>
+          <span class="pd-stat__label">{% trans "Active now" %}</span>
+        </div>
+        {% endif %}{% endwith %}
+      </div>
+      {% endif %}
+      {% if program.coordinators.exists %}
+      <div class="profile-section">
+        <label class="form-input-label">{% trans "Coordinators" %}</label>
+        <div class="people-cards program-people-cards" style="margin-top:0.5rem;">
+          {% for person in program.coordinators.all %}
+            <a href="{{ person.get_absolute_url }}" class="person-card">
+              <div class="person-image"><img src="{{ person.get_thumbnail_url }}" alt="{{ person.user.get_full_name }}"></div>
+              <div class="person-info"><div class="person-name small-text">{{ person.user.get_full_name }}</div></div>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
       {% endif %}
       {% if program.website %}
-        <div class="profile-section">
-          <label class="form-input-label">{% trans "Website" %}</label>
-          <div class="profile-contact-links">
-            <a href="{{ program.website }}" target="_blank" rel="noopener" class="form-link">{{ program.website }}</a>
-          </div>
+      <div class="profile-section">
+        <label class="form-input-label">{% trans "Website" %}</label>
+        <div class="profile-contact-links" style="margin-top:0.25rem;">
+          <a href="{{ program.website }}" target="_blank" rel="noopener" class="form-link">{{ program.website }}</a>
         </div>
+      </div>
       {% endif %}
       {% if program.parent %}
-        <div class="profile-section">
-          <label class="form-input-label">{% trans "Part of" %}</label>
-          <div class="profile-value">{{ program.parent.name }}</div>
-        </div>
+      <div class="profile-section">
+        <label class="form-input-label">{% trans "Part of" %}</label>
+        <div class="profile-value">{{ program.parent.name }}</div>
+      </div>
       {% endif %}
     </div>
-
     {% endif %}
+
+    <div class="pd-divider"></div>
+
+    <div class="pd-tabs">
+      <button class="pd-tab pd-tab--active" data-target="pd-open">{% trans "Open now" %}</button>
+      <button class="pd-tab" data-target="pd-all">{% trans "All cycles" %}</button>
+    </div>
+
+    {# Cycles panel — shared by Open now + All cycles tabs #}
+    <div class="pd-panel" id="pd-cycles">
+      <p class="pd-section-label" id="pd-cycles-label">{% trans "Active and upcoming cycles" %}</p>
+      <div class="pd-cycle-grid">
+        {% for cycle in active_cycles %}
+        <a href="?cycle={{ cycle.slug }}" class="pd-cycle-card{% if cycle.status == 'accepting' %} pd-cycle-card--accepting{% endif %}" data-status="{{ cycle.status }}">
+          <div class="pd-cycle-card__top">
+            <span class="pd-cycle-card__name">{{ cycle.display_label }}{% with r=cycle.regions.first %}{% if r %} · {{ r.name }}{% endif %}{% endwith %}</span>
+            <span class="pd-status pd-status--{{ cycle.status }}">
+              <span class="pd-status__dot"></span>{{ cycle.get_status_display }}
+            </span>
+          </div>
+          {% if cycle.registration_deadline %}
+          <div class="pd-cycle-card__row">{% trans "Applications close" %} {{ cycle.registration_deadline|date:"M j" }}</div>
+          {% elif cycle.start_date %}
+          <div class="pd-cycle-card__row">{% trans "Opens" %} {{ cycle.start_date|date:"M j" }}</div>
+          {% endif %}
+          {% if cycle.address %}
+          <div class="pd-cycle-card__row">{{ cycle.address }}</div>
+          {% else %}{% with r=cycle.regions.first %}{% if r %}
+          <div class="pd-cycle-card__row">{{ r.name }}</div>
+          {% endif %}{% endwith %}{% endif %}
+          {% if cycle.status == 'accepting' %}
+          <span class="pd-cycle-card__cta">{% trans "Apply now" %} →</span>
+          {% else %}
+          <span class="pd-cycle-card__cta pd-cycle-card__cta--muted">{% trans "View details" %} →</span>
+          {% endif %}
+        </a>
+        {% empty %}
+        <p class="profile-muted">{% trans "No active cycles at the moment." %}</p>
+        {% endfor %}
+      </div>
+    </div>
+
+
+  </div>
+
+  {% endif %}
 
   </div>
 </section>
+{% endblock %}
+
+{% block scripts %}
+{% if not latest_cycle %}
+<script>
+(function () {
+  var tabs = document.querySelectorAll('.pd-tab');
+  var cyclesLabel = document.getElementById('pd-cycles-label');
+
+  function applyTab(target) {
+    if (target === 'pd-open') {
+      cyclesLabel.textContent = '{% trans "Open cycles" %}';
+      document.querySelectorAll('.pd-cycle-card').forEach(function (c) {
+        c.style.display = c.dataset.status === 'accepting' ? '' : 'none';
+      });
+    } else {
+      cyclesLabel.textContent = '{% trans "Active and upcoming cycles" %}';
+      document.querySelectorAll('.pd-cycle-card').forEach(function (c) {
+        c.style.display = '';
+      });
+    }
+  }
+
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      tabs.forEach(function (t) { t.classList.remove('pd-tab--active'); });
+      this.classList.add('pd-tab--active');
+      applyTab(this.dataset.target);
+    });
+  });
+
+  // apply filter matching the initially active tab
+  var activeTab = document.querySelector('.pd-tab--active');
+  if (activeTab) applyTab(activeTab.dataset.target);
+}());
+</script>
+{% endif %}
 {% endblock %}

@@ -4,7 +4,7 @@ from modeltranslation.admin import TabbedTranslationAdmin
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
-from .models import EntityCategory, EcosystemEntity, Region, ProgramCycle, RegistrationForm, CustomField, RegistrationResponse
+from .models import EntityCategory, EcosystemEntity, Region, ProgramCycle, RegistrationForm, CustomField, RegistrationResponse, Community
 
 
 @admin.register(Region)
@@ -39,7 +39,7 @@ class ProgramCycleAdmin(ModelAdmin, TabbedTranslationAdmin):
 
     fieldsets = (
         (_("Cycle"), {
-            'fields': ('program', 'cycle_number', 'title', 'description', 'status', 'is_active'),
+            'fields': ('program', 'cycle_number', 'title', 'description', 'status', 'is_active', 'is_featured'),
         }),
         (_("Dates"), {
             'fields': ('start_date', 'end_date', 'registration_deadline'),
@@ -48,7 +48,7 @@ class ProgramCycleAdmin(ModelAdmin, TabbedTranslationAdmin):
             'fields': ('cover_image',),
         }),
         (_("People & Places"), {
-            'fields': ('organizers', 'contributors', 'regions'),
+            'fields': ('organizers', 'contributors', 'regions', 'address'),
         }),
     )
 
@@ -122,3 +122,29 @@ class RegistrationResponseAdmin(ModelAdmin):
     list_filter = ('form__cycle__program',)
     search_fields = ('full_name', 'email')
     readonly_fields = ('form', 'full_name', 'email', 'phone', 'role', 'custom_answers', 'submitted_at')
+
+
+@admin.register(Community)
+class CommunityAdmin(ModelAdmin, TabbedTranslationAdmin):
+    list_display = ('title', 'short_title', 'slug', 'is_published')
+    list_filter = ('is_published',)
+    search_fields = ('title', 'short_title')
+    prepopulated_fields = {'slug': ('title',)}
+    filter_horizontal = ('coordinators', 'members', 'supporting_organizations')
+    fieldsets = (
+        (_("Identity"), {
+            'fields': ('title', 'short_title', 'slug', 'description'),
+        }),
+        (_("Media"), {
+            'fields': ('logo', 'cover_image'),
+        }),
+        (_("Contact"), {
+            'fields': ('website', 'telegram_handle'),
+        }),
+        (_("People & Organizations"), {
+            'fields': ('coordinators', 'members', 'supporting_organizations'),
+        }),
+        (_("Settings"), {
+            'fields': ('is_published', 'is_featured'),
+        }),
+    )

@@ -5,57 +5,58 @@
 {% block content %}
 <section class="container">
 
+  <nav class="breadcrumbs">
+    <a href="{% url 'hub:index' %}" class="breadcrumb-link">{% trans 'Home' %}</a>
+    <span class="breadcrumb-sep">·</span>
+    <span class="breadcrumb-current">{% trans 'Programs' %}</span>
+  </nav>
+
   <div class="pl-header">
     <h1 class="meduim-bold">{% trans 'Programs' %}</h1>
   </div>
 
-  {% for month_label, pairs in groups %}
+  <div class="layout-grid">
+  <div class="span-col-2 prog-cards">
+    {% for program in programs %}
+      {% with count=program.active_cycles|length %}
+      <a href="{{ program.get_absolute_url }}" class="prog-card">
 
-    <div class="pl-month-group">
-      {% if month_label %}
-        <p class="pl-month-label">{{ month_label }}</p>
-      {% else %}
-        <p class="pl-month-label">{% trans 'Date TBD' %}</p>
-      {% endif %}
+        <div class="prog-card__top">
+          <span class="prog-card__title">{{ program.name }}</span>
+          {% if count %}
+            <span class="prog-badge prog-badge--open">
+              <span class="prog-badge__dot"></span>
+              {{ count }} {% blocktrans count c=count %}cycle open{% plural %}cycles open{% endblocktrans %}
+            </span>
+          {% else %}
+            <span class="prog-badge prog-badge--closed">{% trans "No open cycles" %}</span>
+          {% endif %}
+        </div>
 
-      <div class="pl-cards">
-        {% for program, cycle in pairs %}
-          <a href="{{ program.get_absolute_url }}{% if cycle and cycle.slug %}?cycle={{ cycle.slug }}{% endif %}" class="pl-card">
+        {% if program.description %}
+          <p class="prog-card__desc">{{ program.description|truncatechars:110 }}</p>
+        {% endif %}
 
-            {% if program.logo %}
-            <div class="pl-card-logo">
-              <img src="{{ program.get_thumbnail_url }}" alt="{{ program.short_name|default:program.name }}">
+        {% with regions=program.active_cycles.0.regions.all %}
+          {% if regions %}
+            <div class="prog-card__tags">
+              {% for region in regions %}
+                <span class="prog-tag">
+                  <span class="prog-tag__dot"></span>
+                  {{ region.name }}
+                </span>
+              {% endfor %}
             </div>
-            {% endif %}
+          {% endif %}
+        {% endwith %}
 
-            <div class="pl-card-body">
-              <p class="pl-card-title">{% if cycle %}{{ cycle.title|default:program.name }}{% else %}{{ program.name }}{% endif %}</p>
-              {% if cycle and cycle.title %}
-                <p class="pl-card-program">{{ program.short_name|default:program.name }}</p>
-              {% endif %}
-
-              <div class="pl-card-meta">
-                {% if cycle and cycle.status %}
-                  <span class="pl-badge pl-badge--{{ cycle.status }}">{{ cycle.get_status_display }}</span>
-                {% endif %}
-                {% if cycle and cycle.deadline_label %}
-                  <span class="pl-badge pl-badge--deadline">{{ cycle.deadline_label }}</span>
-                {% endif %}
-              </div>
-
-              {% if cycle and cycle.duration_display %}
-                <p class="pl-card-dates">{{ cycle.duration_display }}</p>
-              {% endif %}
-            </div>
-
-          </a>
-        {% endfor %}
-      </div>
-    </div>
-
-  {% empty %}
-    <p class="light" style="padding: 2rem 0;">{% trans 'No programs found.' %}</p>
-  {% endfor %}
+      </a>
+      {% endwith %}
+    {% empty %}
+      <p class="light" style="padding: 2rem 0;">{% trans 'No programs found.' %}</p>
+    {% endfor %}
+  </div>
+  </div>
 
 </section>
 {% endblock %}

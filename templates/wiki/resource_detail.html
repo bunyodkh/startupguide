@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<section class="container">
+  <nav class="breadcrumbs">
+    <a href="{% url 'hub:index' %}" class="breadcrumb-link">{% trans 'Home' %}</a>
+    <span class="breadcrumb-sep">·</span>
+    <a href="{% url 'wiki:resource_list' %}" class="breadcrumb-link">{% trans 'Resources' %}</a>
+    <span class="breadcrumb-sep">·</span>
+    <span class="breadcrumb-current">{{ resource.title }}</span>
+  </nav>
+
+  <div class="layout-grid">
+
+    <!-- Main content -->
+    <div class="layout-block span-col-2">
+
+      <div class="resource-detail-header">
+        {% if resource.logo %}
+          <img src="{{ resource.get_logo_url }}" alt="{{ resource.title }}" class="resource-detail-logo">
+        {% endif %}
+        <div>
+          <p class="pl-month-label">{{ resource.category.name }}</p>
+          <h1 class="meduim-bold">{{ resource.title }}</h1>
+        </div>
+      </div>
+
+      {% if resource.content %}
+      <div class="profile-section">
+        <div class="profile-value">{{ resource.content|linebreaksbr }}</div>
+      </div>
+      {% endif %}
+
+      {% if resource.attached_file %}
+      <div class="profile-section">
+        <label class="form-input-label">{% trans 'File' %}</label>
+        <a href="{{ resource.attached_file.url }}" class="form-link" target="_blank" rel="noopener">{% trans 'Download' %} →</a>
+      </div>
+      {% endif %}
+
+      {% if resource.video_url %}
+      <div class="profile-section">
+        <label class="form-input-label">{% trans 'Video' %}</label>
+        <a href="{{ resource.video_url }}" class="form-link" target="_blank" rel="noopener">{% trans 'Watch' %} →</a>
+      </div>
+      {% endif %}
+
+      {% if resource.author %}
+      <div class="profile-section">
+        <label class="form-input-label">{% trans 'Author' %}</label>
+        <div class="profile-value">{{ resource.author.get_full_name|default:resource.author.username }}</div>
+      </div>
+      {% endif %}
+
+    </div>
+
+  </div>
+</section>
+{% endblock %}

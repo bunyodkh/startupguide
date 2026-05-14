@@ -37,4 +37,11 @@
   {% endif %}
   {% endwith %}
 
+  {% if latest_cycle.address %}
+  <div class="cycle-meta-block">
+    <label class="form-input-label">{% trans "Address" %}</label>
+    <div class="profile-value">{{ latest_cycle.address }}</div>
+  </div>
+  {% endif %}
+
 </div>

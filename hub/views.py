@@ -4,6 +4,7 @@ from calendar import month_name
 
 from django import forms as django_forms
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 from django.db.models import Case, When, Value, IntegerField, Subquery, OuterRef, F, Prefetch
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
@@ -13,7 +14,7 @@ from wiki.models import Resource
 from .forms import CycleForm, RegistrationSettingsForm
 from .models import (
     EcosystemEntity, EntityCategory, ProgramCycle,
-    RegistrationForm, CustomField, RegistrationResponse,
+    RegistrationForm, CustomField, RegistrationResponse, Community,
 )
 
 
@@ -91,6 +92,16 @@ def _build_apply_form_class(reg_form, custom_fields):
 
 # ── Public views ───────────────────────────────────────────────────────────────
 
+def community_list(request):
+    communities = Community.objects.filter(is_published=True).order_by('title')
+    return render(request, 'hub/community_list.html', {'communities': communities})
+
+
+def community_detail(request, slug):
+    community = get_object_or_404(Community, slug=slug, is_published=True)
+    return render(request, 'hub/community_detail.html', {'community': community})
+
+
 def index(request):
     categories = EntityCategory.objects.prefetch_related('entities').all()
 
@@ -136,21 +147,44 @@ def index(request):
             active_deadline=Subquery(latest_cycle_deadline),
             status_order=_CYCLE_STATUS_ORDER,
         )
-        .order_by('?')
+        .order_by('name')
     )
 
     all_pairs = [
         (program, cycle)
         for program in programs_qs
-        for cycle in (program.active_cycles if program.active_cycles else [])
+        for cycle in program.active_cycles
     ]
-    programs = random.sample(all_pairs, min(3, len(all_pairs)))
+    random.shuffle(all_pairs)
+    programs = all_pairs[:3]
 
     resources = (
         Resource.objects
         .filter(is_published=True)
+        .exclude(category__slug='quickinfo')
         .select_related('category')
         .order_by('-created_at')[:6]
+    )
+
+    featured_cycles = list(
+        ProgramCycle.objects
+        .filter(is_featured=True, is_active=True, status__in=_ACTIVE_STATUSES)
+        .select_related('program')
+        .order_by('-cycle_number')[:3]
+    )
+    featured_communities = list(
+        Community.objects
+        .filter(is_featured=True, is_published=True)
+        .order_by('title')[:3]
+    )
+    featured_items = featured_cycles
+    featured_community = featured_communities[0] if featured_communities else None
+
+    quick_info = (
+        Resource.objects
+        .filter(is_published=True, show_on_quickinfo=True)
+        .select_related('category')
+        .first()
     )
 
     return render(request, 'index.html', {
@@ -159,52 +193,28 @@ def index(request):
         'places': places,
         'programs': programs,
         'resources': resources,
+        'featured_items': featured_items,
+        'featured_community': featured_community,
+        'quick_info': quick_info,
     })
 
 
 def program_list(request):
-    programs_qs = (
+    active_cycles_qs = ProgramCycle.objects.filter(
+        is_active=True,
+        status__in=_ACTIVE_STATUSES,
+    ).prefetch_related('regions').order_by('-cycle_number')
+
+    programs = (
         EcosystemEntity.objects
         .filter(has_physical_space=False, is_active=True)
         .select_related('category', 'parent')
         .prefetch_related(
-            Prefetch('cycles', queryset=_active_cycle_qs, to_attr='active_cycles')
+            Prefetch('cycles', queryset=active_cycles_qs, to_attr='active_cycles')
         )
         .order_by('name')
     )
-
-    pairs = []
-    for program in programs_qs:
-        if program.active_cycles:
-            for cycle in program.active_cycles:
-                pairs.append((program, cycle))
-        else:
-            pairs.append((program, None))
-
-    def _sort_key(pair):
-        cycle = pair[1]
-        if cycle:
-            d = cycle.start_date or cycle.registration_deadline
-            if d:
-                return (0, d.year, d.month)
-        return (1, 0, 0)
-
-    def _group_key(pair):
-        cycle = pair[1]
-        if cycle:
-            d = cycle.start_date or cycle.registration_deadline
-            if d:
-                return (d.year, d.month)
-        return None
-
-    pairs.sort(key=_sort_key)
-
-    groups = []
-    for key, items in groupby(pairs, key=_group_key):
-        label = f"{month_name[key[1]]} {key[0]}" if key else None
-        groups.append((label, list(items)))
-
-    return render(request, 'hub/program_list.html', {'groups': groups})
+    return render(request, 'hub/program_list.html', {'programs': programs})
 
 
 def program_detail(request, slug):
@@ -215,17 +225,38 @@ def program_detail(request, slug):
         slug=slug,
         has_physical_space=False,
     )
+
+    user_is_coordinator = (
+        request.user.is_authenticated and
+        _is_coordinator(request.user, program)
+    )
+
+    cycle_slug = request.GET.get('cycle')
+
+    if not cycle_slug:
+        active_cycles = (
+            program.cycles
+            .filter(is_active=True, status__in=_ACTIVE_STATUSES)
+            .prefetch_related('organizers', 'regions')
+            .order_by('-cycle_number')
+        )
+        total_cycles = program.cycles.count()
+        return render(request, 'hub/program_detail.html', {
+            'program': program,
+            'user_is_coordinator': user_is_coordinator,
+            'active_cycles': active_cycles,
+            'total_cycles': total_cycles,
+        })
+
     cycles = (
         program.cycles
         .filter(is_active=True)
         .prefetch_related('contributors__user', 'organizers', 'regions')
         .order_by('-cycle_number')
     )
-    cycle_slug = request.GET.get('cycle')
-    if cycle_slug:
-        latest_cycle = cycles.filter(slug=cycle_slug).first() or cycles.first()
-    else:
-        latest_cycle = cycles.first()
+    latest_cycle = cycles.filter(slug=cycle_slug).first()
+    if not latest_cycle:
+        return redirect(program.get_absolute_url())
 
     reg_form = _get_reg_form(latest_cycle)
     custom_fields = list(reg_form.custom_fields.order_by('order')) if reg_form else []
@@ -234,11 +265,6 @@ def program_detail(request, slug):
     if reg_form and reg_form.is_open and not reg_form.external_url:
         ApplyForm = _build_apply_form_class(reg_form, custom_fields)
         apply_form = ApplyForm()
-
-    user_is_coordinator = (
-        request.user.is_authenticated and
-        _is_coordinator(request.user, program)
-    )
 
     return render(request, 'hub/program_detail.html', {
         'program': program,
@@ -443,9 +469,10 @@ def cycle_create_page(request, pk):
     if request.method == 'POST':
         form = CycleForm(request.POST, request.FILES)
         if form.is_valid():
-            cycle = form.save(commit=False)
-            cycle.program = program
-            cycle.save()
+            with transaction.atomic():
+                cycle = form.save(commit=False)
+                cycle.program = program
+                cycle.save()
             return redirect('hub:program_manage', pk=program.pk)
     else:
         form = CycleForm()
@@ -465,15 +492,25 @@ def cycle_edit_page(request, pk, cycle_pk):
     if request.method == 'POST':
         form = CycleForm(request.POST, request.FILES, instance=cycle)
         if form.is_valid():
-            form.save()
-            return redirect('hub:program_manage', pk=program.pk)
+            with transaction.atomic():
+                form.save()
+            return redirect('hub:cycle_edit_page', pk=program.pk, cycle_pk=cycle.pk)
     else:
         form = CycleForm(instance=cycle)
+    reg_form, _ = RegistrationForm.objects.get_or_create(cycle=cycle)
+    custom_fields = list(reg_form.custom_fields.order_by('order'))
+    recent_responses = list(reg_form.responses.order_by('-submitted_at')[:10])
     return render(request, 'hub/cycle_form.html', {
         'program': program,
         'cycle': cycle,
         'form': form,
         'editing': True,
+        'reg_form': reg_form,
+        'custom_fields': custom_fields,
+        'settings_form': RegistrationSettingsForm(instance=reg_form),
+        'form_mode': _get_form_mode(reg_form, custom_fields),
+        'recent_responses': recent_responses,
+        'langs': _LANGS,
     })
 
 
@@ -508,7 +545,9 @@ def cycle_htmx_edit(request, pk, cycle_pk):
     if request.method == 'POST':
         form = CycleForm(request.POST, request.FILES, instance=cycle)
         if form.is_valid():
-            form.save()
+            with transaction.atomic():
+                form.save()
+            cycle.refresh_from_db()
             return render(request, 'hub/partials/_cycle_item.html', {
                 'program': program, 'cycle': cycle,
             })
@@ -531,9 +570,10 @@ def cycle_htmx_create(request, pk):
     if request.method == 'POST':
         form = CycleForm(request.POST, request.FILES)
         if form.is_valid():
-            cycle = form.save(commit=False)
-            cycle.program = program
-            cycle.save()
+            with transaction.atomic():
+                cycle = form.save(commit=False)
+                cycle.program = program
+                cycle.save()
             ctx = _cycles_ctx(program)
             return render(request, 'hub/partials/_cycles_section.html', ctx)
         ctx = _cycles_ctx(program)
@@ -552,17 +592,16 @@ def _active_cycle_ctx(program, cycle, form=None):
 
 
 @login_required
-def cycle_manage_htmx(request, pk):
+def cycle_manage_htmx(request, pk, cycle_pk):
     program = get_object_or_404(EcosystemEntity, pk=pk, has_physical_space=False)
     if not _is_coordinator(request.user, program):
         return HttpResponse(status=403)
-    cycle = program.cycles.order_by('-cycle_number').first()
-    if not cycle:
-        return HttpResponse(status=404)
+    cycle = get_object_or_404(ProgramCycle, pk=cycle_pk, program=program)
     if request.method == 'POST':
         form = CycleForm(request.POST, request.FILES, instance=cycle)
         if form.is_valid():
-            form.save()
+            with transaction.atomic():
+                form.save()
             cycle.refresh_from_db()
             form = CycleForm(instance=cycle)
         return render(request, 'hub/partials/_active_cycle_form.html',
