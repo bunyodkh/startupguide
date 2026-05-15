@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: startupguide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-14 22:31+0500\n"
+"POT-Creation-Date: 2026-05-15 20:21+0500\n"
 "PO-Revision-Date: 2026-05-09 00:00+0500\n"
 "Last-Translator: StartupGuide\n"
 "Language-Team: Uzbek\n"
@@ -16,16 +16,12 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #: .\announcements\admin.py:16 .\announcements\admin.py:32
-#, fuzzy
-#| msgid "Contacts"
 msgid "Content"
-msgstr "Kontaktlar"
+msgstr "Kontent"
 
 #: .\announcements\admin.py:19 .\announcements\admin.py:38 .\hub\admin.py:147
-#, fuzzy
-#| msgid "Form Settings"
 msgid "Settings"
-msgstr "Forma sozlamalari"
+msgstr "Sozlamalar"
 
 #: .\announcements\admin.py:35
 msgid "Call to Action"
@@ -51,14 +47,10 @@ msgid "Is Active"
 msgstr "Faol"
 
 #: .\announcements\models.py:9 .\announcements\models.py:30
-#, fuzzy
-#| msgid "Create form"
 msgid "Created At"
-msgstr "Forma yaratish"
+msgstr "Yaratilgan sana"
 
 #: .\announcements\models.py:10 .\announcements\models.py:31
-#, fuzzy
-#| msgid "Update Date"
 msgid "Updated At"
 msgstr "Yangilangan sana"
 
@@ -118,7 +110,7 @@ msgstr "Tsikl"
 msgid "Dates"
 msgstr "Sanalar"
 
-#: .\hub\admin.py:47 .\hub\admin.py:71 .\hub\admin.py:138 .\users\admin.py:52
+#: .\hub\admin.py:47 .\hub\admin.py:71 .\hub\admin.py:138 .\users\admin.py:50
 msgid "Media"
 msgstr "Media"
 
@@ -170,17 +162,13 @@ msgstr "Javoblar"
 msgid "Identity"
 msgstr "Identifikatsiya"
 
-#: .\hub\admin.py:141 .\templates\index.html:211
-#, fuzzy
-#| msgid "Contacts"
+#: .\hub\admin.py:141
 msgid "Contact"
-msgstr "Kontaktlar"
+msgstr "Kontakt"
 
 #: .\hub\admin.py:144
-#, fuzzy
-#| msgid "Parent Organization"
 msgid "People & Organizations"
-msgstr "Asosiy tashkilot"
+msgstr "Odamlar va tashkilotlar"
 
 #: .\hub\models.py:31 .\hub\models.py:52 .\hub\models.py:78
 #: .\templates\hub\form_responses.html:32
@@ -188,7 +176,7 @@ msgid "Name"
 msgstr "Nomi"
 
 #: .\hub\models.py:37 .\hub\models.py:85 .\hub\models.py:261
-#: .\hub\models.py:453 .\users\models.py:121 .\wiki\models.py:21
+#: .\hub\models.py:453 .\users\models.py:134 .\wiki\models.py:21
 msgid "Slug"
 msgstr "Slug"
 
@@ -217,7 +205,7 @@ msgstr "Kategoriya"
 msgid "Categories"
 msgstr "Kategoriyalar"
 
-#: .\hub\models.py:86 .\users\models.py:122
+#: .\hub\models.py:86 .\users\models.py:135
 msgid "Leave blank to auto-generate from name."
 msgstr "Nom asosida avtomatik yaratish uchun bo'sh qoldiring."
 
@@ -393,10 +381,8 @@ msgid "Featured on main page"
 msgstr "Bosh sahifada ko'rsatilsin"
 
 #: .\hub\models.py:347
-#, fuzzy
-#| msgid "If checked, this builder will be featured on the main landing page."
 msgid "Show this cycle in the featured block on the home page."
-msgstr "Belgilansa, ushbu ishtirokchi bosh sahifada ko'rsatiladi."
+msgstr "Ushbu tsiklni bosh sahifadagi tanlangan blokda ko'rsating."
 
 #: .\hub\models.py:351
 msgid "Program Cycle"
@@ -451,20 +437,16 @@ msgid "Short Title / Abbreviation"
 msgstr "Qisqa nomi / abbreviatura"
 
 #: .\hub\models.py:454
-#, fuzzy
-#| msgid "Leave blank to auto-generate from name."
 msgid "Leave blank to auto-generate from title."
-msgstr "Nom asosida avtomatik yaratish uchun bo'sh qoldiring."
+msgstr "Sarlavha asosida avtomatik yaratish uchun bo'sh qoldiring."
 
 #: .\hub\models.py:500
 msgid "Telegram Channel / Group"
 msgstr "Telegram kanal / guruh"
 
 #: .\hub\models.py:501
-#, fuzzy
-#| msgid "Without @, e.g., durov"
 msgid "Without @, e.g., mycomminity"
-msgstr "@ belgisisiz, masalan: durov"
+msgstr "@ belgisisiz, masalan: mycommunity"
 
 #: .\hub\models.py:507
 msgid "Year Formed"
@@ -480,20 +462,14 @@ msgid "Individual people who are part of this community."
 msgstr "Ushbu jamoaning alohida a'zolari."
 
 #: .\hub\models.py:529 .\templates\hub\community_detail.html:95
-#, fuzzy
-#| msgid "Parent Organization"
 msgid "Supporting Organizations"
-msgstr "Asosiy tashkilot"
+msgstr "Qo'llab-quvvatlovchi tashkilotlar"
 
 #: .\hub\models.py:530
-#, fuzzy
-#| msgid "Organizations that run or host this cycle."
 msgid "Organizations that support this community."
-msgstr "Ushbu tsiklni o'tkazuvchi yoki qabul qiluvchi tashkilotlar."
+msgstr "Ushbu jamoani qo'llab-quvvatlovchi tashkilotlar."
 
 #: .\hub\models.py:537
-#, fuzzy
-#| msgid "Supported programs"
 msgid "Supported Programs"
 msgstr "Qo'llab-quvvatlanadigan dasturlar"
 
@@ -502,8 +478,6 @@ msgid "Programs supported or promoted by this community."
 msgstr "Ushbu jamoa tomonidan qo'llab-quvvatlanadigan dasturlar."
 
 #: .\hub\models.py:543
-#, fuzzy
-#| msgid "Is Published"
 msgid "Published"
 msgstr "E'lon qilingan"
 
@@ -626,10 +600,8 @@ msgid "The page you are looking for doesn't exist or has been moved."
 msgstr "Siz qidirayotgan sahifa mavjud emas yoki ko'chirilgan."
 
 #: .\templates\404.html:13
-#, fuzzy
-#| msgid "Back to manage"
 msgid "Back to home"
-msgstr "Boshqaruvga qaytish"
+msgstr "Bosh sahifaga qaytish"
 
 #: .\templates\account\email\email_confirmation_signup_message.txt:3
 #, python-format
@@ -687,10 +659,8 @@ msgid "Password"
 msgstr "Parol"
 
 #: .\templates\account\login.html:38
-#, fuzzy
-#| msgid "Form"
 msgid "or"
-msgstr "Forma"
+msgstr "yoki"
 
 #: .\templates\account\login.html:47
 msgid "Sign in with Google"
@@ -822,10 +792,8 @@ msgid "Home"
 msgstr "Bosh sahifa"
 
 #: .\templates\hub\community_detail.html:48
-#, fuzzy
-#| msgid "Telegram Username"
 msgid "Telegram"
-msgstr "Telegram foydalanuvchi nomi"
+msgstr "Telegram"
 
 #: .\templates\hub\community_list.html:30
 msgid "Since"
@@ -840,10 +808,8 @@ msgid "orgs"
 msgstr "tashkilot"
 
 #: .\templates\hub\community_list.html:43
-#, fuzzy
-#| msgid "No cycles yet."
 msgid "No communities yet."
-msgstr "Hali tsikllar yo'q."
+msgstr "Hali jamoalar yo'q."
 
 #: .\templates\hub\cycle_form.html:12
 msgid "Edit Cycle"
@@ -1055,6 +1021,10 @@ msgstr "Qo'shish"
 msgid "View responses"
 msgstr "Javoblarni ko'rish"
 
+#: .\templates\hub\form_responses.html:12
+msgid "program"
+msgstr "dastur"
+
 #: .\templates\hub\form_responses.html:14
 msgid "Back to dashboard"
 msgstr "Boshqaruv paneliga qaytish"
@@ -1083,7 +1053,7 @@ msgstr ""
 #: .\templates\hub\partials\_cycle_item_edit.html:61
 #: .\templates\hub\partials\_form_section.html:51
 #: .\templates\hub\partials\_form_section.html:77
-#: .\templates\users\partials\profile_form.html:140
+#: .\templates\users\partials\profile_form.html:160
 msgid "Saving…"
 msgstr "Saqlanmoqda…"
 
@@ -1145,8 +1115,7 @@ msgstr "Forma yaratish"
 
 #: .\templates\hub\partials\_form_section.html:19
 msgid "Collect registrations directly on this platform."
-msgstr "Ro'yxatga olishni to'g'ridan-to'g'ri ushbu platformada yig'ing."
-"Ro'yxatga olishni to'g'ridan-to'g'ri ushbu platformada amalga oshiring."
+msgstr "Ro'yxatga olishni to'g'ridan-to'g'ri ushbu platformada amalga oshiring."
 
 #: .\templates\hub\partials\_form_section.html:30
 msgid "Use external registration form"
@@ -1249,39 +1218,29 @@ msgid "Apply Now"
 msgstr "Hozir ariza topshirish"
 
 #: .\templates\hub\program_detail.html:142
-#, fuzzy
-#| msgid "No cycles yet."
 msgid "cycles since"
-msgstr "Hali tsikllar yo'q."
+msgstr "tsikllar boshlanganidan beri"
 
 #: .\templates\hub\program_detail.html:145
 msgid "cycle total"
 msgid_plural "cycles total"
-msgstr[0] ""
+msgstr[0] "tsikl jami"
 
 #: .\templates\hub\program_detail.html:154
-#, fuzzy
-#| msgid "Cycle"
 msgid "cycle"
-msgstr "Tsikl"
+msgstr "tsikl"
 
 #: .\templates\hub\program_detail.html:154
-#, fuzzy
-#| msgid "All cycles"
 msgid "cycles"
-msgstr "Barcha tsikllar"
+msgstr "tsikllar"
 
 #: .\templates\hub\program_detail.html:175
-#, fuzzy
-#| msgid "Cycle"
 msgid "Cycles run"
-msgstr "Tsikl"
+msgstr "O'tkazilgan tsikllar"
 
 #: .\templates\hub\program_detail.html:180
-#, fuzzy
-#| msgid "Active"
 msgid "Active now"
-msgstr "Faol"
+msgstr "Hozir faol"
 
 #: .\templates\hub\program_detail.html:218
 msgid "Open now"
@@ -1293,47 +1252,37 @@ msgid "Active and upcoming cycles"
 msgstr "Faol va kutilayotgan tsikllar"
 
 #: .\templates\hub\program_detail.html:235
-#, fuzzy
-#| msgid "Application Submitted"
 msgid "Applications close"
-msgstr "Ariza yuborildi"
+msgstr "Arizalar yopiladi"
 
 #: .\templates\hub\program_detail.html:237
 msgid "Opens"
 msgstr "Ochiladi"
 
 #: .\templates\hub\program_detail.html:245
-#, fuzzy
-#| msgid "Apply Now"
 msgid "Apply now"
 msgstr "Hozir ariza topshirish"
 
 #: .\templates\hub\program_detail.html:247
-#, fuzzy
-#| msgid "View all"
 msgid "View details"
-msgstr "Hammasini ko'rish"
+msgstr "Batafsil"
 
 #: .\templates\hub\program_detail.html:251
 msgid "No active cycles at the moment."
 msgstr "Hozirda faol tsikllar yo'q."
 
 #: .\templates\hub\program_detail.html:274
-#, fuzzy
-#| msgid "New cycle"
 msgid "Open cycles"
-msgstr "Yangi tsikl"
+msgstr "Ochiq tsikllar"
 
 #: .\templates\hub\program_list.html:29
 msgid "cycle open"
 msgid_plural "cycles open"
-msgstr[0] ""
+msgstr[0] "tsikl ochiq"
 
 #: .\templates\hub\program_list.html:32
-#, fuzzy
-#| msgid "New cycle"
 msgid "No open cycles"
-msgstr "Yangi tsikl"
+msgstr "Ochiq tsikllar yo'q"
 
 #: .\templates\hub\program_list.html:56
 msgid "No programs found."
@@ -1357,25 +1306,25 @@ msgstr "Ro'yxatga olish formasini sozlash uchun avval tsikl yarating."
 
 #: .\templates\index.html:32 .\templates\index.html:48
 #: .\templates\index.html:58 .\templates\index.html:90
-#: .\templates\index.html:160 .\templates\index.html:182
+#: .\templates\index.html:160 .\templates\index.html:183
 msgid "See more"
 msgstr "Ko'proq ko'rish"
 
-#: .\templates\index.html:181 .\templates\wiki\resource_detail.html:9
+#: .\templates\index.html:182 .\templates\wiki\resource_detail.html:9
 #: .\templates\wiki\resource_list.html:16
 #: .\templates\wiki\resource_list.html:20 .\wiki\models.py:132
 msgid "Resources"
 msgstr "Resurslar"
 
-#: .\templates\index.html:193 .\templates\wiki\resource_detail.html:37
+#: .\templates\index.html:194 .\templates\wiki\resource_detail.html:37
 msgid "File"
 msgstr "Fayl"
 
-#: .\templates\index.html:194 .\templates\wiki\resource_detail.html:44
+#: .\templates\index.html:195 .\templates\wiki\resource_detail.html:44
 msgid "Video"
 msgstr "Video"
 
-#: .\templates\index.html:204
+#: .\templates\index.html:206
 msgid ""
 "Startup Guide is an open platform for the startup ecosystem — providing "
 "accessible information about programs and resources in a single place."
@@ -1383,11 +1332,11 @@ msgstr ""
 "Startup Guide — startap ekotizimi uchun ochiq platforma: dasturlar va "
 "resurslar haqidagi ma'lumotlar bir joyda."
 
-#: .\templates\index.html:208
+#: .\templates\index.html:210
 msgid "Channel"
 msgstr "Kanal"
 
-#: .\templates\index.html:214
+#: .\templates\index.html:213
 msgid "Leave a message"
 msgstr "Xabar qoldiring"
 
@@ -1423,7 +1372,7 @@ msgstr "Familiya"
 msgid "Search organizations…"
 msgstr "Tashkilotlarni qidirish…"
 
-#: .\templates\users\partials\profile_form.html:139
+#: .\templates\users\partials\profile_form.html:159
 msgid "Save changes"
 msgstr "O'zgarishlarni saqlash"
 
@@ -1467,35 +1416,43 @@ msgstr "Muallif"
 msgid "No resources found."
 msgstr "Resurslar topilmadi."
 
-#: .\users\admin.py:49
+#: .\users\admin.py:47
 msgid "Account Status"
 msgstr "Hisob holati"
 
-#: .\users\admin.py:55
+#: .\users\admin.py:53
 msgid "Professional Information"
 msgstr "Kasbiy ma'lumot"
+
+#: .\users\admin.py:56 .\users\models.py:97
+msgid "Expert"
+msgstr "Mutaxassis"
 
 #: .\users\admin.py:59
 msgid "Contacts"
 msgstr "Kontaktlar"
 
 #: .\users\admin.py:62
+msgid "Personal"
+msgstr "Shaxsiy"
+
+#: .\users\admin.py:65
 msgid "System Info"
 msgstr "Tizim ma'lumoti"
 
-#: .\users\admin.py:71
+#: .\users\admin.py:74
 msgid "No photo"
 msgstr "Rasm yo'q"
 
-#: .\users\admin.py:72
+#: .\users\admin.py:75
 msgid "Photo"
 msgstr "Rasm"
 
-#: .\users\admin.py:77
+#: .\users\admin.py:80
 msgid "No photo uploaded yet."
 msgstr "Rasm hali yuklanmagan."
 
-#: .\users\admin.py:78
+#: .\users\admin.py:81
 msgid "Photo Preview"
 msgstr "Rasm oldindan ko'rinishi"
 
@@ -1523,7 +1480,11 @@ msgstr "O'zingiz, tajribangiz va qanday yordam bera olishingiz haqida ayting."
 msgid "durov (without @)"
 msgstr "durov (@ belgisisiz)"
 
-#: .\users\forms.py:115 .\users\models.py:129
+#: .\users\forms.py:116
+msgid "e.g. Product development, fundraising, go-to-market strategy"
+msgstr "Masalan: mahsulot yaratish, investitsiya jalb qilish, bozorga chiqish strategiyasi"
+
+#: .\users\forms.py:120 .\users\models.py:142
 msgid "Affiliated Organizations"
 msgstr "Bog'liq tashkilotlar"
 
@@ -1552,14 +1513,16 @@ msgid "e.g., Tracker, Program Coordinator, Fund Partner"
 msgstr "Masalan: tracker, dastur koordinatori, fond hamkori"
 
 #: .\users\models.py:64
-msgid "Bio and Expertise"
-msgstr "Biografiya va tajriba"
+msgid "Short Bio"
+msgstr "Qisqa tarjimayi hol"
 
 #: .\users\models.py:65
-msgid "Describe your experience, project focus, and how you can help."
-msgstr "Tajribangizni, loyiha yo'nalishingizni va qanday yordam bera olishingizni yozing."
-"Tajribangiz, loyiha yo'nalishingiz va qanday yordam bera olishingizni "
-"tavsiflang."
+msgid ""
+"Describe yourself in a few sentences, including your background and "
+"involvement in the ecosystem."
+msgstr ""
+"O'zingiz haqida bir necha jumlada yozing: tajribangiz va ekosistemadagi "
+"ishtirokingiz."
 
 #: .\users\models.py:72
 msgid "LinkedIn URL"
@@ -1589,32 +1552,43 @@ msgstr "Ko'rsatilmagan"
 msgid "Gender"
 msgstr "Jins"
 
-#: .\users\models.py:97
+#: .\users\models.py:98
+msgid "Mark this profile as an expert."
+msgstr "Ushbu profilni mutaxassis sifatida belgilash."
+
+#: .\users\models.py:104
+msgid "Expertise"
+msgstr "Mutaxassislik"
+
+#: .\users\models.py:105
+msgid "Brief description of areas of expertise."
+msgstr "Mutaxassislik sohalarining qisqacha tavsifi."
+
+#: .\users\models.py:110
 msgid "Published on site"
 msgstr "Saytda e'lon qilingan"
 
-#: .\users\models.py:98
+#: .\users\models.py:111
 msgid "Uncheck to temporarily hide the profile from the public catalog"
-msgstr "Profilni vaqtincha umumiy katalogdan yashirish uchun belgini olib tashlang"
-"Profilni vaqtincha ommaviy katalogdan yashirish uchun belgini olib tashlang"
+msgstr "Profilni vaqtincha ommaviy katalogdan yashirish uchun belgini olib tashlang."
 
-#: .\users\models.py:103
+#: .\users\models.py:116
 msgid "Show on Main Page"
 msgstr "Bosh sahifada ko'rsatish"
 
-#: .\users\models.py:104
+#: .\users\models.py:117
 msgid "If checked, this builder will be featured on the main landing page."
 msgstr "Belgilansa, ushbu ishtirokchi bosh sahifada ko'rsatiladi."
 
-#: .\users\models.py:109 .\wiki\models.py:123
+#: .\users\models.py:122 .\wiki\models.py:123
 msgid "Creation Date"
 msgstr "Yaratilgan sana"
 
-#: .\users\models.py:114 .\wiki\models.py:127
+#: .\users\models.py:127 .\wiki\models.py:127
 msgid "Update Date"
 msgstr "Yangilangan sana"
 
-#: .\users\models.py:130
+#: .\users\models.py:143
 msgid ""
 "Select the universities, incubators, or programs this builder is involved "
 "with."
@@ -1622,11 +1596,11 @@ msgstr ""
 "Ushbu ishtirokchi bog'liq bo'lgan universitetlar, inkubatorlar yoki "
 "dasturlarni tanlang."
 
-#: .\users\models.py:134
+#: .\users\models.py:147
 msgid "Builder Profile"
 msgstr "Ishtirokchi profili"
 
-#: .\users\models.py:135
+#: .\users\models.py:148
 msgid "Builder Profiles"
 msgstr "Ishtirokchi profillari"
 
@@ -1693,18 +1667,16 @@ msgid "Quick Info Image"
 msgstr "Tezkor ma'lumot rasmi"
 
 #: .\wiki\models.py:108
-#, fuzzy
-#| msgid "External link"
 msgid "Original Link"
-msgstr "Tashqi havola"
+msgstr "Asl havola"
 
 #: .\wiki\models.py:109
 msgid ""
 "Link to the original source or full article. Used in Quick Info as a 'See "
 "more' link."
 msgstr ""
-"Asl manba yoki to'liq maqolaga havola. Tezkor ma'lumotda 'Batafsil' "
-"tugmasi sifatida ishlatiladi."
+"Asl manba yoki to'liq maqolaga havola. Tezkor ma'lumotda 'Batafsil' tugmasi "
+"sifatida ishlatiladi."
 
 #: .\wiki\models.py:114
 msgid "Is Published"
@@ -1725,6 +1697,11 @@ msgstr ""
 #: .\wiki\models.py:131
 msgid "Resource"
 msgstr "Resurs"
+
+#~ msgid "Describe your experience, project focus, and how you can help."
+#~ msgstr ""
+#~ "Tajribangizni, loyiha yo'nalishingizni va qanday yordam bera olishingizni "
+#~ "tavsiflang."
 
 #~ msgid "Manage"
 #~ msgstr "Boshqarish"

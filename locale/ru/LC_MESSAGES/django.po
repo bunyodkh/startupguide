@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: startupguide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-14 22:31+0500\n"
+"POT-Creation-Date: 2026-05-15 20:22+0500\n"
 "PO-Revision-Date: 2026-05-09 00:00+0500\n"
 "Last-Translator: StartupGuide\n"
 "Language-Team: Russian\n"
@@ -18,16 +18,12 @@ msgstr ""
 "(n%100>=11 && n%100<=14)? 2 : 3);\n"
 
 #: .\announcements\admin.py:16 .\announcements\admin.py:32
-#, fuzzy
-#| msgid "Contacts"
 msgid "Content"
-msgstr "Контакты"
+msgstr "Содержание"
 
 #: .\announcements\admin.py:19 .\announcements\admin.py:38 .\hub\admin.py:147
-#, fuzzy
-#| msgid "Form Settings"
 msgid "Settings"
-msgstr "Настройки формы"
+msgstr "Настройки"
 
 #: .\announcements\admin.py:35
 msgid "Call to Action"
@@ -53,14 +49,10 @@ msgid "Is Active"
 msgstr "Активен"
 
 #: .\announcements\models.py:9 .\announcements\models.py:30
-#, fuzzy
-#| msgid "Create form"
 msgid "Created At"
-msgstr "Создать форму"
+msgstr "Дата создания"
 
 #: .\announcements\models.py:10 .\announcements\models.py:31
-#, fuzzy
-#| msgid "Update Date"
 msgid "Updated At"
 msgstr "Дата обновления"
 
@@ -120,7 +112,7 @@ msgstr "Цикл"
 msgid "Dates"
 msgstr "Даты"
 
-#: .\hub\admin.py:47 .\hub\admin.py:71 .\hub\admin.py:138 .\users\admin.py:52
+#: .\hub\admin.py:47 .\hub\admin.py:71 .\hub\admin.py:138 .\users\admin.py:50
 msgid "Media"
 msgstr "Медиа"
 
@@ -172,17 +164,13 @@ msgstr "Ответы"
 msgid "Identity"
 msgstr "Идентификация"
 
-#: .\hub\admin.py:141 .\templates\index.html:211
-#, fuzzy
-#| msgid "Contacts"
+#: .\hub\admin.py:141
 msgid "Contact"
-msgstr "Контакты"
+msgstr "Контакт"
 
 #: .\hub\admin.py:144
-#, fuzzy
-#| msgid "Parent Organization"
 msgid "People & Organizations"
-msgstr "Родительская организация"
+msgstr "Люди и организации"
 
 #: .\hub\models.py:31 .\hub\models.py:52 .\hub\models.py:78
 #: .\templates\hub\form_responses.html:32
@@ -190,7 +178,7 @@ msgid "Name"
 msgstr "Название"
 
 #: .\hub\models.py:37 .\hub\models.py:85 .\hub\models.py:261
-#: .\hub\models.py:453 .\users\models.py:121 .\wiki\models.py:21
+#: .\hub\models.py:453 .\users\models.py:134 .\wiki\models.py:21
 msgid "Slug"
 msgstr "Slug"
 
@@ -219,7 +207,7 @@ msgstr "Категория"
 msgid "Categories"
 msgstr "Категории"
 
-#: .\hub\models.py:86 .\users\models.py:122
+#: .\hub\models.py:86 .\users\models.py:135
 msgid "Leave blank to auto-generate from name."
 msgstr "Оставьте пустым для автозаполнения из названия."
 
@@ -395,10 +383,8 @@ msgid "Featured on main page"
 msgstr "Отображается на главной странице"
 
 #: .\hub\models.py:347
-#, fuzzy
-#| msgid "If checked, this builder will be featured on the main landing page."
 msgid "Show this cycle in the featured block on the home page."
-msgstr "Если отмечено, профиль будет отображаться на главной странице."
+msgstr "Показывать этот цикл в блоке «Рекомендуемые» на главной странице."
 
 #: .\hub\models.py:351
 msgid "Program Cycle"
@@ -453,8 +439,6 @@ msgid "Short Title / Abbreviation"
 msgstr "Краткое название / аббревиатура"
 
 #: .\hub\models.py:454
-#, fuzzy
-#| msgid "Leave blank to auto-generate from name."
 msgid "Leave blank to auto-generate from title."
 msgstr "Оставьте пустым для автозаполнения из названия."
 
@@ -463,10 +447,8 @@ msgid "Telegram Channel / Group"
 msgstr "Telegram-канал / группа"
 
 #: .\hub\models.py:501
-#, fuzzy
-#| msgid "Without @, e.g., durov"
 msgid "Without @, e.g., mycomminity"
-msgstr "Без @, например: durov"
+msgstr "Без @, например: mycommunity"
 
 #: .\hub\models.py:507
 msgid "Year Formed"
@@ -482,20 +464,14 @@ msgid "Individual people who are part of this community."
 msgstr "Люди, входящие в данное сообщество."
 
 #: .\hub\models.py:529 .\templates\hub\community_detail.html:95
-#, fuzzy
-#| msgid "Parent Organization"
 msgid "Supporting Organizations"
-msgstr "Родительская организация"
+msgstr "Поддерживающие организации"
 
 #: .\hub\models.py:530
-#, fuzzy
-#| msgid "Organizations that run or host this cycle."
 msgid "Organizations that support this community."
-msgstr "Организации, проводящие или принимающие данный цикл."
+msgstr "Организации, поддерживающие данное сообщество."
 
 #: .\hub\models.py:537
-#, fuzzy
-#| msgid "Supported programs"
 msgid "Supported Programs"
 msgstr "Поддерживаемые программы"
 
@@ -504,8 +480,6 @@ msgid "Programs supported or promoted by this community."
 msgstr "Программы, поддерживаемые или продвигаемые данным сообществом."
 
 #: .\hub\models.py:543
-#, fuzzy
-#| msgid "Is Published"
 msgid "Published"
 msgstr "Опубликован"
 
@@ -629,10 +603,8 @@ msgid "The page you are looking for doesn't exist or has been moved."
 msgstr "Страница, которую вы ищете, не существует или была перемещена."
 
 #: .\templates\404.html:13
-#, fuzzy
-#| msgid "Back to manage"
 msgid "Back to home"
-msgstr "Назад к управлению"
+msgstr "На главную"
 
 #: .\templates\account\email\email_confirmation_signup_message.txt:3
 #, python-format
@@ -690,10 +662,8 @@ msgid "Password"
 msgstr "Пароль"
 
 #: .\templates\account\login.html:38
-#, fuzzy
-#| msgid "Form"
 msgid "or"
-msgstr "Форма"
+msgstr "или"
 
 #: .\templates\account\login.html:47
 msgid "Sign in with Google"
@@ -825,10 +795,8 @@ msgid "Home"
 msgstr "Главная"
 
 #: .\templates\hub\community_detail.html:48
-#, fuzzy
-#| msgid "Telegram Username"
 msgid "Telegram"
-msgstr "Имя пользователя Telegram"
+msgstr "Telegram"
 
 #: .\templates\hub\community_list.html:30
 msgid "Since"
@@ -843,10 +811,8 @@ msgid "orgs"
 msgstr "орг."
 
 #: .\templates\hub\community_list.html:43
-#, fuzzy
-#| msgid "No cycles yet."
 msgid "No communities yet."
-msgstr "Циклов пока нет."
+msgstr "Сообществ пока нет."
 
 #: .\templates\hub\cycle_form.html:12
 msgid "Edit Cycle"
@@ -1058,6 +1024,10 @@ msgstr "Добавить"
 msgid "View responses"
 msgstr "Посмотреть ответы"
 
+#: .\templates\hub\form_responses.html:12
+msgid "program"
+msgstr "программа"
+
 #: .\templates\hub\form_responses.html:14
 msgid "Back to dashboard"
 msgstr "Вернуться на панель управления"
@@ -1086,7 +1056,7 @@ msgstr ""
 #: .\templates\hub\partials\_cycle_item_edit.html:61
 #: .\templates\hub\partials\_form_section.html:51
 #: .\templates\hub\partials\_form_section.html:77
-#: .\templates\users\partials\profile_form.html:140
+#: .\templates\users\partials\profile_form.html:160
 msgid "Saving…"
 msgstr "Сохранение…"
 
@@ -1251,42 +1221,32 @@ msgid "Apply Now"
 msgstr "Подать заявку"
 
 #: .\templates\hub\program_detail.html:142
-#, fuzzy
-#| msgid "No cycles yet."
 msgid "cycles since"
-msgstr "Циклов пока нет."
+msgstr "циклов с"
 
 #: .\templates\hub\program_detail.html:145
 msgid "cycle total"
 msgid_plural "cycles total"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "цикл всего"
+msgstr[1] "цикла всего"
+msgstr[2] "циклов всего"
+msgstr[3] "цикла всего"
 
 #: .\templates\hub\program_detail.html:154
-#, fuzzy
-#| msgid "Cycle"
 msgid "cycle"
-msgstr "Цикл"
+msgstr "цикл"
 
 #: .\templates\hub\program_detail.html:154
-#, fuzzy
-#| msgid "All cycles"
 msgid "cycles"
-msgstr "Все циклы"
+msgstr "циклов"
 
 #: .\templates\hub\program_detail.html:175
-#, fuzzy
-#| msgid "Cycle"
 msgid "Cycles run"
-msgstr "Цикл"
+msgstr "Проведено циклов"
 
 #: .\templates\hub\program_detail.html:180
-#, fuzzy
-#| msgid "Active"
 msgid "Active now"
-msgstr "Активен"
+msgstr "Сейчас активен"
 
 #: .\templates\hub\program_detail.html:218
 msgid "Open now"
@@ -1298,50 +1258,40 @@ msgid "Active and upcoming cycles"
 msgstr "Активные и предстоящие циклы"
 
 #: .\templates\hub\program_detail.html:235
-#, fuzzy
-#| msgid "Application Submitted"
 msgid "Applications close"
-msgstr "Заявка отправлена"
+msgstr "Приём заявок завершается"
 
 #: .\templates\hub\program_detail.html:237
 msgid "Opens"
 msgstr "Открывается"
 
 #: .\templates\hub\program_detail.html:245
-#, fuzzy
-#| msgid "Apply Now"
 msgid "Apply now"
 msgstr "Подать заявку"
 
 #: .\templates\hub\program_detail.html:247
-#, fuzzy
-#| msgid "View all"
 msgid "View details"
-msgstr "Посмотреть все"
+msgstr "Подробнее"
 
 #: .\templates\hub\program_detail.html:251
 msgid "No active cycles at the moment."
 msgstr "На данный момент нет активных циклов."
 
 #: .\templates\hub\program_detail.html:274
-#, fuzzy
-#| msgid "New cycle"
 msgid "Open cycles"
-msgstr "Новый цикл"
+msgstr "Открытые циклы"
 
 #: .\templates\hub\program_list.html:29
 msgid "cycle open"
 msgid_plural "cycles open"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "цикл открыт"
+msgstr[1] "цикла открыто"
+msgstr[2] "циклов открыто"
+msgstr[3] "цикла открыто"
 
 #: .\templates\hub\program_list.html:32
-#, fuzzy
-#| msgid "New cycle"
 msgid "No open cycles"
-msgstr "Новый цикл"
+msgstr "Нет открытых циклов"
 
 #: .\templates\hub\program_list.html:56
 msgid "No programs found."
@@ -1365,37 +1315,37 @@ msgstr "Создайте цикл, чтобы настроить форму ре
 
 #: .\templates\index.html:32 .\templates\index.html:48
 #: .\templates\index.html:58 .\templates\index.html:90
-#: .\templates\index.html:160 .\templates\index.html:182
+#: .\templates\index.html:160 .\templates\index.html:183
 msgid "See more"
 msgstr "Смотреть ещё"
 
-#: .\templates\index.html:181 .\templates\wiki\resource_detail.html:9
+#: .\templates\index.html:182 .\templates\wiki\resource_detail.html:9
 #: .\templates\wiki\resource_list.html:16
 #: .\templates\wiki\resource_list.html:20 .\wiki\models.py:132
 msgid "Resources"
 msgstr "Ресурсы"
 
-#: .\templates\index.html:193 .\templates\wiki\resource_detail.html:37
+#: .\templates\index.html:194 .\templates\wiki\resource_detail.html:37
 msgid "File"
 msgstr "Файл"
 
-#: .\templates\index.html:194 .\templates\wiki\resource_detail.html:44
+#: .\templates\index.html:195 .\templates\wiki\resource_detail.html:44
 msgid "Video"
 msgstr "Видео"
 
-#: .\templates\index.html:204
+#: .\templates\index.html:206
 msgid ""
 "Startup Guide is an open platform for the startup ecosystem — providing "
 "accessible information about programs and resources in a single place."
 msgstr ""
-"Startup Guide — открытая платформа стартап-экосистемы: актуальная "
-"информация о программах и ресурсах в одном месте."
+"Startup Guide — открытая платформа стартап-экосистемы: актуальная информация "
+"о программах и ресурсах в одном месте."
 
-#: .\templates\index.html:208
+#: .\templates\index.html:210
 msgid "Channel"
 msgstr "Канал"
 
-#: .\templates\index.html:214
+#: .\templates\index.html:213
 msgid "Leave a message"
 msgstr "Написать нам"
 
@@ -1431,7 +1381,7 @@ msgstr "Фамилия"
 msgid "Search organizations…"
 msgstr "Искать организации…"
 
-#: .\templates\users\partials\profile_form.html:139
+#: .\templates\users\partials\profile_form.html:159
 msgid "Save changes"
 msgstr "Сохранить изменения"
 
@@ -1475,35 +1425,43 @@ msgstr "Автор"
 msgid "No resources found."
 msgstr "Ресурсов не найдено."
 
-#: .\users\admin.py:49
+#: .\users\admin.py:47
 msgid "Account Status"
 msgstr "Статус аккаунта"
 
-#: .\users\admin.py:55
+#: .\users\admin.py:53
 msgid "Professional Information"
 msgstr "Профессиональная информация"
+
+#: .\users\admin.py:56 .\users\models.py:97
+msgid "Expert"
+msgstr "Эксперт"
 
 #: .\users\admin.py:59
 msgid "Contacts"
 msgstr "Контакты"
 
 #: .\users\admin.py:62
+msgid "Personal"
+msgstr "Личные данные"
+
+#: .\users\admin.py:65
 msgid "System Info"
 msgstr "Системная информация"
 
-#: .\users\admin.py:71
+#: .\users\admin.py:74
 msgid "No photo"
 msgstr "Без фото"
 
-#: .\users\admin.py:72
+#: .\users\admin.py:75
 msgid "Photo"
 msgstr "Фото"
 
-#: .\users\admin.py:77
+#: .\users\admin.py:80
 msgid "No photo uploaded yet."
 msgstr "Фото ещё не загружено."
 
-#: .\users\admin.py:78
+#: .\users\admin.py:81
 msgid "Photo Preview"
 msgstr "Предпросмотр фото"
 
@@ -1531,7 +1489,11 @@ msgstr "Расскажите о себе, своей экспертизе и ч�
 msgid "durov (without @)"
 msgstr "durov (без @)"
 
-#: .\users\forms.py:115 .\users\models.py:129
+#: .\users\forms.py:116
+msgid "e.g. Product development, fundraising, go-to-market strategy"
+msgstr "Например: разработка продукта, привлечение инвестиций, стратегия выхода на рынок"
+
+#: .\users\forms.py:120 .\users\models.py:142
 msgid "Affiliated Organizations"
 msgstr "Связанные организации"
 
@@ -1560,12 +1522,16 @@ msgid "e.g., Tracker, Program Coordinator, Fund Partner"
 msgstr "Например: трекер, координатор программы, партнёр фонда"
 
 #: .\users\models.py:64
-msgid "Bio and Expertise"
-msgstr "Биография и экспертиза"
+msgid "Short Bio"
+msgstr "Краткая биография"
 
 #: .\users\models.py:65
-msgid "Describe your experience, project focus, and how you can help."
-msgstr "Опишите свой опыт, направление работы и чем вы можете помочь."
+msgid ""
+"Describe yourself in a few sentences, including your background and "
+"involvement in the ecosystem."
+msgstr ""
+"Расскажите о себе в нескольких предложениях: ваш опыт и участие в "
+"экосистеме."
 
 #: .\users\models.py:72
 msgid "LinkedIn URL"
@@ -1595,42 +1561,54 @@ msgstr "Не указан"
 msgid "Gender"
 msgstr "Пол"
 
-#: .\users\models.py:97
+#: .\users\models.py:98
+msgid "Mark this profile as an expert."
+msgstr "Отметить этот профиль как профиль эксперта."
+
+#: .\users\models.py:104
+msgid "Expertise"
+msgstr "Экспертиза"
+
+#: .\users\models.py:105
+msgid "Brief description of areas of expertise."
+msgstr "Краткое описание областей экспертизы."
+
+#: .\users\models.py:110
 msgid "Published on site"
 msgstr "Опубликован на сайте"
 
-#: .\users\models.py:98
+#: .\users\models.py:111
 msgid "Uncheck to temporarily hide the profile from the public catalog"
 msgstr "Снимите, чтобы временно скрыть профиль из публичного каталога"
 
-#: .\users\models.py:103
+#: .\users\models.py:116
 msgid "Show on Main Page"
 msgstr "Показывать на главной странице"
 
-#: .\users\models.py:104
+#: .\users\models.py:117
 msgid "If checked, this builder will be featured on the main landing page."
 msgstr "Если отмечено, профиль будет отображаться на главной странице."
 
-#: .\users\models.py:109 .\wiki\models.py:123
+#: .\users\models.py:122 .\wiki\models.py:123
 msgid "Creation Date"
 msgstr "Дата создания"
 
-#: .\users\models.py:114 .\wiki\models.py:127
+#: .\users\models.py:127 .\wiki\models.py:127
 msgid "Update Date"
 msgstr "Дата обновления"
 
-#: .\users\models.py:130
+#: .\users\models.py:143
 msgid ""
 "Select the universities, incubators, or programs this builder is involved "
 "with."
 msgstr ""
 "Выберите университеты, инкубаторы или программы, с которыми связан участник."
 
-#: .\users\models.py:134
+#: .\users\models.py:147
 msgid "Builder Profile"
 msgstr "Профиль участника"
 
-#: .\users\models.py:135
+#: .\users\models.py:148
 msgid "Builder Profiles"
 msgstr "Профили участников"
 
@@ -1697,10 +1675,8 @@ msgid "Quick Info Image"
 msgstr "Изображение для быстрой информации"
 
 #: .\wiki\models.py:108
-#, fuzzy
-#| msgid "External link"
 msgid "Original Link"
-msgstr "Внешняя ссылка"
+msgstr "Оригинальная ссылка"
 
 #: .\wiki\models.py:109
 msgid ""
@@ -1729,6 +1705,9 @@ msgstr ""
 #: .\wiki\models.py:131
 msgid "Resource"
 msgstr "Ресурс"
+
+#~ msgid "Describe your experience, project focus, and how you can help."
+#~ msgstr "Опишите свой опыт, направление работы и чем вы можете помочь."
 
 #~ msgid "Manage"
 #~ msgstr "Управление"
