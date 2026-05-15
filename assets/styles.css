@@ -2176,47 +2176,6 @@ form.htmx-request .btn-primary { opacity: 0.7; cursor: not-allowed; }
     -webkit-backdrop-filter: blur(8px);
 }
 
-
-
-
-/* ── Error pages ────────────────────────────────────────────────────────────── */
-
-.error-page {
-    padding: 3rem 0 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.error-page-code {
-    font-size: 5rem;
-    font-weight: 900;
-    font-family: var(--font-display);
-    color: var(--border-color);
-    line-height: 1;
-}
-
-.error-page-title {
-    font-size: 1.6rem;
-}
-
-.error-page-text {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    font-weight: 300;
-}
-
-.error-page-link {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--text-main);
-    margin-top: 0.5rem;
-}
-
-.error-page-link:hover {
-    text-decoration: underline;
-}
-
 body.has-cta {
     padding-bottom: 3rem;
 }
@@ -2896,4 +2855,42 @@ body.has-cta {
     padding: 0.15rem 0.5rem;
     border: 1px solid var(--border-color);
     border-radius: 999px;
+}
+
+/* ── Error pages ────────────────────────────────────────────────────────────── */
+
+.error-page {
+    padding: 3rem 0 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.error-page-code {
+    font-size: 5rem !important;
+    font-weight: 900;
+    font-family: var(--font-display);
+    color: var(--border-color);
+    line-height: 1;
+}
+
+.error-page-title {
+    font-size: 1.6rem;
+}
+
+.error-page-text {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-weight: 300;
+}
+
+.error-page-link {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-top: 0.5rem;
+}
+
+.error-page-link:hover {
+    text-decoration: underline;
 }
