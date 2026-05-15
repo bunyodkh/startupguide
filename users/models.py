@@ -61,8 +61,8 @@ class BuilderProfile(models.Model):
 
     bio = models.TextField(
         blank=True,
-        verbose_name=_("Bio and Expertise"),
-        help_text=_("Describe your experience, project focus, and how you can help.")
+        verbose_name=_("Short Bio"),
+        help_text=_("Describe yourself in a few sentences, including your background and involvement in the ecosystem.")
     )
 
     linkedin_url = models.URLField(
@@ -90,6 +90,19 @@ class BuilderProfile(models.Model):
         choices=Gender.choices,
         default=Gender.NA,
         verbose_name=_("Gender")
+    )
+
+    is_expert = models.BooleanField(
+        default=False,
+        verbose_name=_("Expert"),
+        help_text=_("Mark this profile as an expert.")
+    )
+
+    expertise = models.TextField(
+        max_length=500,
+        blank=True,
+        verbose_name=_("Expertise"),
+        help_text=_("Brief description of areas of expertise.")
     )
 
     is_published = models.BooleanField(

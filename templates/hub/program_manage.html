@@ -18,7 +18,7 @@
             <a href="{% url 'hub:cycle_create_page' pk=program.pk %}" class="form-link" style="font-size:0.8rem;">+ {% trans "New cycle" %}</a>
           {% endif %}
           {% if reg_form and latest_cycle %}
-            <a href="{% url 'hub:form_responses' pk=program.pk %}" class="form-link" style="font-size:0.8rem;">{% trans "View responses" %}</a>
+            <a href="{% url 'hub:form_responses' pk=program.pk %}?cycle={{ latest_cycle.pk }}" class="form-link" style="font-size:0.8rem;">{% trans "View responses" %}</a>
           {% endif %}
           <a href="{% url 'hub:view_program' slug=program.slug %}" class="form-link">{% trans "Public page" %} →</a>
         </div>
@@ -49,7 +49,7 @@
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.75rem;">
         <label class="form-input-label">{% trans "Recent Registrations" %}</label>
         {% if reg_form %}
-          <a href="{% url 'hub:form_responses' pk=program.pk %}" class="form-link" style="font-size:0.75rem;">{% trans "View all" %} →</a>
+          <a href="{% url 'hub:form_responses' pk=program.pk %}?cycle={{ latest_cycle.pk }}" class="form-link" style="font-size:0.75rem;">{% trans "View all" %} →</a>
         {% endif %}
       </div>
       {% if recent_responses %}

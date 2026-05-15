@@ -176,6 +176,7 @@
             </div>
         </section>
 
+        {% if resources %}
         <section class="layout-block span-col-2 index-resources">
             <div class="layout-block-heading">
                 <h2 class="meduim-bold">{% trans 'Resources' %}</h2>
@@ -199,6 +200,7 @@
                 {% endfor %}
             </div>
         </section>
+        {% endif %}
 
         <div class="about-sidebar index-about">
             <p class="about-sidebar-text">{% trans 'Startup Guide is an open platform for the startup ecosystem — providing accessible information about programs and resources in a single place.' %}</p>

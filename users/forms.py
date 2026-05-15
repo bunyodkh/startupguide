@@ -88,7 +88,7 @@ class UserInfoForm(forms.ModelForm):
 class BuilderProfileForm(forms.ModelForm):
     class Meta:
         model = BuilderProfile
-        fields = ['photo', 'position', 'bio', 'linkedin_url', 'telegram_handle', 'gender', 'affiliated_entities']
+        fields = ['photo', 'position', 'bio', 'linkedin_url', 'telegram_handle', 'gender', 'affiliated_entities', 'is_expert', 'expertise']
         widgets = {
             'photo': forms.FileInput(attrs={'accept': 'image/*'}),
             'gender': forms.Select(attrs={'class': 'form-input'}),
@@ -110,6 +110,11 @@ class BuilderProfileForm(forms.ModelForm):
                 'placeholder': _('durov (without @)'),
             }),
             'affiliated_entities': forms.SelectMultiple(attrs={'class': 'form-input'}),
+            'expertise': forms.Textarea(attrs={
+                'rows': 3,
+                'class': 'form-input',
+                'placeholder': _('e.g. Product development, fundraising, go-to-market strategy'),
+            }),
         }
         labels = {
             'affiliated_entities': _("Affiliated Organizations"),

@@ -22,7 +22,7 @@
     <h3 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;margin-bottom:1rem;">{% trans "Register" %}</h3>
 
     <form
-      hx-post="{% url 'hub:program_apply' slug=program.slug %}"
+      hx-post="{% url 'hub:program_apply' slug=program.slug %}{% if cycle %}?cycle={{ cycle.slug }}{% endif %}"
       hx-target="#apply-block"
       hx-swap="outerHTML">
       {% csrf_token %}

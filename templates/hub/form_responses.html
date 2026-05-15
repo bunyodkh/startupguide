@@ -6,12 +6,12 @@
   <div class="layout-grid">
 
     <div class="layout-block span-col-3">
-      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:1rem;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;">
         <div>
-          <h2 class="meduim-bold">{{ program.name }} — {% trans "Responses" %}</h2>
-          {% if cycle %}<div class="profile-muted">{{ cycle.display_label }}</div>{% endif %}
+          <h2 class="meduim-bold" style="margin-bottom:0.25rem;">{% if cycle %}{{ cycle.display_label }} {% trans "Responses" %}{% else %}{% endif %}</h2>
+          <div class="profile-muted" style="text-align:left;">{{ program.name }} {% trans 'program' %}</div>
         </div>
-        <a href="{% url 'hub:program_manage' pk=program.pk %}" class="form-link">← {% trans "Back to dashboard" %}</a>
+        <a href="{% url 'hub:program_manage' pk=program.pk %}?cycle={{ cycle.pk }}" class="form-link">← {% trans "Back to dashboard" %}</a>
       </div>
     </div>
 

@@ -36,13 +36,11 @@ class CustomGroupAdmin(ModelAdmin, GroupAdmin):
 
 @admin.register(BuilderProfile)
 class BuilderProfileAdmin(ModelAdmin, TabbedTranslationAdmin):
-    list_display = ('get_avatar', 'user', 'position', 'is_published', 'show_on_main_page', 'created_at')
+    list_display = ('get_avatar', 'user', 'position', 'is_expert', 'is_published', 'show_on_main_page', 'created_at')
     list_display_links = ('get_avatar', 'user')
-    list_filter = ('is_published', 'show_on_main_page')
-    search_fields = ('user__username', 'user__first_name', 'user__last_name', 'user__email', 'position')
+    list_filter = ('is_published', 'show_on_main_page', 'is_expert', 'gender')
+    search_fields = ('user__username', 'user__first_name', 'user__last_name', 'user__email', 'position', 'expertise')
     readonly_fields = ('created_at', 'updated_at', 'get_avatar_preview')
-    
-    # Автодополнение для удобного поиска организаций при привязке (вместо длинного списка)
     autocomplete_fields = ['affiliated_entities']
 
     fieldsets = (
@@ -53,15 +51,20 @@ class BuilderProfileAdmin(ModelAdmin, TabbedTranslationAdmin):
             'fields': ('photo', 'get_avatar_preview')
         }),
         (_('Professional Information'), {
-            # Добавили affiliated_entities сюда
-            'fields': ('position', 'affiliated_entities', 'bio') 
+            'fields': ('position', 'bio', 'affiliated_entities')
+        }),
+        (_('Expert'), {
+            'fields': ('is_expert', 'expertise')
         }),
         (_('Contacts'), {
             'fields': ('linkedin_url', 'telegram_handle')
         }),
+        (_('Personal'), {
+            'fields': ('gender',)
+        }),
         (_('System Info'), {
             'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',), 
+            'classes': ('collapse',),
         }),
     )
 

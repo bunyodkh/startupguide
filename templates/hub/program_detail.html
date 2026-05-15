@@ -80,7 +80,7 @@
       </div>
       <div class="program-detail-col">
         <div class="layout-block">
-          {% include "hub/partials/_apply_block.html" %}
+          {% include "hub/partials/_apply_block.html" with cycle=latest_cycle %}
           {% if program.parent %}
             <div class="profile-section">
               <label class="form-input-label">{% trans "Part of" %}</label>

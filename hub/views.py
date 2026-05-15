@@ -324,7 +324,13 @@ def program_apply(request, slug):
         return redirect('hub:view_program', slug=slug)
 
     program = get_object_or_404(EcosystemEntity, slug=slug, has_physical_space=False)
-    cycle = program.cycles.filter(is_active=True).order_by('-cycle_number').first()
+
+    cycle_slug = request.GET.get('cycle')
+    if cycle_slug:
+        cycle = program.cycles.filter(is_active=True, slug=cycle_slug).first()
+    else:
+        cycle = program.cycles.filter(is_active=True).order_by('-cycle_number').first()
+
     reg_form = _get_reg_form(cycle)
 
     if not reg_form or not reg_form.is_open or reg_form.external_url:
@@ -339,6 +345,7 @@ def program_apply(request, slug):
         if RegistrationResponse.objects.filter(form=reg_form, email=email).exists():
             return render(request, 'hub/partials/_apply_block.html', {
                 'program': program,
+                'cycle': cycle,
                 'reg_form': reg_form,
                 'apply_form': ApplyForm(),
                 'custom_fields': custom_fields,
@@ -358,6 +365,7 @@ def program_apply(request, slug):
         )
         return render(request, 'hub/partials/_apply_block.html', {
             'program': program,
+            'cycle': cycle,
             'applied': True,
             'apply_form': ApplyForm(),
             'custom_fields': custom_fields,
@@ -365,6 +373,7 @@ def program_apply(request, slug):
 
     return render(request, 'hub/partials/_apply_block.html', {
         'program': program,
+        'cycle': cycle,
         'reg_form': reg_form,
         'apply_form': form,
         'custom_fields': custom_fields,
@@ -422,7 +431,12 @@ def form_responses(request, pk):
     if not _is_coordinator(request.user, program):
         return render(request, 'hub/403.html', status=403)
 
-    cycle = program.cycles.filter(is_active=True).order_by('-cycle_number').first()
+    cycle_pk = request.GET.get('cycle')
+    if cycle_pk:
+        cycle = get_object_or_404(ProgramCycle, pk=cycle_pk, program=program)
+    else:
+        cycle = program.cycles.filter(is_active=True).order_by('-cycle_number').first()
+
     reg_form = _get_reg_form(cycle)
     custom_fields = []
     responses = []
