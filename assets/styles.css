@@ -2031,7 +2031,7 @@ form.htmx-request .btn-primary { opacity: 0.7; cursor: not-allowed; }
 
 .featured-block {
     display: grid;
-    grid-template-columns: 60% 40%;
+    grid-template-columns: 65% 35%;
     height: 200px;
     border-radius: var(--radius-soft);
     overflow: hidden;
