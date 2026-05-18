@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% trans "Startup Guide | Hub" %}</title>
+    <title>{% block title %}{% trans "Startup Guide | Hub" %}{% endblock %}</title>
     {% include "components/links.html" %}
 </head>
 <body{% if cta_announcement %} class="has-cta"{% endif %}>
