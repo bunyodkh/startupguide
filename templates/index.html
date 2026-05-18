@@ -38,17 +38,11 @@
         {% if quick_info %}
         <div class="layout-block quickinfo-block">
             <div class="quickinfo-text">
-                {% if quick_info.logo %}<img src="{{ quick_info.get_logo_url }}" alt="{{ quick_info.title }}" class="quickinfo-logo">{% endif %}
                 <p class="quickinfo-content">{{ quick_info.content }}</p>
-            </div>
-            {% if quick_info.quickinfo_image %}
-            <div class="quickinfo-image-wrap">
-                <img src="{{ quick_info.quickinfo_image.url }}" alt="{{ quick_info.title }}" class="quickinfo-image">
                 {% if quick_info.original_link %}
                 <a href="{{ quick_info.original_link }}" target="_blank" rel="noopener" class="quickinfo-see-more">{% trans "See more" %} →</a>
                 {% endif %}
             </div>
-            {% endif %}
         </div>
         {% endif %}
 
