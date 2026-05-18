@@ -56,9 +56,9 @@ class ProgramCycleAdmin(ModelAdmin, TabbedTranslationAdmin):
 @admin.register(EcosystemEntity)
 class EcosystemEntityAdmin(ModelAdmin, TabbedTranslationAdmin):
     inlines = [ProgramCycleInline]
-    list_display = ('get_logo', 'name', 'category', 'city', 'is_active')
+    list_display = ('get_logo', 'name', 'category', 'city', 'is_active', 'show_on_main')
     list_display_links = ('get_logo', 'name')
-    list_filter = ('category', 'is_active', 'has_physical_space')
+    list_filter = ('category', 'is_active', 'has_physical_space', 'show_on_main')
     search_fields = ('name', 'short_name', 'category__name')
     autocomplete_fields = ['parent', 'category']
 
@@ -66,7 +66,7 @@ class EcosystemEntityAdmin(ModelAdmin, TabbedTranslationAdmin):
 
     fieldsets = (
         (_("General"), {
-            'fields': ('name', 'short_name', 'category', 'parent', 'description', 'website', 'is_active'),
+            'fields': ('name', 'short_name', 'category', 'parent', 'description', 'website', 'is_active', 'show_on_main'),
         }),
         (_("Media"), {
             'fields': ('logo',),

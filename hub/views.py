@@ -115,7 +115,7 @@ def index(request):
 
     places = (
         EcosystemEntity.objects
-        .filter(has_physical_space=True, is_active=True)
+        .filter(has_physical_space=True, is_active=True, show_on_main=True)
         .select_related('category', 'parent')
         .order_by('?')[:3]
     )
@@ -135,7 +135,7 @@ def index(request):
 
     programs_qs = (
         EcosystemEntity.objects
-        .filter(has_physical_space=False, is_active=True)
+        .filter(has_physical_space=False, is_active=True, show_on_main=True)
         .filter(cycles__is_active=True, cycles__status__in=_ACTIVE_STATUSES)
         .distinct()
         .select_related('category', 'parent')

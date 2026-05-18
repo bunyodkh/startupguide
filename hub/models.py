@@ -169,6 +169,12 @@ class EcosystemEntity(models.Model):
         verbose_name=_("Is Active")
     )
 
+    show_on_main = models.BooleanField(
+        default=False,
+        verbose_name=_("Featured on main page"),
+        help_text=_("Show this entity in the featured block on the home page. Only active entities will be shown.")
+    )
+
     class Meta:
         verbose_name = _("Ecosystem Entity")
         verbose_name_plural = _("Ecosystem Entities")
