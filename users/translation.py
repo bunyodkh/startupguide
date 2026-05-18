@@ -3,4 +3,4 @@ from .models import BuilderProfile
 
 @register(BuilderProfile)
 class BuilderProfileTranslationOptions(TranslationOptions):
-    fields = ('position', 'bio')
+    fields = ('position', 'bio', 'expertise')
