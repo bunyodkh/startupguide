@@ -12,8 +12,8 @@
     <div class="people-cards program-people-cards" style="margin-top:0.5rem;">
       {% for person in program.coordinators.all %}
         <a href="{{ person.get_absolute_url }}" class="person-card">
-          <div class="person-image"><img src="{{ person.get_thumbnail_url }}" alt="{{ person.user.get_full_name }}"></div>
-          <div class="person-info"><div class="person-name small-text">{{ person.user.get_full_name }}</div></div>
+          <div class="person-image"><img src="{{ person.get_thumbnail_url }}" alt="{{ person.get_full_name }}"></div>
+          <div class="person-info"><div class="person-name small-text">{{ person.get_full_name }}</div></div>
         </a>
       {% endfor %}
     </div>

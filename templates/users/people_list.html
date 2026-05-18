@@ -28,10 +28,10 @@
             {% for person in members %}
               <div class="person-card">
                 <div class="person-image">
-                  <img src="{{ person.get_thumbnail_url }}" alt="{{ person.user.get_full_name }}">
+                  <img src="{{ person.get_thumbnail_url }}" alt="{{ person.get_full_name }}">
                 </div>
                 <div class="person-info">
-                  <h4 class="person-name"><a href="{{ person.get_absolute_url }}">{{ person.user.first_name }} {{ person.user.last_name }}</a></h4>
+                  <h4 class="person-name"><a href="{{ person.get_absolute_url }}">{{ person.get_full_name }}</a></h4>
                   {% if person.affiliated_entities.exists %}
                     <p class="person-place">{{ person.affiliated_entities.first.short_name|default:person.affiliated_entities.first.name }}</p>
                   {% endif %}

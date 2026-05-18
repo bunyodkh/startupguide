@@ -10,7 +10,7 @@
     <span class="breadcrumb-sep">·</span>
     <a href="{% url 'users:people_list' %}" class="breadcrumb-link">{% trans 'People' %}</a>
     <span class="breadcrumb-sep">·</span>
-    <span class="breadcrumb-current">{{ profile.user.get_full_name }}</span>
+    <span class="breadcrumb-current">{{ profile.get_full_name }}</span>
   </nav>
 
   <div class="layout-grid">
@@ -22,10 +22,10 @@
         <div class="profile-avatar-col">
           <img
             src="{{ profile.get_photo_url }}"
-            alt="{{ profile.user.get_full_name }}"
+            alt="{{ profile.get_full_name }}"
             class="profile-avatar"
           >
-          <div class="meduim-bold profile-display-name">{{ profile.user.get_full_name }}</div>
+          <div class="meduim-bold profile-display-name">{{ profile.get_full_name }}</div>
           {% if profile.position %}
             <div class="profile-muted">{{ profile.position }}</div>
           {% endif %}

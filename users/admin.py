@@ -60,7 +60,7 @@ class BuilderProfileAdmin(ModelAdmin, TabbedTranslationAdmin):
             'fields': ('linkedin_url', 'telegram_handle')
         }),
         (_('Personal'), {
-            'fields': ('gender',)
+            'fields': ('gender', 'first_name_uz', 'last_name_uz', 'first_name_ru', 'last_name_ru')
         }),
         (_('System Info'), {
             'fields': ('created_at', 'updated_at'),

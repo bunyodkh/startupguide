@@ -59,10 +59,10 @@
               {% for person in community.coordinators.all %}
               <a href="{{ person.get_absolute_url }}" class="person-card">
                 <div class="person-image">
-                  <img src="{{ person.get_thumbnail_url }}" alt="{{ person.user.get_full_name }}">
+                  <img src="{{ person.get_thumbnail_url }}" alt="{{ person.get_full_name }}">
                 </div>
                 <div class="person-info">
-                  <div class="person-name small-text">{{ person.user.get_full_name }}</div>
+                  <div class="person-name small-text">{{ person.get_full_name }}</div>
                   {% if person.position %}<div class="small-text" style="color:var(--text-muted);">{{ person.position }}</div>{% endif %}
                 </div>
               </a>
@@ -78,10 +78,10 @@
               {% for person in community.members.all %}
               <a href="{{ person.get_absolute_url }}" class="person-card">
                 <div class="person-image">
-                  <img src="{{ person.get_thumbnail_url }}" alt="{{ person.user.get_full_name }}">
+                  <img src="{{ person.get_thumbnail_url }}" alt="{{ person.get_full_name }}">
                 </div>
                 <div class="person-info">
-                  <div class="person-name small-text">{{ person.user.get_full_name }}</div>
+                  <div class="person-name small-text">{{ person.get_full_name }}</div>
                   {% if person.position %}<div class="small-text" style="color:var(--text-muted);">{{ person.position }}</div>{% endif %}
                 </div>
               </a>

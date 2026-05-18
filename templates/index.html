@@ -63,11 +63,11 @@
             {% for person in people %}
                 <div class="person-card">
                     <div class="person-image">
-                        <img src="{{ person.get_thumbnail_url }}" alt="{{ person.user.first_name }}{{ person.user.last_name }}">
+                        <img src="{{ person.get_thumbnail_url }}" alt="{{ person.get_full_name }}">
                     </div>
 
                     <div class="person-info">
-                        <h4 class="person-name"><a href="{{ person.get_absolute_url }}">{{person.user.first_name}} {{ person.user.last_name }}</a></h4>
+                        <h4 class="person-name"><a href="{{ person.get_absolute_url }}">{{ person.get_full_name }}</a></h4>
                         
                         {% if person.affiliated_entities %}
                             <p class="person-place">{{ person.affiliated_entities.first.short_name }}</p>
@@ -139,8 +139,8 @@
                     <p class="community-body-label">{% trans "Members" %}</p>
                     <div class="community-avatars">
                         {% for person in featured_community.members.all|slice:":8" %}
-                        <a href="{{ person.get_absolute_url }}" class="community-avatar-link" title="{{ person.user.get_full_name }}">
-                            <img src="{{ person.get_thumbnail_url }}" alt="{{ person.user.get_full_name }}" class="community-avatar">
+                        <a href="{{ person.get_absolute_url }}" class="community-avatar-link" title="{{ person.get_full_name }}">
+                            <img src="{{ person.get_thumbnail_url }}" alt="{{ person.get_full_name }}" class="community-avatar">
                         </a>
                         {% endfor %}
                         {% with total=featured_community.members.count %}

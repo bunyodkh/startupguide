@@ -52,6 +52,30 @@ class BuilderProfile(models.Model):
         verbose_name=_("Profile Photo Thumbnail"),
     )
 
+    first_name_uz = models.CharField(
+        max_length=150,
+        blank=True,
+        verbose_name=_("First Name (UZ)")
+    )
+
+    last_name_uz = models.CharField(
+        max_length=150,
+        blank=True,
+        verbose_name=_("Last Name (UZ)")
+    )
+
+    first_name_ru = models.CharField(
+        max_length=150,
+        blank=True,
+        verbose_name=_("First Name (RU)")
+    )
+
+    last_name_ru = models.CharField(
+        max_length=150,
+        blank=True,
+        verbose_name=_("Last Name (RU)")
+    )
+
     position = models.CharField(
         max_length=255,
         blank=True,
@@ -190,6 +214,20 @@ class BuilderProfile(models.Model):
         from django.core.files.storage import default_storage
         if name and default_storage.exists(name):
             default_storage.delete(name)
+
+    def get_full_name(self):
+        from django.utils.translation import get_language
+        lang = get_language() or ''
+        if lang.startswith('uz'):
+            first = self.first_name_uz or self.user.first_name
+            last = self.last_name_uz or self.user.last_name
+        elif lang.startswith('ru'):
+            first = self.first_name_ru or self.user.first_name
+            last = self.last_name_ru or self.user.last_name
+        else:
+            first = self.user.first_name
+            last = self.user.last_name
+        return f"{first} {last}".strip() or self.user.username
 
     def __str__(self):
         full_name = self.user.get_full_name()
