@@ -128,16 +128,16 @@
                     <p class="community-body-desc">{{ featured_community.description|truncatewords:25 }}</p>
                 </div>
                 {% endif %}
-                {% if featured_community.members.exists %}
+                {% if featured_community.coordinators.exists %}
                 <div class="community-body-col">
-                    <p class="community-body-label">{% trans "Members" %}</p>
+                    <p class="community-body-label">{% trans "Community people" %}</p>
                     <div class="community-avatars">
-                        {% for person in featured_community.members.all|slice:":8" %}
+                        {% for person in featured_community.coordinators.all|slice:":8" %}
                         <a href="{{ person.get_absolute_url }}" class="community-avatar-link" title="{{ person.get_full_name }}">
                             <img src="{{ person.get_thumbnail_url }}" alt="{{ person.get_full_name }}" class="community-avatar">
                         </a>
                         {% endfor %}
-                        {% with total=featured_community.members.count %}
+                        {% with total=featured_community.coordinators.count %}
                         {% if total > 8 %}<span class="community-avatar-more">+{{ total|add:"-8" }}</span>{% endif %}
                         {% endwith %}
                     </div>
