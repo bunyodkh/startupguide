@@ -9,6 +9,13 @@
 
     <!-- Main content -->
     <div class="layout-block span-col-2">
+      <nav class="breadcrumbs">
+        <a href="{% url 'hub:index' %}" class="breadcrumb-link">{% trans 'Home' %}</a>
+        <span class="breadcrumb-sep">·</span>
+        <a href="{% url 'hub:place_list' %}" class="breadcrumb-link">{% trans 'Places' %}</a>
+        <span class="breadcrumb-sep">·</span>
+        <span class="breadcrumb-current">{{ place.short_name|default:place.name }}</span>
+      </nav>
       <div class="profile-layout">
 
         <!-- Logo column -->
