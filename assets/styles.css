@@ -636,10 +636,6 @@ textarea.form-input {
     .span-row-1 { grid-row: span 1; }
     .span-row-2 { grid-row: span 2; }
     .span-row-3 { grid-row: span 3 ; }
-
-    .index-programs,
-    .index-places,
-    .index-about { grid-column: 3; }
 }
 
 
@@ -2033,6 +2029,33 @@ form.htmx-request .btn-primary { opacity: 0.7; cursor: not-allowed; }
 
 .logo-short { display: none; }
 
+/* ── Index page layout (main + side, flex) ─────────────────────────────────── */
+
+.layout-flex {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 0;
+}
+
+.main-block,
+.side-block {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-width: 0;
+}
+
+@media (min-width: 768px) {
+    .layout-flex {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+
+    .main-block { flex: 2; }
+    .side-block { flex: 1; }
+}
+
 /* ── Featured block ─────────────────────────────────────────────────────────── */
 
 .featured-block {
@@ -2122,7 +2145,6 @@ form.htmx-request .btn-primary { opacity: 0.7; cursor: not-allowed; }
 /* ── Quick Info carousel ────────────────────────────────────────────────────── */
 
 .quickinfo-block {
-    grid-column: 3;
     display: flex;
     flex-direction: row;
     align-items: stretch;
@@ -2587,8 +2609,6 @@ body.has-cta {
     }
 
     .quickinfo-block {
-        grid-column: auto;
-        grid-row: auto;
         min-height: 160px;
     }
 
@@ -2611,16 +2631,6 @@ body.has-cta {
     .pd-cycle-grid {
         grid-template-columns: 1fr;
     }
-
-    /* Mobile section order: featured, people, quickinfo, programs, community, places, resources, about */
-    .featured-block  { order: 1; }
-    .index-people    { order: 2; }
-    .quickinfo-block { order: 3; }
-    .index-programs  { order: 4; }
-    .index-community  { order: 5; }
-    .index-places    { order: 6; }
-    .index-resources  { order: 7; }
-    .index-about      { order: 8; }
 
     /* Bigger search organizations input on mobile */
     .ms-search {

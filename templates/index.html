@@ -4,207 +4,215 @@
 {% load i18n%}
 
 
-{% block content %}  
+{% block content %}
 
 <section class="container">
-    <div class="layout-grid">
+    <div class="layout-flex">
 
-        {% if featured_items %}
-        {% for item in featured_items %}
-        <a href="{{ item.get_absolute_url }}" class="featured-block span-col-2">
-            <div class="featured-cover">
-                {% if item.cover_image %}
-                <img src="{{ item.cover_image.url }}" alt="{{ item.title|default:item.program.name }}" class="featured-cover-img">
-                {% endif %}
-            </div>
-            <div class="featured-info">
-                <h2 class="featured-title">{{ item.title|default:item.program.name }}</h2>
-                {% if item.description %}<p class="featured-desc">{{ item.description|truncatewords:20 }}</p>{% endif %}
-                {% with date=item.duration_display city=item.program.city %}
-                {% if date or city %}
-                <p class="featured-meta">
-                    {% if date %}{{ date }}{% endif %}
-                    {% if date and city %} · {% endif %}
-                    {% if city %}{{ city }}{% endif %}
-                </p>
-                {% endif %}
-                {% endwith %}
-                <span class="featured-cta">{% trans 'See more' %} →</span>
-            </div>
-        </a>
-        {% endfor %}
-        {% endif %}
+        <div class="main-block">
 
-        {% if quick_info %}
-        <div class="layout-block quickinfo-block">
-            <div class="quickinfo-text">
-                <p class="quickinfo-content">{{ quick_info.content }}</p>
-                {% if quick_info.original_link %}
-                <a href="{{ quick_info.original_link }}" target="_blank" rel="noopener" class="quickinfo-see-more">{% trans "See more" %} →</a>
-                {% endif %}
-            </div>
-        </div>
-        {% endif %}
-
-        <section class="layout-block span-col-2 span-row-2 index-people">
-            <div class="layout-block-heading">
-                <h2 class="meduim-bold">{% trans 'People' %}</h2>
-                <a href="{% url 'users:people_list' %}" class="section-link-all">{% trans 'See more' %} &rarr;</a>
-            </div>
-
-            <div class="people-cards">
-
-            {% for person in people %}
-                <div class="person-card">
-                    <div class="person-image">
-                        <img src="{{ person.get_thumbnail_url }}" alt="{{ person.get_full_name }}">
-                    </div>
-
-                    <div class="person-info">
-                        <h4 class="person-name"><a href="{{ person.get_absolute_url }}">{{ person.get_full_name }}</a></h4>
-                        
-                        {% if person.affiliated_entities %}
-                            <p class="person-place">{{ person.affiliated_entities.first.short_name }}</p>
-                        {% endif %}
-
-                        {% if person.position %}
-                            <p class="person-tg"><a href="#" target="_blank">{{ person.position }}</a></p>
-                        {% endif %}
-                    </div>
+            {% if featured_items %}
+            {% for item in featured_items %}
+            <a href="{{ item.get_absolute_url }}" class="featured-block">
+                <div class="featured-cover">
+                    {% if item.cover_image %}
+                    <img src="{{ item.cover_image.url }}" alt="{{ item.title|default:item.program.name }}" class="featured-cover-img">
+                    {% endif %}
                 </div>
+                <div class="featured-info">
+                    <h2 class="featured-title">{{ item.title|default:item.program.name }}</h2>
+                    {% if item.description %}<p class="featured-desc">{{ item.description|truncatewords:20 }}</p>{% endif %}
+                    {% with date=item.duration_display city=item.program.city %}
+                    {% if date or city %}
+                    <p class="featured-meta">
+                        {% if date %}{{ date }}{% endif %}
+                        {% if date and city %} · {% endif %}
+                        {% if city %}{{ city }}{% endif %}
+                    </p>
+                    {% endif %}
+                    {% endwith %}
+                    <span class="featured-cta">{% trans 'See more' %} →</span>
+                </div>
+            </a>
             {% endfor %}
-
-            </div>
-        </section>
-
-        {% if programs %}
-        <section class="layout-block span-col-1 span-row-2 index-programs">
-            <div class="layout-block-heading">
-                <h2 class="meduim-bold">{% trans 'Programs' %}</h2>
-                <a href="{% url 'hub:program_list' %}" class="section-link-all">{% trans 'See more' %} &rarr;</a>
-            </div>
-
-            <div class="program-list">
-
-                {% for program, cycle in programs %}
-
-                    <article class="program-item">
-                        <div class="program-heading">
-                            <h4><a class="program-title" href="{{ program.get_absolute_url }}{% if cycle.slug %}?cycle={{ cycle.slug }}{% endif %}">{{ cycle.title|default:program.name }}</a></h4>
-                            {% if cycle.deadline_label %}<p class="program-reg-deadline">{{ cycle.deadline_label }}</p>{% endif %}
-                        </div>
-                        {% if cycle.duration_display %}<p class="program-dates">{{ cycle.duration_display }}</p>{% endif %}
-                        <div class="program-status-row">
-                            {% if cycle.status == 'accepting' or cycle.status == 'upcoming' %}
-                            <div class="ring-container">
-                                <div class="ringring"></div>
-                                <div class="circle"></div>
-                            </div>
-                            {% else %}
-                            <div class="ring-container">
-                                <div class="circle-inactive"></div>
-                            </div>
-                            {% endif %}
-                            {% if cycle.status %}<p class="program-status program-status--{{ cycle.status }}">{{ cycle.get_status_display }}</p>{% endif %}
-                        </div>
-                    </article>
-                {% endfor %}
-
-            </div>
-        </section>
-        {% endif %}
-
-        {% if featured_community %}
-        <section class="layout-block index-community span-col-2">
-            {% if featured_community.cover_image %}
-            <img src="{{ featured_community.cover_image.url }}" alt="{{ featured_community.title }}" class="community-card-cover">
             {% endif %}
-            <h2 class="meduim-bold" style="margin-top:0.75rem;">
-                <a href="{{ featured_community.get_absolute_url }}">{{ featured_community.title }}</a>
-            </h2>
-            <div class="community-body-row">
-                {% if featured_community.description %}
-                <div class="community-body-col">
-                    <p class="community-body-desc">{{ featured_community.description|truncatewords:25 }}</p>
-                </div>
-                {% endif %}
-                {% if featured_community.coordinators.exists %}
-                <div class="community-body-col">
-                    <div class="community-avatars">
-                        {% for person in featured_community.coordinators.all|slice:":8" %}
-                        <a href="{{ person.get_absolute_url }}" class="community-avatar-link" title="{{ person.get_full_name }}">
-                            <img src="{{ person.get_thumbnail_url }}" alt="{{ person.get_full_name }}" class="community-avatar">
-                        </a>
-                        {% endfor %}
-                        {% with total=featured_community.coordinators.count %}
-                        {% if total > 8 %}<span class="community-avatar-more">+{{ total|add:"-8" }}</span>{% endif %}
-                        {% endwith %}
-                    </div>
-                </div>
-                {% endif %}
-            </div>
-        </section>
-        {% endif %}
 
-        <section class="layout-block index-places">
-            <div class="layout-block-heading">
-                <h2 class="meduim-bold">{% trans 'Places' %}</h2>
-                <a href="{% url 'hub:place_list' %}" class="section-link-all">{% trans 'See more' %} &rarr;</a>
-            </div>
-            <div class="place-list">
-                {% for place in places %}
-                <a href="{{ place.get_absolute_url }}" class="place-item">
-                    {% if place.logo %}
-                    <img src="{{ place.get_thumbnail_url }}" alt="{{ place.name }}" class="place-logo">
-                    {% else %}
-                    <img src="{% static 'images/default-place.png' %}" alt="{{ place.name }}" class="place-logo">
-                    {% endif %}
-                    <div class="place-info">
-                        <span class="place-name">{{ place.short_name|default:place.name }}</span>
-                        {% if place.category %}<span class="place-category">{{ place.category.name }}</span>{% endif %}
-                    </div>
-                </a>
-                {% endfor %}
-            </div>
-        </section>
+            <section class="layout-block index-people">
+                <div class="layout-block-heading">
+                    <h2 class="meduim-bold">{% trans 'People' %}</h2>
+                    <a href="{% url 'users:people_list' %}" class="section-link-all">{% trans 'See more' %} &rarr;</a>
+                </div>
 
-        {% if resources %}
-        <section class="layout-block span-col-2 index-resources">
-            <div class="layout-block-heading">
-                <h2 class="meduim-bold">{% trans 'Resources' %}</h2>
-                <a href="{% url 'wiki:resource_list' %}" class="section-link-all">{% trans 'See more' %} &rarr;</a>
-            </div>
-            <div class="resource-list">
-                {% for resource in resources|slice:":3" %}
-                <a href="{{ resource.get_absolute_url }}" class="resource-item">
-                    {% if resource.logo %}
-                    <img src="{{ resource.get_logo_url }}" alt="{{ resource.title }}" class="resource-logo">
-                    {% endif %}
-                    <div class="resource-item-text">
-                        <div class="resource-item-top">
-                            <span class="resource-category">{{ resource.category.name }}</span>
-                            {% if resource.attached_file %}<span class="resource-badge">{% trans 'File' %}</span>{% endif %}
-                            {% if resource.video_url %}<span class="resource-badge">{% trans 'Video' %}</span>{% endif %}
+                <div class="people-cards">
+
+                {% for person in people %}
+                    <div class="person-card">
+                        <div class="person-image">
+                            <img src="{{ person.get_thumbnail_url }}" alt="{{ person.get_full_name }}">
                         </div>
-                        <p class="resource-title">{{ resource.title }}</p>
-                    </div>
-                </a>
-                {% endfor %}
-            </div>
-        </section>
-        {% endif %}
 
-        <div class="about-sidebar index-about">
-            <p class="about-sidebar-text">{% trans 'Startup Guide is an open platform for the startup ecosystem — providing accessible information about programs and resources in a single place.' %}</p>
-            <div class="about-sidebar-links">
-                <a href="https://t.me/startupguideuz" target="_blank" rel="noopener" class="about-sidebar-link">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-                    {% trans 'Channel' %}
-                </a>
-                <a href="https://t.me/startupguideuz?direct" target="_blank" rel="noopener" class="about-sidebar-link">
-                    {% trans 'Leave a message' %}
-                </a>
+                        <div class="person-info">
+                            <h4 class="person-name"><a href="{{ person.get_absolute_url }}">{{ person.get_full_name }}</a></h4>
+
+                            {% if person.affiliated_entities %}
+                                <p class="person-place">{{ person.affiliated_entities.first.short_name }}</p>
+                            {% endif %}
+
+                            {% if person.position %}
+                                <p class="person-tg"><a href="#" target="_blank">{{ person.position }}</a></p>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+
+                </div>
+            </section>
+
+            {% if featured_community %}
+            <section class="layout-block index-community">
+                {% if featured_community.cover_image %}
+                <img src="{{ featured_community.cover_image.url }}" alt="{{ featured_community.title }}" class="community-card-cover">
+                {% endif %}
+                <h2 class="meduim-bold" style="margin-top:0.75rem;">
+                    <a href="{{ featured_community.get_absolute_url }}">{{ featured_community.title }}</a>
+                </h2>
+                <div class="community-body-row">
+                    {% if featured_community.description %}
+                    <div class="community-body-col">
+                        <p class="community-body-desc">{{ featured_community.description|truncatewords:25 }}</p>
+                    </div>
+                    {% endif %}
+                    {% if featured_community.coordinators.exists %}
+                    <div class="community-body-col">
+                        <div class="community-avatars">
+                            {% for person in featured_community.coordinators.all|slice:":8" %}
+                            <a href="{{ person.get_absolute_url }}" class="community-avatar-link" title="{{ person.get_full_name }}">
+                                <img src="{{ person.get_thumbnail_url }}" alt="{{ person.get_full_name }}" class="community-avatar">
+                            </a>
+                            {% endfor %}
+                            {% with total=featured_community.coordinators.count %}
+                            {% if total > 8 %}<span class="community-avatar-more">+{{ total|add:"-8" }}</span>{% endif %}
+                            {% endwith %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </section>
+            {% endif %}
+
+            {% if resources %}
+            <section class="layout-block index-resources">
+                <div class="layout-block-heading">
+                    <h2 class="meduim-bold">{% trans 'Resources' %}</h2>
+                    <a href="{% url 'wiki:resource_list' %}" class="section-link-all">{% trans 'See more' %} &rarr;</a>
+                </div>
+                <div class="resource-list">
+                    {% for resource in resources|slice:":3" %}
+                    <a href="{{ resource.get_absolute_url }}" class="resource-item">
+                        {% if resource.logo %}
+                        <img src="{{ resource.get_logo_url }}" alt="{{ resource.title }}" class="resource-logo">
+                        {% endif %}
+                        <div class="resource-item-text">
+                            <div class="resource-item-top">
+                                <span class="resource-category">{{ resource.category.name }}</span>
+                                {% if resource.attached_file %}<span class="resource-badge">{% trans 'File' %}</span>{% endif %}
+                                {% if resource.video_url %}<span class="resource-badge">{% trans 'Video' %}</span>{% endif %}
+                            </div>
+                            <p class="resource-title">{{ resource.title }}</p>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
+        </div>
+
+        <div class="side-block">
+
+            {% if quick_info %}
+            <div class="layout-block quickinfo-block">
+                <div class="quickinfo-text">
+                    <p class="quickinfo-content">{{ quick_info.content }}</p>
+                    {% if quick_info.original_link %}
+                    <a href="{{ quick_info.original_link }}" target="_blank" rel="noopener" class="quickinfo-see-more">{% trans "See more" %} →</a>
+                    {% endif %}
+                </div>
             </div>
+            {% endif %}
+
+            {% if programs %}
+            <section class="layout-block index-programs">
+                <div class="layout-block-heading">
+                    <h2 class="meduim-bold">{% trans 'Programs' %}</h2>
+                    <a href="{% url 'hub:program_list' %}" class="section-link-all">{% trans 'See more' %} &rarr;</a>
+                </div>
+
+                <div class="program-list">
+
+                    {% for program, cycle in programs %}
+
+                        <article class="program-item">
+                            <div class="program-heading">
+                                <h4><a class="program-title" href="{{ program.get_absolute_url }}{% if cycle.slug %}?cycle={{ cycle.slug }}{% endif %}">{{ cycle.title|default:program.name }}</a></h4>
+                                {% if cycle.deadline_label %}<p class="program-reg-deadline">{{ cycle.deadline_label }}</p>{% endif %}
+                            </div>
+                            {% if cycle.duration_display %}<p class="program-dates">{{ cycle.duration_display }}</p>{% endif %}
+                            <div class="program-status-row">
+                                {% if cycle.status == 'accepting' or cycle.status == 'upcoming' %}
+                                <div class="ring-container">
+                                    <div class="ringring"></div>
+                                    <div class="circle"></div>
+                                </div>
+                                {% else %}
+                                <div class="ring-container">
+                                    <div class="circle-inactive"></div>
+                                </div>
+                                {% endif %}
+                                {% if cycle.status %}<p class="program-status program-status--{{ cycle.status }}">{{ cycle.get_status_display }}</p>{% endif %}
+                            </div>
+                        </article>
+                    {% endfor %}
+
+                </div>
+            </section>
+            {% endif %}
+
+            <section class="layout-block index-places">
+                <div class="layout-block-heading">
+                    <h2 class="meduim-bold">{% trans 'Places' %}</h2>
+                    <a href="{% url 'hub:place_list' %}" class="section-link-all">{% trans 'See more' %} &rarr;</a>
+                </div>
+                <div class="place-list">
+                    {% for place in places %}
+                    <a href="{{ place.get_absolute_url }}" class="place-item">
+                        {% if place.logo %}
+                        <img src="{{ place.get_thumbnail_url }}" alt="{{ place.name }}" class="place-logo">
+                        {% else %}
+                        <img src="{% static 'images/default-place.png' %}" alt="{{ place.name }}" class="place-logo">
+                        {% endif %}
+                        <div class="place-info">
+                            <span class="place-name">{{ place.short_name|default:place.name }}</span>
+                            {% if place.category %}<span class="place-category">{{ place.category.name }}</span>{% endif %}
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <div class="about-sidebar index-about">
+                <p class="about-sidebar-text">{% trans 'Startup Guide is an open platform for the startup ecosystem — providing accessible information about programs and resources in a single place.' %}</p>
+                <div class="about-sidebar-links">
+                    <a href="https://t.me/startupguideuz" target="_blank" rel="noopener" class="about-sidebar-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+                        {% trans 'Channel' %}
+                    </a>
+                    <a href="https://t.me/startupguideuz?direct" target="_blank" rel="noopener" class="about-sidebar-link">
+                        {% trans 'Leave a message' %}
+                    </a>
+                </div>
+            </div>
+
         </div>
 
     </div>
